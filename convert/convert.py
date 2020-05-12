@@ -64,6 +64,7 @@ class HelpIndex(NamedTuple):
             "doc_root": f"{self.doc_root.name}/",
             "help_files": {k: v.as_json() for (k, v) in self.help_files.items()},
             "externals": externals,
+            "help_contents": list(self.help_files.keys())
         }
 
     def save(self) -> Path:

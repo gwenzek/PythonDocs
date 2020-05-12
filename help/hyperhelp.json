@@ -290,5 +290,9 @@
         "topic": "Lib/pathlib.py"
       }
     ]
-  }
+  },
+  "help_contents": [
+    "os.path",
+    "pathlib"
+  ]
 }
