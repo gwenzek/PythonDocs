@@ -1,0 +1,201 @@
+{
+  "package": "PythonDocs",
+  "description": "Browse docs.python.org inside Sublime",
+  "doc_root": "help/",
+  "help_files": {
+    "pathlib": [
+      "pathlib --- Object-oriented filesystem paths",
+      {
+        "topic": "pathlib.PurePath"
+      },
+      {
+        "topic": "pathlib.PurePosixPath"
+      },
+      {
+        "topic": "pathlib.PureWindowsPath"
+      },
+      {
+        "topic": "pathlib.PurePath.parts"
+      },
+      {
+        "topic": "pathlib.PurePath.drive"
+      },
+      {
+        "topic": "pathlib.PurePath.root"
+      },
+      {
+        "topic": "pathlib.PurePath.anchor"
+      },
+      {
+        "topic": "pathlib.PurePath.parents"
+      },
+      {
+        "topic": "pathlib.PurePath.parent"
+      },
+      {
+        "topic": "pathlib.PurePath.name"
+      },
+      {
+        "topic": "pathlib.PurePath.suffix"
+      },
+      {
+        "topic": "pathlib.PurePath.suffixes"
+      },
+      {
+        "topic": "pathlib.PurePath.stem"
+      },
+      {
+        "topic": "pathlib.PurePath.as_posix"
+      },
+      {
+        "topic": "pathlib.PurePath.as_uri"
+      },
+      {
+        "topic": "pathlib.PurePath.is_absolute"
+      },
+      {
+        "topic": "pathlib.PurePath.is_reserved"
+      },
+      {
+        "topic": "pathlib.PurePath.joinpath"
+      },
+      {
+        "topic": "pathlib.PurePath.match"
+      },
+      {
+        "topic": "pathlib.PurePath.relative_to"
+      },
+      {
+        "topic": "pathlib.PurePath.with_name"
+      },
+      {
+        "topic": "pathlib.PurePath.with_suffix"
+      },
+      {
+        "topic": "pathlib.Path"
+      },
+      {
+        "topic": "pathlib.PosixPath"
+      },
+      {
+        "topic": "pathlib.WindowsPath"
+      },
+      {
+        "topic": "pathlib.Path.cwd"
+      },
+      {
+        "topic": "pathlib.Path.home"
+      },
+      {
+        "topic": "pathlib.Path.stat"
+      },
+      {
+        "topic": "pathlib.Path.chmod"
+      },
+      {
+        "topic": "pathlib.Path.exists"
+      },
+      {
+        "topic": "pathlib.Path.expanduser"
+      },
+      {
+        "topic": "pathlib.Path.glob"
+      },
+      {
+        "topic": "pathlib.Path.group"
+      },
+      {
+        "topic": "pathlib.Path.is_dir"
+      },
+      {
+        "topic": "pathlib.Path.is_file"
+      },
+      {
+        "topic": "pathlib.Path.is_mount"
+      },
+      {
+        "topic": "pathlib.Path.is_symlink"
+      },
+      {
+        "topic": "pathlib.Path.is_socket"
+      },
+      {
+        "topic": "pathlib.Path.is_fifo"
+      },
+      {
+        "topic": "pathlib.Path.is_block_device"
+      },
+      {
+        "topic": "pathlib.Path.is_char_device"
+      },
+      {
+        "topic": "pathlib.Path.iterdir"
+      },
+      {
+        "topic": "pathlib.Path.lchmod"
+      },
+      {
+        "topic": "pathlib.Path.lstat"
+      },
+      {
+        "topic": "pathlib.Path.mkdir"
+      },
+      {
+        "topic": "pathlib.Path.open"
+      },
+      {
+        "topic": "pathlib.Path.owner"
+      },
+      {
+        "topic": "pathlib.Path.read_bytes"
+      },
+      {
+        "topic": "pathlib.Path.read_text"
+      },
+      {
+        "topic": "pathlib.Path.rename"
+      },
+      {
+        "topic": "pathlib.Path.replace"
+      },
+      {
+        "topic": "pathlib.Path.resolve"
+      },
+      {
+        "topic": "pathlib.Path.rglob"
+      },
+      {
+        "topic": "pathlib.Path.rmdir"
+      },
+      {
+        "topic": "pathlib.Path.samefile"
+      },
+      {
+        "topic": "pathlib.Path.symlink_to"
+      },
+      {
+        "topic": "pathlib.Path.touch"
+      },
+      {
+        "topic": "pathlib.Path.unlink"
+      },
+      {
+        "topic": "pathlib.Path.link_to"
+      },
+      {
+        "topic": "pathlib.Path.write_bytes"
+      },
+      {
+        "topic": "pathlib.Path.write_text"
+      }
+    ]
+  },
+  "externals": {
+    "https://github.com/python/cpython/blob/3.8/Lib/pathlib.py": [
+      "Lib/pathlib.py",
+      {
+        "topic": "Lib/pathlib.py"
+      }
+    ]
+  }
+}

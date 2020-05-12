@@ -1,0 +1,3 @@
+%hyperhelp title="Index file for PythonDocs package" date="2020-05-12"
+
+This is the root help file for the 'PythonDocs' package.
