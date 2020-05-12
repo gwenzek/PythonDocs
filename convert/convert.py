@@ -105,14 +105,15 @@ def rst2help(rst_file: Path, help_index: HelpIndex) -> Path:
 
 
 TOPIC_RE = re.compile(r"^\.\. ([\w\d_-]+?):$")
-LOCAL_REFERENCE_RE = re.compile(r":(?:class|meth|func):`([\w\d_]+?)`")
-REFERENCE_RE = re.compile(r":(?:class|meth|func|mod):`([\w\d_\.]+?)`")
+LOCAL_REFERENCE_RE = re.compile(r":(?:class|data|func|meth):`([\w\d_]+?)`")
+REFERENCE_RE = re.compile(r":(?:class|data|func|meth|mod):`([\w\d_\.]+?)`")
 BOLD_RE = re.compile(r"\*\*?(.+?)\*\*?")
 INLINE_CODE_RE = re.compile(r"``(.+?)``")
 CODE_SAMPLE_RE = re.compile(r"^(   \s*)>>>")
-TAGS = [".. class::", ".. classmethod::", ".. data::", ".. method::"]
+TAGS = [".. class::", ".. classmethod::", ".. data::", ".. function::", ".. method::"]
 UNDERLINE_RE = re.compile(r"^(\^+|\-+)$")
 SOURCE_RE = re.compile(r"^(.* ):source:`([\w/]+\.py)`$")
+BULLET_POINT_RE = re.compile(r"^#\. ")
 SOURCE_PREFIX_URL = "https://github.com/python/cpython/blob/3.8/"
 
 TITLE_LEVEL = {"=": 0, "-": 1, "^": 2}
@@ -167,13 +168,13 @@ def _rst2help_line(lines: peekable, help_file: HelpFile) -> Optional[str]:
     if match:
         indent = match.group(1)
         indent_len = max(len(indent) - 3, 0)
-        code_block = [" " * indent_len + "```", line[indent_len:]]
+        code_block = [" " * indent_len + "```py", line[indent_len:]]
         while True:
             line = lines.__next__()
             if not line or not line.startswith(indent):
                 break
             code_block.append(line[indent_len:])
-        code_block.append(code_block[0])
+        code_block.append(code_block[0].strip("py"))
         code_block.append("")
         return "\n".join(code_block)
 
@@ -185,6 +186,8 @@ def _rst2help_line(lines: peekable, help_file: HelpFile) -> Optional[str]:
 
     line = LOCAL_REFERENCE_RE.sub(rf"|:{help_file.module}.\1:\1|", line)
     line = REFERENCE_RE.sub(r"|\1|", line)
+    # Keep 3 chars to not break the 3 spaces indentation.
+    line = BULLET_POINT_RE.sub(" - ", line)
     line = BOLD_RE.sub(r"<\1>", line)
     line = INLINE_CODE_RE.sub(r"`\1`", line)
     if line.startswith("# "):
@@ -201,6 +204,11 @@ def test():
     assert match
     assert match.groups() == ("**Source code:** ", "Lib/pathlib.py")
     assert r2h("**Source code**: pathlib.py") == "<Source code>: pathlib.py"
+    assert r2h(":class:`os.PathLike`") == "|os.PathLike|"
+    assert r2h(":class:`PathLike`") == "|:test.PathLike:PathLike|"
+
+    # TODO
+    # assert r2h(":ref:`pure paths <pure-paths>`") == "|pure-paths:pure paths|"
 
 
 def main():
@@ -210,8 +218,7 @@ def main():
 
     test()
     help_index = HelpIndex()
-    # for file in RST.glob("*.rst"):
-    for file in [RST / "pathlib.rst"]:
+    for file in RST.glob("*.rst"):
         rst2help(file, help_index)
     help_index.save()
 

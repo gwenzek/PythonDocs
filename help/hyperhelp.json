@@ -3,6 +3,99 @@
   "description": "Browse docs.python.org inside Sublime",
   "doc_root": "help/",
   "help_files": {
+    "os.path": [
+      "os.path --- Common pathname manipulations",
+      {
+        "topic": "os.path.abspath"
+      },
+      {
+        "topic": "os.path.basename"
+      },
+      {
+        "topic": "os.path.commonpath"
+      },
+      {
+        "topic": "os.path.commonprefix"
+      },
+      {
+        "topic": "os.path.dirname"
+      },
+      {
+        "topic": "os.path.exists"
+      },
+      {
+        "topic": "os.path.lexists"
+      },
+      {
+        "topic": "os.path.expanduser"
+      },
+      {
+        "topic": "os.path.expandvars"
+      },
+      {
+        "topic": "os.path.getatime"
+      },
+      {
+        "topic": "os.path.getmtime"
+      },
+      {
+        "topic": "os.path.getctime"
+      },
+      {
+        "topic": "os.path.getsize"
+      },
+      {
+        "topic": "os.path.isabs"
+      },
+      {
+        "topic": "os.path.isfile"
+      },
+      {
+        "topic": "os.path.isdir"
+      },
+      {
+        "topic": "os.path.islink"
+      },
+      {
+        "topic": "os.path.ismount"
+      },
+      {
+        "topic": "os.path.join"
+      },
+      {
+        "topic": "os.path.normcase"
+      },
+      {
+        "topic": "os.path.normpath"
+      },
+      {
+        "topic": "os.path.realpath"
+      },
+      {
+        "topic": "os.path.relpath"
+      },
+      {
+        "topic": "os.path.samefile"
+      },
+      {
+        "topic": "os.path.sameopenfile"
+      },
+      {
+        "topic": "os.path.samestat"
+      },
+      {
+        "topic": "os.path.split"
+      },
+      {
+        "topic": "os.path.splitdrive"
+      },
+      {
+        "topic": "os.path.splitext"
+      },
+      {
+        "topic": "os.path.supports_unicode_filenames"
+      }
+    ],
     "pathlib": [
       "pathlib --- Object-oriented filesystem paths",
       {

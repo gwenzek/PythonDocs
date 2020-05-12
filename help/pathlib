@@ -25,10 +25,10 @@ a :ref:`concrete path <concrete-paths>` for the platform the code is running on.
 
 Pure paths are useful in some special cases; for example:
 
-#. If you want to manipulate Windows paths on a Unix machine (or vice versa).
+ - If you want to manipulate Windows paths on a Unix machine (or vice versa).
    You cannot instantiate a |:pathlib.WindowsPath:WindowsPath| when running on Unix, but you
    can instantiate |:pathlib.PureWindowsPath:PureWindowsPath|.
-#. You want to make sure that your code only manipulates paths without actually
+ - You want to make sure that your code only manipulates paths without actually
    accessing the OS. In this case, instantiating one of the pure classes may be
    useful since those simply don't have any OS-accessing operations.
 
@@ -44,13 +44,13 @@ Pure paths are useful in some special cases; for example:
 
 Importing the main class::
 
-```
+```py
    >>> from pathlib import Path
 ```
 
 Listing subdirectories::
 
-```
+```py
    >>> p = Path('.')
    >>> [x for x in p.iterdir() if x.is_dir()]
    [PosixPath('.hg'), PosixPath('docs'), PosixPath('dist'),
@@ -59,7 +59,7 @@ Listing subdirectories::
 
 Listing Python source files in this directory tree::
 
-```
+```py
    >>> list(p.glob('**/*.py'))
    [PosixPath('test_pathlib.py'), PosixPath('setup.py'),
     PosixPath('pathlib.py'), PosixPath('docs/conf.py'),
@@ -68,7 +68,7 @@ Listing Python source files in this directory tree::
 
 Navigating inside a directory tree::
 
-```
+```py
    >>> p = Path('/etc')
    >>> q = p / 'init.d' / 'reboot'
    >>> q
@@ -79,7 +79,7 @@ Navigating inside a directory tree::
 
 Querying path properties::
 
-```
+```py
    >>> q.exists()
    True
    >>> q.is_dir()
@@ -88,7 +88,7 @@ Querying path properties::
 
 Opening a file::
 
-```
+```py
    >>> with q.open() as f: f.readline()
    ...
    '#!/bin/bash\n'
@@ -106,7 +106,7 @@ we also call <flavours>:
    A generic class that represents the system's path flavour (instantiating
    it creates either a |:pathlib.PurePosixPath:PurePosixPath| or a |:pathlib.PureWindowsPath:PureWindowsPath|)::
 
-   ```
+   ```py
    >>> PurePath('setup.py')      # Running on a Unix machine
    PurePosixPath('setup.py')
    ```
@@ -115,7 +115,7 @@ we also call <flavours>:
    path segment, an object implementing the |os.PathLike| interface
    which returns a string, or another path object::
 
-   ```
+   ```py
    >>> PurePath('foo', 'some/path', 'bar')
    PurePosixPath('foo/some/path/bar')
    >>> PurePath(Path('foo'), Path('bar'))
@@ -124,7 +124,7 @@ we also call <flavours>:
 
    When <pathsegments> is empty, the current directory is assumed::
 
-   ```
+   ```py
    >>> PurePath()
    PurePosixPath('.')
    ```
@@ -132,7 +132,7 @@ we also call <flavours>:
    When several absolute paths are given, the last is taken as an anchor
    (mimicking |os.path.join|'s behaviour)::
 
-   ```
+   ```py
    >>> PurePath('/etc', '/usr', 'lib64')
    PurePosixPath('/usr/lib64')
    >>> PureWindowsPath('c:/Windows', 'd:bar')
@@ -142,7 +142,7 @@ we also call <flavours>:
    However, in a Windows path, changing the local root doesn't discard the
    previous drive setting::
 
-   ```
+   ```py
    >>> PureWindowsPath('c:/Windows', '/Program Files')
    PureWindowsPath('c:/Program Files')
    ```
@@ -151,7 +151,7 @@ we also call <flavours>:
    are not, since this would change the meaning of a path in the face of
    symbolic links::
 
-   ```
+   ```py
    >>> PurePath('foo//bar')
    PurePosixPath('foo/bar')
    >>> PurePath('foo/./bar')
@@ -175,7 +175,7 @@ we also call <flavours>:
    A subclass of |:pathlib.PurePath:PurePath|, this path flavour represents non-Windows
    filesystem paths::
 
-   ```
+   ```py
    >>> PurePosixPath('/etc')
    PurePosixPath('/etc')
    ```
@@ -187,7 +187,7 @@ we also call <flavours>:
    A subclass of |:pathlib.PurePath:PurePath|, this path flavour represents Windows
    filesystem paths::
 
-   ```
+   ```py
    >>> PureWindowsPath('c:/Program Files/')
    PureWindowsPath('c:/Program Files')
    ```
@@ -204,7 +204,7 @@ Paths are immutable and hashable.  Paths of a same flavour are comparable
 and orderable.  These properties respect the flavour's case-folding
 semantics::
 
-```
+```py
    >>> PurePosixPath('foo') == PurePosixPath('FOO')
    False
    >>> PureWindowsPath('foo') == PureWindowsPath('FOO')
@@ -217,7 +217,7 @@ semantics::
 
 Paths of a different flavour compare unequal and cannot be ordered::
 
-```
+```py
    >>> PureWindowsPath('foo') == PurePosixPath('foo')
    False
    >>> PureWindowsPath('foo') < PurePosixPath('foo')
@@ -231,7 +231,7 @@ Paths of a different flavour compare unequal and cannot be ordered::
 
 The slash operator helps create child paths, similarly to |os.path.join|::
 
-```
+```py
    >>> p = PurePath('/etc')
    >>> p
    PurePosixPath('/etc')
@@ -245,7 +245,7 @@ The slash operator helps create child paths, similarly to |os.path.join|::
 A path object can be used anywhere an object implementing |os.PathLike|
 is accepted::
 
-```
+```py
    >>> import os
    >>> p = PurePath('/etc')
    >>> os.fspath(p)
@@ -256,7 +256,7 @@ The string representation of a path is the raw filesystem path itself
 (in native form, e.g. with backslashes under Windows), which you can
 pass to any function taking a file path as a string::
 
-```
+```py
    >>> p = PurePath('/etc')
    >>> str(p)
    '/etc'
@@ -268,7 +268,7 @@ pass to any function taking a file path as a string::
 Similarly, calling |:pathlib.bytes:bytes| on a path gives the raw filesystem path as a
 bytes object, as encoded by |os.fsencode|::
 
-```
+```py
    >>> bytes(p)
    b'/etc'
 ```
@@ -287,13 +287,13 @@ property:
 
    A tuple giving access to the path's various components::
 
-   ```
+   ```py
    >>> p = PurePath('/usr/bin/python3')
    >>> p.parts
    ('/', 'usr', 'bin', 'python3')
    ```
 
-   ```
+   ```py
    >>> p = PureWindowsPath('c:/Program Files/PSF')
    >>> p.parts
    ('c:\\', 'Program Files', 'PSF')
@@ -314,7 +314,7 @@ Pure paths provide the following methods and properties:
 
    A string representing the drive letter or name, if any::
 
-   ```
+   ```py
    >>> PureWindowsPath('c:/Program Files/').drive
    'c:'
    >>> PureWindowsPath('/Program Files/').drive
@@ -325,7 +325,7 @@ Pure paths provide the following methods and properties:
 
    UNC shares are also considered drives::
 
-   ```
+   ```py
    >>> PureWindowsPath('//host/share/foo.txt').drive
    '\\\\host\\share'
    ```
@@ -334,7 +334,7 @@ Pure paths provide the following methods and properties:
 
    A string representing the (local or global) root, if any::
 
-   ```
+   ```py
    >>> PureWindowsPath('c:/Program Files/').root
    '\\'
    >>> PureWindowsPath('c:Program Files/').root
@@ -345,7 +345,7 @@ Pure paths provide the following methods and properties:
 
    UNC shares always have a root::
 
-   ```
+   ```py
    >>> PureWindowsPath('//host/share').root
    '\\'
    ```
@@ -354,7 +354,7 @@ Pure paths provide the following methods and properties:
 
    The concatenation of the drive and root::
 
-   ```
+   ```py
    >>> PureWindowsPath('c:/Program Files/').anchor
    'c:\\'
    >>> PureWindowsPath('c:Program Files/').anchor
@@ -371,7 +371,7 @@ Pure paths provide the following methods and properties:
    An immutable sequence providing access to the logical ancestors of
    the path::
 
-   ```
+   ```py
    >>> p = PureWindowsPath('c:/foo/bar/setup.py')
    >>> p.parents[0]
    PureWindowsPath('c:/foo/bar')
@@ -386,7 +386,7 @@ Pure paths provide the following methods and properties:
 
    The logical parent of the path::
 
-   ```
+   ```py
    >>> p = PurePosixPath('/a/b/c/d')
    >>> p.parent
    PurePosixPath('/a/b/c')
@@ -394,7 +394,7 @@ Pure paths provide the following methods and properties:
 
    You cannot go past an anchor, or empty path::
 
-   ```
+   ```py
    >>> p = PurePosixPath('/')
    >>> p.parent
    PurePosixPath('/')
@@ -406,7 +406,7 @@ Pure paths provide the following methods and properties:
    .. note::
       This is a purely lexical operation, hence the following behaviour::
 
-      ```
+      ```py
    >>> p = PurePosixPath('foo/..')
    >>> p.parent
    PurePosixPath('foo')
@@ -422,14 +422,14 @@ Pure paths provide the following methods and properties:
    A string representing the final path component, excluding the drive and
    root, if any::
 
-   ```
+   ```py
    >>> PurePosixPath('my/library/setup.py').name
    'setup.py'
    ```
 
    UNC drive names are not considered::
 
-   ```
+   ```py
    >>> PureWindowsPath('//some/share/setup.py').name
    'setup.py'
    >>> PureWindowsPath('//some/share').name
@@ -441,7 +441,7 @@ Pure paths provide the following methods and properties:
 
    The file extension of the final component, if any::
 
-   ```
+   ```py
    >>> PurePosixPath('my/library/setup.py').suffix
    '.py'
    >>> PurePosixPath('my/library.tar.gz').suffix
@@ -455,7 +455,7 @@ Pure paths provide the following methods and properties:
 
    A list of the path's file extensions::
 
-   ```
+   ```py
    >>> PurePosixPath('my/library.tar.gar').suffixes
    ['.tar', '.gar']
    >>> PurePosixPath('my/library.tar.gz').suffixes
@@ -469,7 +469,7 @@ Pure paths provide the following methods and properties:
 
    The final path component, without its suffix::
 
-   ```
+   ```py
    >>> PurePosixPath('my/library.tar.gz').stem
    'library.tar'
    >>> PurePosixPath('my/library.tar').stem
@@ -483,7 +483,7 @@ Pure paths provide the following methods and properties:
 
    Return a string representation of the path with forward slashes (`/`)::
 
-   ```
+   ```py
    >>> p = PureWindowsPath('c:\\windows')
    >>> str(p)
    'c:\\windows'
@@ -497,7 +497,7 @@ Pure paths provide the following methods and properties:
    Represent the path as a `file` URI.  :exc:`ValueError` is raised if
    the path isn't absolute.
 
-   ```
+   ```py
    >>> p = PurePosixPath('/etc/passwd')
    >>> p.as_uri()
    'file:///etc/passwd'
@@ -512,14 +512,14 @@ Pure paths provide the following methods and properties:
    Return whether the path is absolute or not.  A path is considered absolute
    if it has both a root and (if the flavour allows) a drive::
 
-   ```
+   ```py
    >>> PurePosixPath('/a/b').is_absolute()
    True
    >>> PurePosixPath('a/b').is_absolute()
    False
    ```
 
-   ```
+   ```py
    >>> PureWindowsPath('c:/a/b').is_absolute()
    True
    >>> PureWindowsPath('/a/b').is_absolute()
@@ -537,7 +537,7 @@ Pure paths provide the following methods and properties:
    reserved under Windows, `False` otherwise.  With |:pathlib.PurePosixPath:PurePosixPath|,
    `False` is always returned.
 
-   ```
+   ```py
    >>> PureWindowsPath('nul').is_reserved()
    True
    >>> PurePosixPath('nul').is_reserved()
@@ -553,7 +553,7 @@ Pure paths provide the following methods and properties:
    Calling this method is equivalent to combining the path with each of
    the <other> arguments in turn::
 
-   ```
+   ```py
    >>> PurePosixPath('/etc').joinpath('passwd')
    PurePosixPath('/etc/passwd')
    >>> PurePosixPath('/etc').joinpath(PurePosixPath('passwd'))
@@ -573,7 +573,7 @@ Pure paths provide the following methods and properties:
    If <pattern> is relative, the path can be either relative or absolute,
    and matching is done from the right::
 
-   ```
+   ```py
    >>> PurePath('a/b.py').match('*.py')
    True
    >>> PurePath('/a/b/c.py').match('b/*.py')
@@ -585,7 +585,7 @@ Pure paths provide the following methods and properties:
    If <pattern> is absolute, the path must be absolute, and the whole path
    must match::
 
-   ```
+   ```py
    >>> PurePath('/a.py').match('/*.py')
    True
    >>> PurePath('a/b.py').match('/*.py')
@@ -594,7 +594,7 @@ Pure paths provide the following methods and properties:
 
    As with other methods, case-sensitivity follows platform defaults::
 
-   ```
+   ```py
    >>> PurePosixPath('b.py').match('*.PY')
    False
    >>> PureWindowsPath('b.py').match('*.PY')
@@ -607,7 +607,7 @@ Pure paths provide the following methods and properties:
    Compute a version of this path relative to the path represented by
    <other>.  If it's impossible, ValueError is raised::
 
-   ```
+   ```py
    >>> p = PurePosixPath('/etc/passwd')
    >>> p.relative_to('/')
    PurePosixPath('etc/passwd')
@@ -627,7 +627,7 @@ Pure paths provide the following methods and properties:
    Return a new path with the :attr:`name` changed.  If the original path
    doesn't have a name, ValueError is raised::
 
-   ```
+   ```py
    >>> p = PureWindowsPath('c:/Downloads/pathlib.tar.gz')
    >>> p.with_name('setup.py')
    PureWindowsPath('c:/Downloads/setup.py')
@@ -647,7 +647,7 @@ Pure paths provide the following methods and properties:
    doesn't have a suffix, the new <suffix> is appended instead.  If the
    <suffix> is an empty string, the original suffix is removed::
 
-   ```
+   ```py
    >>> p = PureWindowsPath('c:/Downloads/pathlib.tar.gz')
    >>> p.with_suffix('.bz2')
    PureWindowsPath('c:/Downloads/pathlib.tar.bz2')
@@ -672,7 +672,7 @@ calls on path objects.  There are three ways to instantiate concrete paths:
    the system's path flavour (instantiating it creates either a
    |:pathlib.PosixPath:PosixPath| or a |:pathlib.WindowsPath:WindowsPath|)::
 
-   ```
+   ```py
    >>> Path('setup.py')
    PosixPath('setup.py')
    ```
@@ -684,7 +684,7 @@ calls on path objects.  There are three ways to instantiate concrete paths:
    A subclass of |:pathlib.Path:Path| and |:pathlib.PurePosixPath:PurePosixPath|, this class
    represents concrete non-Windows filesystem paths::
 
-   ```
+   ```py
    >>> PosixPath('/etc')
    PosixPath('/etc')
    ```
@@ -696,7 +696,7 @@ calls on path objects.  There are three ways to instantiate concrete paths:
    A subclass of |:pathlib.Path:Path| and |:pathlib.PureWindowsPath:PureWindowsPath|, this class
    represents concrete Windows filesystem paths::
 
-   ```
+   ```py
    >>> WindowsPath('c:/Program Files/')
    WindowsPath('c:/Program Files')
    ```
@@ -707,7 +707,7 @@ You can only instantiate the class flavour that corresponds to your system
 (allowing system calls on non-compatible path flavours could lead to
 bugs or failures in your application)::
 
-```
+```py
    >>> import os
    >>> os.name
    'posix'
@@ -745,7 +745,7 @@ call fails (for example because the path doesn't exist).
    Return a new path object representing the current directory (as returned
    by |os.getcwd|)::
 
-   ```
+   ```py
    >>> Path.cwd()
    PosixPath('/home/antoine/pathlib')
    ```
@@ -756,7 +756,7 @@ call fails (for example because the path doesn't exist).
    Return a new path object representing the user's home directory (as
    returned by |os.path.expanduser| with `~` construct)::
 
-   ```
+   ```py
    >>> Path.home()
    PosixPath('/home/antoine')
    ```
@@ -771,7 +771,7 @@ call fails (for example because the path doesn't exist).
 
    ::
 
-   ```
+   ```py
    >>> p = Path('setup.py')
    >>> p.stat().st_size
    956
@@ -784,7 +784,7 @@ call fails (for example because the path doesn't exist).
 
    Change the file mode and permissions, like |os.chmod|::
 
-   ```
+   ```py
    >>> p = Path('setup.py')
    >>> p.stat().st_mode
    33277
@@ -798,7 +798,7 @@ call fails (for example because the path doesn't exist).
 
    Whether the path points to an existing file or directory::
 
-   ```
+   ```py
    >>> Path('.').exists()
    True
    >>> Path('setup.py').exists()
@@ -819,7 +819,7 @@ call fails (for example because the path doesn't exist).
    Return a new path with expanded `~` and `~user` constructs,
    as returned by |os.path.expanduser|::
 
-   ```
+   ```py
    >>> p = PosixPath('~/films/Monty Python')
    >>> p.expanduser()
    PosixPath('/home/eric/films/Monty Python')
@@ -833,7 +833,7 @@ call fails (for example because the path doesn't exist).
    Glob the given relative <pattern> in the directory represented by this path,
    yielding all matching files (of any kind)::
 
-   ```
+   ```py
    >>> sorted(Path('.').glob('*.py'))
    [PosixPath('pathlib.py'), PosixPath('setup.py'), PosixPath('test_pathlib.py')]
    >>> sorted(Path('.').glob('*/*.py'))
@@ -843,7 +843,7 @@ call fails (for example because the path doesn't exist).
    The "`**`" pattern means "this directory and all subdirectories,
    recursively".  In other words, it enables recursive globbing::
 
-   ```
+   ```py
    >>> sorted(Path('.').glob('**/*.py'))
    [PosixPath('build/lib/pathlib.py'),
     PosixPath('docs/conf.py'),
@@ -942,7 +942,7 @@ call fails (for example because the path doesn't exist).
    When the path points to a directory, yield path objects of the directory
    contents::
 
-   ```
+   ```py
    >>> p = Path('docs')
    >>> for child in p.iterdir(): child
    ...
@@ -997,7 +997,7 @@ call fails (for example because the path doesn't exist).
    Open the file pointed to by the path, like the built-in |:pathlib.open:open|
    function does::
 
-   ```
+   ```py
    >>> p = Path('setup.py')
    >>> with p.open() as f:
    ...     f.readline()
@@ -1016,7 +1016,7 @@ call fails (for example because the path doesn't exist).
 
    Return the binary contents of the pointed-to file as a bytes object::
 
-   ```
+   ```py
    >>> p = Path('my_binary_file')
    >>> p.write_bytes(b'Binary file contents')
    20
@@ -1031,7 +1031,7 @@ call fails (for example because the path doesn't exist).
 
    Return the decoded contents of the pointed-to file as a string::
 
-   ```
+   ```py
    >>> p = Path('my_text_file')
    >>> p.write_text('Text file contents')
    18
@@ -1052,7 +1052,7 @@ call fails (for example because the path doesn't exist).
    it will be replaced silently if the user has permission.  <target> can be
    either a string or another path object::
 
-   ```
+   ```py
    >>> p = Path('foo')
    >>> p.open('w').write('some text')
    9
@@ -1082,7 +1082,7 @@ call fails (for example because the path doesn't exist).
    Make the path absolute, resolving any symlinks.  A new path object is
    returned::
 
-   ```
+   ```py
    >>> p = Path()
    >>> p
    PosixPath('.')
@@ -1092,7 +1092,7 @@ call fails (for example because the path doesn't exist).
 
    "`..`" components are also eliminated (this is the only method to do so)::
 
-   ```
+   ```py
    >>> p = Path('docs/../setup.py')
    >>> p.resolve()
    PosixPath('/home/antoine/pathlib/setup.py')
@@ -1112,7 +1112,7 @@ call fails (for example because the path doesn't exist).
    This is like calling |Path.glob| with "`**/`" added in front of the
    given relative <pattern>::
 
-   ```
+   ```py
    >>> sorted(Path().rglob("*.py"))
    [PosixPath('build/lib/pathlib.py'),
     PosixPath('docs/conf.py'),
@@ -1138,7 +1138,7 @@ call fails (for example because the path doesn't exist).
 
    ::
 
-   ```
+   ```py
    >>> p = Path('spam')
    >>> q = Path('eggs')
    >>> p.samefile(q)
@@ -1158,7 +1158,7 @@ call fails (for example because the path doesn't exist).
 
    ::
 
-   ```
+   ```py
    >>> p = Path('mylink')
    >>> p.symlink_to('setup.py')
    >>> p.resolve()
@@ -1210,7 +1210,7 @@ call fails (for example because the path doesn't exist).
    Open the file pointed to in bytes mode, write <data> to it, and close the
    file::
 
-   ```
+   ```py
    >>> p = Path('my_binary_file')
    >>> p.write_bytes(b'Binary file contents')
    20
@@ -1228,7 +1228,7 @@ call fails (for example because the path doesn't exist).
    Open the file pointed to in text mode, write <data> to it, and close the
    file::
 
-   ```
+   ```py
    >>> p = Path('my_text_file')
    >>> p.write_text('Text file contents')
    18
@@ -1274,9 +1274,9 @@ os and os.path                         pathlib
                                        |Path.group|
 |os.path.isabs|                  |PurePath.is_absolute|
 |os.path.join|                   |PurePath.joinpath|
-|os.path.basename|               :data:`PurePath.name`
-|os.path.dirname|                :data:`PurePath.parent`
+|os.path.basename|               |PurePath.name|
+|os.path.dirname|                |PurePath.parent|
 |os.path.samefile|               |Path.samefile|
-|os.path.splitext|               :data:`PurePath.suffix`
+|os.path.splitext|               |PurePath.suffix|
 ====================================   ==============================
 
