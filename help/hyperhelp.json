@@ -96,8 +96,152 @@
         "topic": "os.path.supports_unicode_filenames"
       }
     ],
+    "subprocess": [
+      "subprocess --- Subprocess management",
+      {
+        "topic": "subprocess.run"
+      },
+      {
+        "topic": "subprocess.CompletedProcess"
+      },
+      {
+        "topic": "subprocess.DEVNULL"
+      },
+      {
+        "topic": "subprocess.PIPE"
+      },
+      {
+        "topic": "subprocess.STDOUT"
+      },
+      {
+        "topic": "subprocess.frequently-used-arguments"
+      },
+      {
+        "topic": "subprocess.Popen"
+      },
+      {
+        "topic": "subprocess.Popen.poll"
+      },
+      {
+        "topic": "subprocess.Popen.wait"
+      },
+      {
+        "topic": "subprocess.Popen.communicate"
+      },
+      {
+        "topic": "subprocess.Popen.send_signal"
+      },
+      {
+        "topic": "subprocess.Popen.terminate"
+      },
+      {
+        "topic": "subprocess.Popen.kill"
+      },
+      {
+        "topic": "subprocess.Popen.args"
+      },
+      {
+        "topic": "subprocess.Popen.stdin"
+      },
+      {
+        "topic": "subprocess.Popen.stdout"
+      },
+      {
+        "topic": "subprocess.Popen.stderr"
+      },
+      {
+        "topic": "subprocess.Popen.pid"
+      },
+      {
+        "topic": "subprocess.Popen.returncode"
+      },
+      {
+        "topic": "subprocess.STARTUPINFO"
+      },
+      {
+        "topic": "subprocess.STD_INPUT_HANDLE"
+      },
+      {
+        "topic": "subprocess.STD_OUTPUT_HANDLE"
+      },
+      {
+        "topic": "subprocess.STD_ERROR_HANDLE"
+      },
+      {
+        "topic": "subprocess.SW_HIDE"
+      },
+      {
+        "topic": "subprocess.STARTF_USESTDHANDLES"
+      },
+      {
+        "topic": "subprocess.STARTF_USESHOWWINDOW"
+      },
+      {
+        "topic": "subprocess.CREATE_NEW_CONSOLE"
+      },
+      {
+        "topic": "subprocess.CREATE_NEW_PROCESS_GROUP"
+      },
+      {
+        "topic": "subprocess.ABOVE_NORMAL_PRIORITY_CLASS"
+      },
+      {
+        "topic": "subprocess.BELOW_NORMAL_PRIORITY_CLASS"
+      },
+      {
+        "topic": "subprocess.HIGH_PRIORITY_CLASS"
+      },
+      {
+        "topic": "subprocess.IDLE_PRIORITY_CLASS"
+      },
+      {
+        "topic": "subprocess.NORMAL_PRIORITY_CLASS"
+      },
+      {
+        "topic": "subprocess.REALTIME_PRIORITY_CLASS"
+      },
+      {
+        "topic": "subprocess.CREATE_NO_WINDOW"
+      },
+      {
+        "topic": "subprocess.DETACHED_PROCESS"
+      },
+      {
+        "topic": "subprocess.CREATE_DEFAULT_ERROR_MODE"
+      },
+      {
+        "topic": "subprocess.CREATE_BREAKAWAY_FROM_JOB"
+      },
+      {
+        "topic": "subprocess.call-function-trio"
+      },
+      {
+        "topic": "subprocess.call"
+      },
+      {
+        "topic": "subprocess.check_call"
+      },
+      {
+        "topic": "subprocess.check_output"
+      },
+      {
+        "topic": "subprocess.subprocess-replacements"
+      },
+      {
+        "topic": "subprocess.getstatusoutput"
+      },
+      {
+        "topic": "subprocess.getoutput"
+      },
+      {
+        "topic": "subprocess.converting-argument-sequence"
+      }
+    ],
     "pathlib": [
       "pathlib --- Object-oriented filesystem paths",
+      {
+        "topic": "pathlib.pure-paths"
+      },
       {
         "topic": "pathlib.PurePath"
       },
@@ -163,6 +307,9 @@
       },
       {
         "topic": "pathlib.PurePath.with_suffix"
+      },
+      {
+        "topic": "pathlib.concrete-paths"
       },
       {
         "topic": "pathlib.Path"
@@ -284,6 +431,12 @@
     ]
   },
   "externals": {
+    "https://github.com/python/cpython/blob/3.8/Lib/subprocess.py": [
+      "Lib/subprocess.py",
+      {
+        "topic": "Lib/subprocess.py"
+      }
+    ],
     "https://github.com/python/cpython/blob/3.8/Lib/pathlib.py": [
       "Lib/pathlib.py",
       {
@@ -293,6 +446,7 @@
   },
   "help_contents": [
     "os.path",
+    "subprocess",
     "pathlib"
   ]
 }

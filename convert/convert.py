@@ -1,10 +1,9 @@
-from pathlib import Path
-from typing import Dict, NamedTuple, List
-import json
-import functools
 import datetime
+import functools
+import json
 import re
-from typing import Optional
+from pathlib import Path
+from typing import Dict, Iterable, Iterator, List, NamedTuple, Optional
 
 from more_itertools import peekable
 
@@ -64,7 +63,7 @@ class HelpIndex(NamedTuple):
             "doc_root": f"{self.doc_root.name}/",
             "help_files": {k: v.as_json() for (k, v) in self.help_files.items()},
             "externals": externals,
-            "help_contents": list(self.help_files.keys())
+            "help_contents": list(self.help_files.keys()),
         }
 
     def save(self) -> Path:
@@ -93,29 +92,48 @@ def rst2help(rst_file: Path, help_index: HelpIndex) -> Path:
 
     help_file = HelpFile(module=module, description=title)
     help_index.help_files[help_file.module] = help_file
+
+    for l in rst2help_body(lines, help_file):
+        write(l)
+    return output
+
+
+def rst2help_body(lines: Iterable[str], help_file: HelpFile) -> Iterator[str]:
     iterator = peekable(lines)
     try:
         while True:
             help_line = _rst2help_line(iterator, help_file)
             if help_line is not None:
-                write(help_line)
+                yield help_line
     except StopIteration:
         pass
 
-    return output
 
-
-TOPIC_RE = re.compile(r"^\.\. ([\w\d_-]+?):$")
+TOPIC_RE = re.compile(r"^\.\. _([\w\d_-]+?):$")
 LOCAL_REFERENCE_RE = re.compile(r":(?:class|data|func|meth):`([\w\d_]+?)`")
+LOCAL_LINK_REF_RE = re.compile(r":(?:ref):`(.+?) <([\w-]+?)>`")
 REFERENCE_RE = re.compile(r":(?:class|data|func|meth|mod):`([\w\d_\.]+?)`")
 BOLD_RE = re.compile(r"\*\*?(.+?)\*\*?")
 INLINE_CODE_RE = re.compile(r"``(.+?)``")
+# TODO: code blocks seem to be prefixed by "::". Use that instead.
 CODE_SAMPLE_RE = re.compile(r"^(   \s*)>>>")
-TAGS = [".. class::", ".. classmethod::", ".. data::", ".. function::", ".. method::"]
 UNDERLINE_RE = re.compile(r"^(\^+|\-+)$")
 SOURCE_RE = re.compile(r"^(.* ):source:`([\w/]+\.py)`$")
 BULLET_POINT_RE = re.compile(r"^#\. ")
 SOURCE_PREFIX_URL = "https://github.com/python/cpython/blob/3.8/"
+
+TAGS = [
+    f".. {t}::"
+    for t in [
+        "attribute",
+        "class",
+        "classmethod",
+        "attribute",
+        "data",
+        "function",
+        "method",
+    ]
+]
 
 TITLE_LEVEL = {"=": 0, "-": 1, "^": 2}
 
@@ -163,6 +181,7 @@ def _rst2help_line(lines: peekable, help_file: HelpFile) -> Optional[str]:
         if lvl == 1:
             print(f"# {anchor_text}")
         help_file._current_title_level = lvl
+        help_file.add_topic(topic)
         return f"{lvl * '#'} {help_file.module}.{topic}: {anchor_text}"
 
     match = CODE_SAMPLE_RE.match(line)
@@ -186,6 +205,7 @@ def _rst2help_line(lines: peekable, help_file: HelpFile) -> Optional[str]:
         line = match.group(1) + f"|{source_name}|"
 
     line = LOCAL_REFERENCE_RE.sub(rf"|:{help_file.module}.\1:\1|", line)
+    line = LOCAL_LINK_REF_RE.sub(rf"|:{help_file.module}.\2: \1|", line)
     line = REFERENCE_RE.sub(r"|\1|", line)
     # Keep 3 chars to not break the 3 spaces indentation.
     line = BULLET_POINT_RE.sub(" - ", line)
@@ -196,8 +216,13 @@ def _rst2help_line(lines: peekable, help_file: HelpFile) -> Optional[str]:
     return line
 
 
-def r2h(line: str) -> Optional[str]:
-    return _rst2help_line(peekable([line]), HelpFile("test", "Testing"))
+def r2h(text: Iterable[str]) -> List[str]:
+    if isinstance(text, str):
+        text = text.split("\n")
+    res = list(rst2help_body(text, HelpFile("test", "Testing")))
+    if len(res) == 1:
+        return res[0]  # type: ignore
+    return res
 
 
 def test():
@@ -207,9 +232,12 @@ def test():
     assert r2h("**Source code**: pathlib.py") == "<Source code>: pathlib.py"
     assert r2h(":class:`os.PathLike`") == "|os.PathLike|"
     assert r2h(":class:`PathLike`") == "|:test.PathLike:PathLike|"
-
-    # TODO
-    # assert r2h(":ref:`pure paths <pure-paths>`") == "|pure-paths:pure paths|"
+    assert r2h(".. attribute:: returncode") == "# test.returncode: returncode"
+    assert r2h(":ref:`pure paths <pure-paths>`") == "|:test.pure-paths: pure paths|"
+    assert (
+        r2h([".. _pure-paths:", "", "Pure paths", "----------"])
+        == "# test.pure-paths: Pure paths"
+    )
 
 
 def main():

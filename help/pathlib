@@ -1,4 +1,4 @@
-%hyperhelp title="pathlib --- Object-oriented filesystem paths" date="2020-05-12"
+%hyperhelp title="pathlib --- Object-oriented filesystem paths" date="2020-05-13"
 
 .. module:: pathlib
    :synopsis: Object-oriented filesystem paths
@@ -12,8 +12,8 @@
 
 This module offers classes representing filesystem paths with semantics
 appropriate for different operating systems.  Path classes are divided
-between :ref:`pure paths <pure-paths>`, which provide purely computational
-operations without I/O, and :ref:`concrete paths <concrete-paths>`, which
+between |:pathlib.pure-paths: pure paths|, which provide purely computational
+operations without I/O, and |:pathlib.concrete-paths: concrete paths|, which
 inherit from pure paths but also provide I/O operations.
 
 .. image:: pathlib-inheritance.png
@@ -21,7 +21,7 @@ inherit from pure paths but also provide I/O operations.
 
 If you've never used this module before or just aren't sure which class is
 right for your task, |:pathlib.Path:Path| is most likely what you need. It instantiates
-a :ref:`concrete path <concrete-paths>` for the platform the code is running on.
+a |:pathlib.concrete-paths: concrete path| for the platform the code is running on.
 
 Pure paths are useful in some special cases; for example:
 
@@ -95,7 +95,7 @@ Opening a file::
 ```
 
 
-# pathlib._pure-paths: Pure paths
+# pathlib.pure-paths: Pure paths
 
 Pure path objects provide path-handling operations which don't actually
 access a filesystem.  There are three ways to access these classes, which
@@ -660,7 +660,7 @@ Pure paths provide the following methods and properties:
    ```
 
 
-# pathlib._concrete-paths: Concrete paths
+# pathlib.concrete-paths: Concrete paths
 
 Concrete paths are subclasses of the pure path classes.  In addition to
 operations provided by the latter, they also provide methods to do system
