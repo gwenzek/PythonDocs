@@ -1,40 +1,50 @@
 import sublime
 import sublime_plugin
-import hyperhelpcore
+import hyperhelpcore as hh
 
 import re
 
 
 def plugin_loaded():
-    hyperhelpcore.initialize()
+    hh.initialize()
 
 
 class PythonDocsOpen(sublime_plugin.TextCommand):
-    def run(self, _: None, key: str = None):
-        if key is None:
-            key = self.get_search_key()
+    pkg_info = hh.core.help_index_list().get("PythonDocs")
 
-        assert key, "No search term found"
-        print("searching:", key)
-        sublime.run_command("hyperhelp_topic", {"package": "PythonDocs", "topic": key})
+    def run(self, _: None, topic: str = None):
+        if topic is None:
+            topic = self.get_topic()
 
-    def get_search_key(self) -> str:
+        topic_exists = hh.core.lookup_help_topic(self.pkg_info, topic)
+        if topic_exists:
+            return sublime.run_command(
+                "hyperhelp_topic", {"package": "PythonDocs", "topic": topic}
+            )
+
+        sublime.run_command("hyperhelp_index", {"package": "PythonDocs"})
+        self.view.window().run_command("insert", {"characters": topic})
+
+    def get_topic(self) -> str:
+        """Uses the word under the cursor as topic.
+
+        Extends the word to the left if possible:
+            pathlib.Pa|th -> pathlib.Path
+            path|lib.Path -> pathlib
+            (foo / "readme.txt").exp|anduser -> expanduser
+        """
         view = self.view
         selection = view.sel()[0]
-        if len(selection) == 0:
+        if selection.empty():
             selection = view.word(selection)
-        # extend to the left, only capturing words
-        #    pathlib.Pa|th -> pathlib.Path
-        #    path|lib.Path -> pathlib
-        #    (foo / "readme.txt").exp|anduser -> expanduser
         while view.substr(selection.begin() - 1) == ".":
             extended = selection.cover(view.word(selection.begin() - 2))
             if not re.match(r"^\w[\w\d_]+\.", self.view.substr(extended)):
                 break
             selection = extended
 
-        return self.view.substr(selection)
-
+        topic = self.view.substr(selection)
+        return topic
 
 # For testing
 # pathlib.Path
