@@ -18,10 +18,11 @@ CPYTHON_SRC = "https://raw.githubusercontent.com/python/cpython"
 
 class HelpTopic(tp.NamedTuple):
     topic: str
+    caption: str
     aliases: List[str] = []
 
     def as_json(self) -> dict:
-        d: dict = {"topic": self.topic}
+        d: dict = {"topic": self.topic, "caption": self.caption}
         if self.aliases:
             d["aliases"] = self.aliases
         return d
@@ -30,8 +31,11 @@ class HelpTopic(tp.NamedTuple):
 class HelpFile:
     def __init__(self, rst_file: Path, description: str):
         self.rst_file = rst_file
-        self.module = rst_file.stem
-        self.output = HELP / rst_file.parent / rst_file.stem
+        if rst_file.parent.name:
+            self.module = "/".join((rst_file.parent.name, rst_file.stem))
+        else:
+            self.module = rst_file.stem
+        self.output = HELP / self.module
         self.description = description
         self.topics: List[HelpTopic] = []
         self.sources: Dict[str, HelpFile] = {}
@@ -39,15 +43,17 @@ class HelpFile:
         self._current_title_level: int = 0
 
     def as_json(self) -> list:
+        if not self.description and not self.topics:
+            return []
         return [self.description] + [t.as_json() for t in self.topics]  # type: ignore
 
     def add_topic(self, name: str) -> None:
         topic_name = ".".join((self.module, name))
-        self.topics.append(HelpTopic(topic_name))
+        self.topics.append(HelpTopic(topic_name, name))
 
     def add_source(self, name: str) -> None:
         file = HelpFile(Path(""), name)
-        file.topics.append(HelpTopic(name))
+        # file.topics.append(HelpTopic(name))
         self.sources[SOURCE_PREFIX_URL + name] = file
 
 
@@ -64,18 +70,21 @@ class HelpIndex(tp.NamedTuple):
             for hf in self.help_files.values()
             for k, v in hf.sources.items()
         }
+        help_files = {k: v.as_json() for (k, v) in self.help_files.items() if v.description}
         return {
             "package": self.package,
             "description": self.description,
             "doc_root": f"{self.doc_root.name}/",
-            "help_files": {k: v.as_json() for (k, v) in self.help_files.items()},
+            "help_files": help_files,
             "externals": externals,
             "help_contents": list(self.help_files.keys()),
         }
 
     def save(self) -> Path:
         output = self.doc_root / "hyperhelp.json"
-        output.write_text(json.dumps(self.as_json(), indent=2))
+        output.write_text(
+            json.dumps(self.as_json(), indent=None, separators=(",\n", ": "))
+        )
         return output
 
 
@@ -119,9 +128,9 @@ def rst2help_body(lines: Iterable[str], help_file: HelpFile) -> Iterator[str]:
 
 
 TOPIC_RE = re.compile(r"^\.\. _([\w\d_-]+?):$")
-LOCAL_REFERENCE_RE = re.compile(r":(?:class|data|func|meth):`([\w\d_]+?)`")
+LOCAL_REFERENCE_RE = re.compile(r":(?:class|data|func|meth):`~?([\w\d_]+?)`")
 LOCAL_LINK_REF_RE = re.compile(r":(?:ref):`(.+?) <([\w-]+?)>`")
-REFERENCE_RE = re.compile(r":(?:class|data|func|meth|mod):`([\w\d_\.]+?)`")
+REFERENCE_RE = re.compile(r":(?:class|data|func|meth|mod):`~?([\w\d_\.]+?)`")
 BOLD_RE = re.compile(r"\*\*?(.+?)\*\*?")
 INLINE_CODE_RE = re.compile(r"``(.+?)``")
 # TODO: code blocks seem to be prefixed by "::". Use that instead.
@@ -144,7 +153,7 @@ TAGS = [
     ]
 ]
 
-TITLE_LEVEL = {"=": 0, "#": 0, "-": 1, "^": 2, "*": 1}
+TITLE_LEVEL = {"=": 0, "#": 0, "-": 1, "^": 2, "~": 3, "*": 1}
 
 
 def parse_line(lines: peekable, help_file: HelpFile) -> Optional[str]:
@@ -240,7 +249,7 @@ def parse_line(lines: peekable, help_file: HelpFile) -> Optional[str]:
 
     line = LOCAL_REFERENCE_RE.sub(rf"|:{help_file.module}.\1:\1|", line)
     line = LOCAL_LINK_REF_RE.sub(rf"|:{help_file.module}.\2: \1|", line)
-    line = REFERENCE_RE.sub(r"|\1|", line)
+    line = REFERENCE_RE.sub(r"|:library/\1:\1|", line)
     # Keep 3 chars to not break the 3 spaces indentation.
     line = BULLET_POINT_RE.sub(" - ", line)
     line = BOLD_RE.sub(r"<\1>", line)
@@ -284,7 +293,7 @@ def test():
     assert match
     assert match.groups() == ("**Source code:** ", "Lib/pathlib.py")
     assert r2h("**Source code**: pathlib.py") == "<Source code>: pathlib.py"
-    assert r2h(":class:`os.PathLike`") == "|os.PathLike|"
+    assert r2h(":class:`os.PathLike`") == "|:library/os.PathLike:os.PathLike|"
     assert r2h(":class:`PathLike`") == "|:test.PathLike:PathLike|"
     assert r2h(".. attribute:: returncode") == "# test.returncode: returncode"
     assert r2h(":ref:`pure paths <pure-paths>`") == "|:test.pure-paths: pure paths|"

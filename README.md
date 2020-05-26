@@ -9,9 +9,10 @@ to show Python documentation from Sublime.
 
 ##  TODO
 
-- [ ] make the `.rst` parser more robust
 - [x] add proper keybinding so that we can jump in documentation from Python code
-- [ ] process all python documentation programmatically
+- [x] process all python documentation programmatically
+- [ ] make the `.rst` parser more robust
+- [ ] consider leveraging sphinx instead of custom parser
 - [ ] add support for other libraries using sphinx documentation
 
 ## For the curious
