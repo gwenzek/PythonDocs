@@ -1,4 +1,6 @@
-__pycache__/
 /help/
 /help/hyperhelp.json
 /rst/
+
+__pycache__/
+/venv/
