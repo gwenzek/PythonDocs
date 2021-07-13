@@ -1,0 +1,83 @@
+%hyperhelp title="Floating Point Objects" date="2021-07-11"
+*|floating-point-objects:⚓|*
+
+*|index-0:⚓|*
+
+*c.PyFloatObject:type PyFloatObject
+*
+
+   This subtype of |:c-api/structures.txt/c.PyObject:PyObject| represents a Python floating point object.
+
+*c.PyFloat_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyFloat_Type
+*
+
+   This instance of |:c-api/type.txt/c.PyTypeObject:PyTypeObject| represents the Python floating point type.  This
+   is the same object as |:library/functions.txt/float:float| in the Python layer.
+
+*c.PyFloat_Check:int PyFloat_Check(PyObject *p)
+*
+
+   Return true if its argument is a |:c.PyFloatObject:PyFloatObject| or a subtype of |:c.PyFloatObject:PyFloatObject|
+   .
+
+*c.PyFloat_CheckExact:int PyFloat_CheckExact(PyObject *p)
+*
+
+   Return true if its argument is a |:c.PyFloatObject:PyFloatObject|, but not a subtype of
+   |:c.PyFloatObject:PyFloatObject|.
+
+*c.PyFloat_FromString:|:c-api/structures.txt/c.PyObject:PyObject| *PyFloat_FromString(PyObject *str)
+*
+    *Return value: New reference.*
+
+   Create a |:c.PyFloatObject:PyFloatObject| object based on the string value in *str*, or "NULL" on
+   failure.
+
+*c.PyFloat_FromDouble:|:c-api/structures.txt/c.PyObject:PyObject| *PyFloat_FromDouble(double v)
+*
+    *Return value: New reference.*
+
+   Create a |:c.PyFloatObject:PyFloatObject| object from *v*, or "NULL" on failure.
+
+*c.PyFloat_AsDouble:double PyFloat_AsDouble(PyObject *pyfloat)
+*
+
+   Return a C *double* representation of the contents of *pyfloat*.  If *pyfloat*
+   is not a Python floating point object but has a "__float__()" method, this
+   method will first be called to convert *pyfloat* into a float. If "__float__()"
+   is not defined then it falls back to "__index__()". This method returns "-1.0"
+   upon failure, so one should call |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to check for errors.
+
+   Changed in version 3.8: Use "__index__()" if available.
+
+*c.PyFloat_AS_DOUBLE:double PyFloat_AS_DOUBLE(PyObject *pyfloat)
+*
+
+   Return a C *double* representation of the contents of *pyfloat*, but without
+   error checking.
+
+*c.PyFloat_GetInfo:|:c-api/structures.txt/c.PyObject:PyObject| *PyFloat_GetInfo(void)
+*
+    *Return value: New reference.*
+
+   Return a structseq instance which contains information about the precision,
+   minimum and maximum values of a float. It’s a thin wrapper around the header
+   file "float.h".
+
+*c.PyFloat_GetMax:double PyFloat_GetMax()
+*
+
+   Return the maximum representable finite float *DBL_MAX* as C *double*.
+
+*c.PyFloat_GetMin:double PyFloat_GetMin()
+*
+
+   Return the minimum normalized positive float *DBL_MIN* as C *double*.
+
+*c.PyFloat_ClearFreeList:int PyFloat_ClearFreeList()
+*
+
+   Clear the float free list. Return the number of items that could not be freed.
+
+
+

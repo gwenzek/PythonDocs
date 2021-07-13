@@ -1,0 +1,8 @@
+%hyperhelp title="Uploading Packages to the Package Index" date="2021-07-11"
+*|uploading-packages-to-the-package-index:⚓|*
+
+References to up to date PyPI documentation can be found at
+|:distributing/index.txt/publishing-python-packages:Reading the Python Packaging User Guide|.
+
+
+

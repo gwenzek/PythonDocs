@@ -1,0 +1,516 @@
+%hyperhelp title="http.client" date="2021-07-11"
+*|module-http.client:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/http/client.py:Lib/http/client.py|
+
+*|index-0:⚓|* *|index-1:⚓|*
+
+======================================================================
+
+This module defines classes which implement the client side of the HTTP and
+HTTPS protocols.  It is normally not used directly — the module |:library/urllib.request.txt/module-urllib.request:urllib.request|
+uses it to handle URLs that use HTTP and HTTPS.
+
+See also:
+
+  The |:requests.readthedocs.io/en/master:Requests package|*|requests-package:⚓|*  is recommended for a higher-level
+  HTTP client interface.
+
+Note:
+
+  HTTPS support is only available if Python was compiled with SSL support (through
+  the |:library/ssl.txt/module-ssl:ssl| module).
+
+The module provides the following classes:
+
+*http.client.HTTPConnection:class http.client.HTTPConnection(host, port=None[, timeout], source_address=None, blocksize=8192)*
+
+   An |:http.client.HTTPConnection:HTTPConnection| instance represents one transaction with an HTTP server.  It
+   should be instantiated passing it a host and optional port number.  If no port
+   number is passed, the port is extracted from the host string if it has the form
+   "host:port", else the default HTTP port (80) is used.  If the optional *timeout*
+   parameter is given, blocking operations (like connection attempts) will timeout
+   after that many seconds (if it is not given, the global default timeout setting
+   is used). The optional *source_address* parameter may be a tuple of a (host,
+   port) to use as the source address the HTTP connection is made from. The
+   optional *blocksize* parameter sets the buffer size in bytes for sending a file-
+   like message body.
+
+   For example, the following calls all create instances that connect to the server
+   at the same host and port:
+
+```rst
+>>> h1 = http.client.HTTPConnection('www.python.org')
+>>> h2 = http.client.HTTPConnection('www.python.org:80')
+>>> h3 = http.client.HTTPConnection('www.python.org', 80)
+>>> h4 = http.client.HTTPConnection('www.python.org', 80, timeout=10)
+```
+
+   Changed in version 3.2: *source_address* was added.
+
+   Changed in version 3.4: The  *strict* parameter was removed. HTTP 0.9-style
+   “Simple Responses” are not longer supported.
+
+   Changed in version 3.7: *blocksize* parameter was added.
+
+*http.client.HTTPSConnection:class http.client.HTTPSConnection(host, port=None, key_file=None, cert_file=None[, timeout], source_address=None, *, context=None, check_hostname=None, blocksize=8192)*
+
+   A subclass of |:http.client.HTTPConnection:HTTPConnection| that uses SSL for communication with secure
+   servers.  Default port is "443".  If *context* is specified, it must be a
+   |:library/ssl.txt/ssl.SSLContext:ssl.SSLContext| instance describing the various SSL options.
+
+   Please read |:library/ssl.txt/ssl-security:Security considerations| for more information on best practices.
+
+   Changed in version 3.2: *source_address*, *context* and *check_hostname* were
+   added.
+
+   Changed in version 3.2: This class now supports HTTPS virtual hosts if possible
+   (that is, if |:library/ssl.txt/ssl.HAS_SNI:ssl.HAS_SNI| is true).
+
+   Changed in version 3.4: The *strict* parameter was removed. HTTP 0.9-style
+   “Simple Responses” are no longer supported.
+
+   Changed in version 3.4.3: This class now performs all the necessary certificate
+   and hostname checks by default. To revert to the previous, unverified, behavior
+   "ssl._create_unverified_context()" can be passed to the *context* parameter.
+
+   Changed in version 3.8: This class now enables TLS 1.3
+   |:library/ssl.txt/ssl.SSLContext.post_handshake_auth:ssl.SSLContext.post_handshake_auth| for the default *context* or when *
+   cert_file* is passed with a custom *context*.
+
+   Deprecated since version 3.6: *key_file* and *cert_file* are deprecated in favor
+   of *context*. Please use |:library/ssl.txt/ssl.SSLContext.load_cert_chain:ssl.SSLContext.load_cert_chain()| instead, or let
+   |:library/ssl.txt/ssl.create_default_context:ssl.create_default_context()| select the system’s trusted CA certificates for
+   you.The *check_hostname* parameter is also deprecated; the
+   |:library/ssl.txt/ssl.SSLContext.check_hostname:ssl.SSLContext.check_hostname| attribute of *context* should be used instead.
+
+*http.client.HTTPResponse:class http.client.HTTPResponse(sock, debuglevel=0, method=None, url=None)*
+
+   Class whose instances are returned upon successful connection.  Not instantiated
+   directly by user.
+
+   Changed in version 3.4: The *strict* parameter was removed. HTTP 0.9 style
+   “Simple Responses” are no longer supported.
+
+This module provides the following function:
+
+*http.client.parse_headers:http.client.parse_headers(fp)*
+
+   Parse the headers from a file pointer *fp* representing a HTTP request/response.
+   The file has to be a "BufferedIOBase" reader (i.e. not text) and must provide a
+   valid *|index-2:⚓|* |:tools.ietf.org/html/rfc2822.html:RFC 2822| style header.
+
+   This function returns an instance of "http.client.HTTPMessage" that holds the
+   header fields, but no payload (the same as |:http.client.HTTPResponse.msg:HTTPResponse.msg| and
+   |:library/http.server.txt/http.server.BaseHTTPRequestHandler.headers:http.server.BaseHTTPRequestHandler.headers|). After returning, the file pointer
+   *fp* is ready to read the HTTP body.
+
+   Note:
+
+     |:http.client.parse_headers:parse_headers()| does not parse the start-line of a HTTP message; it only
+     parses the "Name: value" lines. The file has to be ready to read these field
+     lines, so the first line should already be consumed before calling the function.
+
+The following exceptions are raised as appropriate:
+
+*http.client.HTTPException:exception http.client.HTTPException*
+
+   The base class of the other exceptions in this module.  It is a subclass of
+   |:library/exceptions.txt/Exception:Exception|.
+
+*http.client.NotConnected:exception http.client.NotConnected*
+
+   A subclass of |:http.client.HTTPException:HTTPException|.
+
+*http.client.InvalidURL:exception http.client.InvalidURL*
+
+   A subclass of |:http.client.HTTPException:HTTPException|, raised if a port is given and is either non-
+   numeric or empty.
+
+*http.client.UnknownProtocol:exception http.client.UnknownProtocol*
+
+   A subclass of |:http.client.HTTPException:HTTPException|.
+
+*http.client.UnknownTransferEncoding:exception http.client.UnknownTransferEncoding*
+
+   A subclass of |:http.client.HTTPException:HTTPException|.
+
+*http.client.UnimplementedFileMode:exception http.client.UnimplementedFileMode*
+
+   A subclass of |:http.client.HTTPException:HTTPException|.
+
+*http.client.IncompleteRead:exception http.client.IncompleteRead*
+
+   A subclass of |:http.client.HTTPException:HTTPException|.
+
+*http.client.ImproperConnectionState:exception http.client.ImproperConnectionState*
+
+   A subclass of |:http.client.HTTPException:HTTPException|.
+
+*http.client.CannotSendRequest:exception http.client.CannotSendRequest*
+
+   A subclass of |:http.client.ImproperConnectionState:ImproperConnectionState|.
+
+*http.client.CannotSendHeader:exception http.client.CannotSendHeader*
+
+   A subclass of |:http.client.ImproperConnectionState:ImproperConnectionState|.
+
+*http.client.ResponseNotReady:exception http.client.ResponseNotReady*
+
+   A subclass of |:http.client.ImproperConnectionState:ImproperConnectionState|.
+
+*http.client.BadStatusLine:exception http.client.BadStatusLine*
+
+   A subclass of |:http.client.HTTPException:HTTPException|.  Raised if a server responds with a HTTP status
+   code that we don’t understand.
+
+*http.client.LineTooLong:exception http.client.LineTooLong*
+
+   A subclass of |:http.client.HTTPException:HTTPException|.  Raised if an excessively long line is received
+   in the HTTP protocol from the server.
+
+*http.client.RemoteDisconnected:exception http.client.RemoteDisconnected*
+
+   A subclass of |:library/exceptions.txt/ConnectionResetError:ConnectionResetError| and |:http.client.BadStatusLine:BadStatusLine|.  Raised by
+   |:http.client.HTTPConnection.getresponse:HTTPConnection.getresponse()| when the attempt to read the response results in
+   no data read from the connection, indicating that the remote end has closed the
+   connection.
+
+   New in version 3.5: Previously, |:http.client.BadStatusLine:BadStatusLine|"('')" was raised.
+
+The constants defined in this module are:
+
+*http.client.HTTP_PORT:http.client.HTTP_PORT*
+
+   The default port for the HTTP protocol (always "80").
+
+*http.client.HTTPS_PORT:http.client.HTTPS_PORT*
+
+   The default port for the HTTPS protocol (always "443").
+
+*http.client.responses:http.client.responses*
+
+   This dictionary maps the HTTP 1.1 status codes to the W3C names.
+
+   Example: "http.client.responses[http.client.NOT_FOUND]" is "'Not Found'".
+
+See |:library/http.txt/http-status-codes:HTTP status codes| for a list of HTTP status codes that are available in
+this module as constants.
+
+# httpconnection-objects:HTTPConnection Objects
+
+|:http.client.HTTPConnection:HTTPConnection| instances have the following methods:
+
+*http.client.HTTPConnection.request:HTTPConnection.request(method, url, body=None, headers={}, *, encode_chunked=False)*
+
+   This will send a request to the server using the HTTP request method *method*
+   and the selector *url*.
+
+   If *body* is specified, the specified data is sent after the headers are
+   finished.  It may be a |:library/stdtypes.txt/str:str|, a |:glossary.txt/term-bytes-like-object:bytes-like object|, an open |:glossary.txt/term-file-object:file object|, or
+   an iterable of |:library/stdtypes.txt/bytes:bytes|.  If *body* is a string, it is encoded as ISO-8859-1, the
+   default for HTTP.  If it is a bytes-like object, the bytes are sent as is.  If
+   it is a |:glossary.txt/term-file-object:file
+object|, the contents of the file is sent; this file object should
+   support at least the "read()" method.  If the file object is an instance of
+   |:library/io.txt/io.TextIOBase:io.TextIOBase|, the data returned by the "read()" method will be encoded as
+   ISO-8859-1, otherwise the data returned by "read()" is sent as is.  If *body* is
+   an iterable, the elements of the iterable are sent as is until the iterable is
+   exhausted.
+
+   The *headers* argument should be a mapping of extra HTTP headers to send with
+   the request.
+
+   If *headers* contains neither Content-Length nor Transfer-Encoding, but there is
+   a request body, one of those header fields will be added automatically.  If *
+   body* is "None", the Content-Length header is set to "0" for methods that expect
+   a body ("PUT", "POST", and "PATCH").  If *body* is a string or a bytes-like
+   object that is not also a |:glossary.txt/term-file-object:file|, the Content-Length header is set to its
+   length.  Any other type of *body* (files and iterables in general) will be
+   chunk-encoded, and the Transfer-Encoding header will automatically be set
+   instead of Content-Length.
+
+   The *encode_chunked* argument is only relevant if Transfer-Encoding is specified
+   in *headers*.  If *encode_chunked* is "False", the HTTPConnection object assumes
+   that all encoding is handled by the calling code.  If it is "True", the body
+   will be chunk-encoded.
+
+   Note:
+
+     Chunked transfer encoding has been added to the HTTP protocol version 1.1.
+     Unless the HTTP server is known to handle HTTP 1.1, the caller must either
+     specify the Content-Length, or must pass a |:library/stdtypes.txt/str:str| or bytes-like object that is
+     not also a file as the body representation.
+
+   New in version 3.2: *body* can now be an iterable.
+
+   Changed in version 3.6: If neither Content-Length nor Transfer-Encoding are set
+   in *headers*, file and iterable *body* objects are now chunk-encoded. The *
+   encode_chunked* argument was added. No attempt is made to determine the Content-
+   Length for file objects.
+
+*http.client.HTTPConnection.getresponse:HTTPConnection.getresponse()*
+
+   Should be called after a request is sent to get the response from the server.
+   Returns an |:http.client.HTTPResponse:HTTPResponse| instance.
+
+   Note:
+
+     Note that you must have read the whole response before you can send a new
+     request to the server.
+
+   Changed in version 3.5: If a |:library/exceptions.txt/ConnectionError:ConnectionError| or subclass is raised, the
+   |:http.client.HTTPConnection:HTTPConnection| object will be ready to reconnect when a new request is sent.
+
+*http.client.HTTPConnection.set_debuglevel:HTTPConnection.set_debuglevel(level)*
+
+   Set the debugging level.  The default debug level is "0", meaning no debugging
+   output is printed.  Any value greater than "0" will cause all currently defined
+   debug output to be printed to stdout.  The "debuglevel" is passed to any new
+   |:http.client.HTTPResponse:HTTPResponse| objects that are created.
+
+   New in version 3.1.
+
+*http.client.HTTPConnection.set_tunnel:HTTPConnection.set_tunnel(host, port=None, headers=None)*
+
+   Set the host and the port for HTTP Connect Tunnelling. This allows running the
+   connection through a proxy server.
+
+   The host and port arguments specify the endpoint of the tunneled connection
+   (i.e. the address included in the CONNECT request, *not* the address of the
+   proxy server).
+
+   The headers argument should be a mapping of extra HTTP headers to send with the
+   CONNECT request.
+
+   For example, to tunnel through a HTTPS proxy server running locally on port
+   8080, we would pass the address of the proxy to the |:http.client.HTTPSConnection:HTTPSConnection|
+   constructor, and the address of the host that we eventually want to reach to the
+   |:http.client.HTTPConnection.set_tunnel:set_tunnel()| method:
+
+```rst
+>>> import http.client
+>>> conn = http.client.HTTPSConnection("localhost", 8080)
+>>> conn.set_tunnel("www.python.org")
+>>> conn.request("HEAD","/index.html")
+```
+
+   New in version 3.2.
+
+*http.client.HTTPConnection.connect:HTTPConnection.connect()*
+
+   Connect to the server specified when the object was created.  By default, this
+   is called automatically when making a request if the client does not already
+   have a connection.
+
+*http.client.HTTPConnection.close:HTTPConnection.close()*
+
+   Close the connection to the server.
+
+*http.client.HTTPConnection.blocksize:HTTPConnection.blocksize*
+
+   Buffer size in bytes for sending a file-like message body.
+
+   New in version 3.7.
+
+As an alternative to using the "request()" method described above, you can also
+send your request step by step, by using the four functions below.
+
+*http.client.HTTPConnection.putrequest:HTTPConnection.putrequest(method, url, skip_host=False, skip_accept_encoding=False)*
+
+   This should be the first call after the connection to the server has been made.
+   It sends a line to the server consisting of the *method* string, the *url*
+   string, and the HTTP version ("HTTP/1.1").  To disable automatic sending of "
+   Host:" or "Accept-Encoding:" headers (for example to accept additional content
+   encodings), specify *skip_host* or *skip_accept_encoding* with non-False values.
+
+*http.client.HTTPConnection.putheader:HTTPConnection.putheader(header, argument[, ...])*
+
+   Send an *|index-3:⚓|* |:tools.ietf.org/html/rfc822.html:RFC 822|-style header to the server.  It sends a line to
+   the server consisting of the header, a colon and a space, and the first
+   argument.  If more arguments are given, continuation lines are sent, each
+   consisting of a tab and an argument.
+
+*http.client.HTTPConnection.endheaders:HTTPConnection.endheaders(message_body=None, *, encode_chunked=False)*
+
+   Send a blank line to the server, signalling the end of the headers. The optional
+   *message_body* argument can be used to pass a message body associated with the
+   request.
+
+   If *encode_chunked* is "True", the result of each iteration of *message_body*
+   will be chunk-encoded as specified in *|index-4:⚓|* |:tools.ietf.org/html/rfc7230.html:RFC 7230|, Section 3.3.1.
+   How the data is encoded is dependent on the type of *message_body*.  If *
+   message_body* implements the |:c-api/buffer.txt/bufferobjects:buffer interface| the encoding will result in a
+   single chunk. If *message_body* is a |:library/collections.abc.txt/collections.abc.Iterable:collections.abc.Iterable|, each iteration
+   of *message_body* will result in a chunk.  If *message_body* is a |:glossary.txt/term-file-object:file object|,
+   each call to ".read()" will result in a chunk. The method automatically signals
+   the end of the chunk-encoded data immediately after *message_body*.
+
+   Note:
+
+     Due to the chunked encoding specification, empty chunks yielded by an iterator
+     body will be ignored by the chunk-encoder. This is to avoid premature
+     termination of the read of the request by the target server due to malformed
+     encoding.
+
+   New in version 3.6: Chunked encoding support.  The *encode_chunked* parameter
+   was added.
+
+*http.client.HTTPConnection.send:HTTPConnection.send(data)*
+
+   Send data to the server.  This should be used directly only after the
+   |:http.client.HTTPConnection.endheaders:endheaders()| method has been called and before |:http.client.HTTPConnection.getresponse:getresponse()| is called.
+
+*|httpresponse-objects:⚓|* # httpresponse-objects:HTTPResponse Objects
+
+An |:http.client.HTTPResponse:HTTPResponse| instance wraps the HTTP response from the server.  It provides
+access to the request headers and the entity body.  The response is an iterable
+object and can be used in a with statement.
+
+Changed in version 3.5: The |:library/io.txt/io.BufferedIOBase:io.BufferedIOBase| interface is now implemented and
+all of its reader operations are supported.
+
+*http.client.HTTPResponse.read:HTTPResponse.read([amt])*
+
+   Reads and returns the response body, or up to the next *amt* bytes.
+
+*http.client.HTTPResponse.readinto:HTTPResponse.readinto(b)*
+
+   Reads up to the next len(b) bytes of the response body into the buffer *b*.
+   Returns the number of bytes read.
+
+   New in version 3.3.
+
+*http.client.HTTPResponse.getheader:HTTPResponse.getheader(name, default=None)*
+
+   Return the value of the header *name*, or *default* if there is no header
+   matching *name*.  If there is more than one  header with the name *name*, return
+   all of the values joined by ‘, ‘.  If ‘default’ is any iterable other than a
+   single string, its elements are similarly returned joined by commas.
+
+*http.client.HTTPResponse.getheaders:HTTPResponse.getheaders()*
+
+   Return a list of (header, value) tuples.
+
+*http.client.HTTPResponse.fileno:HTTPResponse.fileno()*
+
+   Return the "fileno" of the underlying socket.
+
+*http.client.HTTPResponse.msg:HTTPResponse.msg*
+
+   A "http.client.HTTPMessage" instance containing the response headers.  "
+   http.client.HTTPMessage" is a subclass of |:library/email.compat32-message.txt/email.message.Message:email.message.Message|.
+
+*http.client.HTTPResponse.version:HTTPResponse.version*
+
+   HTTP protocol version used by server.  10 for HTTP/1.0, 11 for HTTP/1.1.
+
+*http.client.HTTPResponse.status:HTTPResponse.status*
+
+   Status code returned by server.
+
+*http.client.HTTPResponse.reason:HTTPResponse.reason*
+
+   Reason phrase returned by server.
+
+*http.client.HTTPResponse.debuglevel:HTTPResponse.debuglevel*
+
+   A debugging hook.  If |:http.client.HTTPResponse.debuglevel:debuglevel| is greater than zero, messages will be
+   printed to stdout as the response is read and parsed.
+
+*http.client.HTTPResponse.closed:HTTPResponse.closed*
+
+   Is "True" if the stream is closed.
+
+# examples:Examples
+
+Here is an example session that uses the "GET" method:
+
+```rst
+>>> import http.client
+>>> conn = http.client.HTTPSConnection("www.python.org")
+>>> conn.request("GET", "/")
+>>> r1 = conn.getresponse()
+>>> print(r1.status, r1.reason)
+200 OK
+>>> data1 = r1.read()  # This will return entire content.
+>>> # The following example demonstrates reading data in chunks.
+>>> conn.request("GET", "/")
+>>> r1 = conn.getresponse()
+>>> while chunk := r1.read(200):
+...     print(repr(chunk))
+b'<!doctype html>\n<!--[if"...
+...
+>>> # Example of an invalid request
+>>> conn = http.client.HTTPSConnection("docs.python.org")
+>>> conn.request("GET", "/parrot.spam")
+>>> r2 = conn.getresponse()
+>>> print(r2.status, r2.reason)
+404 Not Found
+>>> data2 = r2.read()
+>>> conn.close()
+```
+
+Here is an example session that uses the "HEAD" method.  Note that the "HEAD"
+method never returns any data.
+
+```rst
+>>> import http.client
+>>> conn = http.client.HTTPSConnection("www.python.org")
+>>> conn.request("HEAD", "/")
+>>> res = conn.getresponse()
+>>> print(res.status, res.reason)
+200 OK
+>>> data = res.read()
+>>> print(len(data))
+0
+>>> data == b''
+True
+```
+
+Here is an example session that shows how to "POST" requests:
+
+```rst
+>>> import http.client, urllib.parse
+>>> params = urllib.parse.urlencode({'@number': 12524, '@type': 'issue', '@action': 'show'})
+>>> headers = {"Content-type": "application/x-www-form-urlencoded",
+...            "Accept": "text/plain"}
+>>> conn = http.client.HTTPConnection("bugs.python.org")
+>>> conn.request("POST", "", params, headers)
+>>> response = conn.getresponse()
+>>> print(response.status, response.reason)
+302 Found
+>>> data = response.read()
+>>> data
+b'Redirecting to <a href="http://bugs.python.org/issue12524">http://bugs.python.org/issue12524</a>'
+>>> conn.close()
+```
+
+Client side "HTTP PUT" requests are very similar to "POST" requests. The
+difference lies only the server side where HTTP server will allow resources to
+be created via "PUT" request. It should be noted that custom HTTP methods are
+also handled in |:library/urllib.request.txt/urllib.request.Request:urllib.request.Request| by setting the appropriate method
+attribute. Here is an example session that shows how to send a "PUT" request
+using http.client:
+
+```rst
+>>> # This creates an HTTP message
+>>> # with the content of BODY as the enclosed representation
+>>> # for the resource http://localhost:8080/file
+...
+>>> import http.client
+>>> BODY = "***filecontents***"
+>>> conn = http.client.HTTPConnection("localhost", 8080)
+>>> conn.request("PUT", "/file", BODY)
+>>> response = conn.getresponse()
+>>> print(response.status, response.reason)
+200, OK
+```
+
+*|httpmessage-objects:⚓|* # httpmessage-objects:HTTPMessage Objects
+
+An "http.client.HTTPMessage" instance holds the headers from an HTTP response.
+It is implemented using the |:library/email.compat32-message.txt/email.message.Message:email.message.Message| class.
+
+
+

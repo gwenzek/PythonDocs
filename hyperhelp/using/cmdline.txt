@@ -1,0 +1,875 @@
+%hyperhelp title="Command line and environment" date="2021-07-11"
+*|command-line-and-environment:⚓|*
+
+The CPython interpreter scans the command line and the environment for various
+settings.
+
+*CPython implementation detail:* Other implementations’ command line schemes may
+differ.  See |:reference/introduction.txt/implementations:Alternate Implementations| for further resources.
+
+# command-line:Command line
+
+When invoking Python, you may specify any of these options:
+
+```rst
+python [-bBdEhiIOqsSuvVWx?] [-c command | -m module-name | script | - ] [args]
+```
+
+The most common use case is, of course, a simple invocation of a script:
+
+```rst
+python myscript.py
+```
+
+## interface-options:Interface options
+
+The interpreter interface resembles that of the UNIX shell, but provides some
+additional methods of invocation:
+
+* When called with standard input connected to a tty device, it prompts for
+  commands and executes them until an EOF (an end-of-file character, you can
+  produce that with "Ctrl-D" on UNIX or "Ctrl-Z, Enter" on Windows) is read.
+
+* When called with a file name argument or with a file as standard input, it reads
+  and executes a script from that file.
+
+* When called with a directory name argument, it reads and executes an
+  appropriately named script from that directory.
+
+* When called with "-c command", it executes the Python statement(s) given as *
+  command*.  Here *command* may contain multiple statements separated by newlines.
+  Leading whitespace is significant in Python statements!
+
+* When called with "-m module-name", the given module is located on the Python
+  module path and executed as a script.
+
+In non-interactive mode, the entire input is parsed before it is executed.
+
+An interface option terminates the list of options consumed by the interpreter,
+all consecutive arguments will end up in |:library/sys.txt/sys.argv:sys.argv| – note that the first
+element, subscript zero ("sys.argv[0]"), is a string reflecting the program’s
+source.
+
+*cmdoption-c:-c <command>*
+
+   Execute the Python code in *command*.  *command* can be one or more statements
+   separated by newlines, with significant leading whitespace as in normal module
+   code.
+
+   If this option is given, the first element of |:library/sys.txt/sys.argv:sys.argv| will be ""-c"" and the
+   current directory will be added to the start of |:library/sys.txt/sys.path:sys.path| (allowing modules in
+   that directory to be imported as top level modules).
+
+   Raises an |:library/sys.txt/auditing:auditing event| "cpython.run_command" with argument "command".
+
+*cmdoption-m:-m <module-name>*
+
+   Search |:library/sys.txt/sys.path:sys.path| for the named module and execute its contents as the
+   |:library/__main__.txt/module-__main__:__main__| module.
+
+   Since the argument is a *module* name, you must not give a file extension (".py"
+   ).  The module name should be a valid absolute Python module name, but the
+   implementation may not always enforce this (e.g. it may allow you to use a name
+   that includes a hyphen).
+
+   Package names (including namespace packages) are also permitted. When a package
+   name is supplied instead of a normal module, the interpreter will execute "
+   <pkg>.__main__" as the main module. This behaviour is deliberately similar to
+   the handling of directories and zipfiles that are passed to the interpreter as
+   the script argument.
+
+   Note:
+
+     This option cannot be used with built-in modules and extension modules written
+     in C, since they do not have Python module files. However, it can still be used
+     for precompiled modules, even if the original source file is not available.
+
+   If this option is given, the first element of |:library/sys.txt/sys.argv:sys.argv| will be the full path
+   to the module file (while the module file is being located, the first element
+   will be set to ""-m""). As with the |:cmdoption-c:-c| option, the current directory will be
+   added to the start of |:library/sys.txt/sys.path:sys.path|.
+
+   |:cmdoption-I:-I| option can  be used to run the script in isolated mode where |:library/sys.txt/sys.path:sys.path|
+   contains neither the current directory nor the user’s site-packages directory.
+   All *|index-0:⚓|* "PYTHON*" environment variables are ignored, too.
+
+   Many standard library modules contain code that is invoked on their execution as
+   a script.  An example is the |:library/timeit.txt/module-timeit:timeit| module:
+
+```rst
+python -m timeit -s 'setup here' 'benchmarked code here'
+python -m timeit -h # for details
+```
+
+   Raises an |:library/sys.txt/auditing:auditing event| "cpython.run_module" with argument "module-name".
+
+   See also:
+
+     |:library/runpy.txt/runpy.run_module:runpy.run_module()|
+        Equivalent functionality directly available to Python code
+
+     *|index-1:⚓|* |:www.python.org/dev/peps/pep-0338:PEP 338| – Executing modules as scripts
+
+   Changed in version 3.1: Supply the package name to run a "__main__" submodule.
+
+   Changed in version 3.4: namespace packages are also supported
+
+*|cmdarg-dash:⚓|*
+
+-
+
+   Read commands from standard input (|:library/sys.txt/sys.stdin:sys.stdin|).  If standard input is a
+   terminal, |:cmdoption-i:-i| is implied.
+
+   If this option is given, the first element of |:library/sys.txt/sys.argv:sys.argv| will be ""-"" and the
+   current directory will be added to the start of |:library/sys.txt/sys.path:sys.path|.
+
+   Raises an |:library/sys.txt/auditing:auditing event| "cpython.run_stdin" with no arguments.
+
+*|cmdarg-script:⚓|*
+
+<script>
+
+   Execute the Python code contained in *script*, which must be a filesystem path
+   (absolute or relative) referring to either a Python file, a directory containing
+   a "__main__.py" file, or a zipfile containing a "__main__.py" file.
+
+   If this option is given, the first element of |:library/sys.txt/sys.argv:sys.argv| will be the script name
+   as given on the command line.
+
+   If the script name refers directly to a Python file, the directory containing
+   that file is added to the start of |:library/sys.txt/sys.path:sys.path|, and the file is executed as the
+   |:library/__main__.txt/module-__main__:__main__| module.
+
+   If the script name refers to a directory or zipfile, the script name is added to
+   the start of |:library/sys.txt/sys.path:sys.path| and the "__main__.py" file in that location is executed
+   as the |:library/__main__.txt/module-__main__:__main__| module.
+
+   |:cmdoption-I:-I| option can  be used to run the script in isolated mode where |:library/sys.txt/sys.path:sys.path|
+   contains neither the script’s directory nor the user’s site-packages directory.
+   All *|index-2:⚓|* "PYTHON*" environment variables are ignored, too.
+
+   Raises an |:library/sys.txt/auditing:auditing event| "cpython.run_file" with argument "filename".
+
+   See also:
+
+     |:library/runpy.txt/runpy.run_path:runpy.run_path()|
+        Equivalent functionality directly available to Python code
+
+If no interface option is given, |:cmdoption-i:-i| is implied, "sys.argv[0]" is an empty
+string ("""") and the current directory will be added to the start of |:library/sys.txt/sys.path:sys.path|
+.  Also, tab-completion and history editing is automatically enabled, if
+available on your platform (see |:library/site.txt/rlcompleter-config:Readline configuration|).
+
+See also:
+
+  |:tutorial/interpreter.txt/tut-invoking:Invoking the Interpreter|
+
+Changed in version 3.4: Automatic enabling of tab-completion and history
+editing.
+
+## generic-options:Generic options
+
+*cmdoption-0:-?*
+*cmdoption-h:-h*
+*cmdoption-help:--help*
+
+   Print a short description of all command line options.
+
+*cmdoption-V:-V*
+*cmdoption-version:--version*
+
+   Print the Python version number and exit.  Example output could be:
+
+```rst
+Python 3.8.0b2+
+```
+
+   When given twice, print more information about the build, like:
+
+```rst
+Python 3.8.0b2+ (3.8:0c076caaa8, Apr 20 2019, 21:55:00)
+[GCC 6.2.0 20161005]
+```
+
+   New in version 3.6: The "-VV" option.
+
+*|using-on-misc-options:⚓|* ## miscellaneous-options:Miscellaneous options
+
+*cmdoption-b:-b*
+
+   Issue a warning when comparing |:library/stdtypes.txt/bytes:bytes| or |:library/stdtypes.txt/bytearray:bytearray| with |:library/stdtypes.txt/str:str| or |:library/stdtypes.txt/bytes:bytes| with
+   |:library/functions.txt/int:int|.  Issue an error when the option is given twice ("-bb").
+
+   Changed in version 3.5: Affects comparisons of |:library/stdtypes.txt/bytes:bytes| with |:library/functions.txt/int:int|.
+
+*cmdoption-B:-B*
+
+   If given, Python won’t try to write ".pyc" files on the import of source
+   modules.  See also *|index-3:⚓|* |:envvar-PYTHONDONTWRITEBYTECODE:PYTHONDONTWRITEBYTECODE|.
+
+*cmdoption-check-hash-based-pycs:--check-hash-based-pycs default|always|never*
+
+   Control the validation behavior of hash-based ".pyc" files. See
+   |:reference/import.txt/pyc-invalidation:Cached bytecode invalidation|. When set to "default", checked and unchecked
+   hash-based bytecode cache files are validated according to their default
+   semantics. When set to "always", all hash-based ".pyc" files, whether checked or
+   unchecked, are validated against their corresponding source file. When set to "
+   never", hash-based ".pyc" files are not validated against their corresponding
+   source files.
+
+   The semantics of timestamp-based ".pyc" files are unaffected by this option.
+
+*cmdoption-d:-d*
+
+   Turn on parser debugging output (for expert only, depending on compilation
+   options).  See also *|index-4:⚓|* |:envvar-PYTHONDEBUG:PYTHONDEBUG|.
+
+*cmdoption-E:-E*
+
+   Ignore all *|index-5:⚓|* "PYTHON*" environment variables, e.g. *|index-6:⚓|*
+   |:envvar-PYTHONPATH:PYTHONPATH| and *|index-7:⚓|* |:envvar-PYTHONHOME:PYTHONHOME|, that might be set.
+
+*cmdoption-i:-i*
+
+   When a script is passed as first argument or the |:cmdoption-c:-c| option is used, enter
+   interactive mode after executing the script or the command, even when
+   |:library/sys.txt/sys.stdin:sys.stdin| does not appear to be a terminal.  The *|index-8:⚓|* |:envvar-PYTHONSTARTUP:PYTHONSTARTUP|
+   file is not read.
+
+   This can be useful to inspect global variables or a stack trace when a script
+   raises an exception.  See also *|index-9:⚓|* |:envvar-PYTHONINSPECT:PYTHONINSPECT|.
+
+*cmdoption-I:-I*
+
+   Run Python in isolated mode. This also implies -E and -s. In isolated mode
+   |:library/sys.txt/sys.path:sys.path| contains neither the script’s directory nor the user’s site-packages
+   directory. All *|index-10:⚓|* "PYTHON*" environment variables are ignored, too.
+   Further restrictions may be imposed to prevent the user from injecting malicious
+   code.
+
+   New in version 3.4.
+
+*cmdoption-O:-O*
+
+   Remove assert statements and any code conditional on the value of |:library/constants.txt/debug__:__debug__|.
+   Augment the filename for compiled (|:glossary.txt/term-bytecode:bytecode|) files by adding ".opt-1" before
+   the ".pyc" extension (see *|index-11:⚓|* |:www.python.org/dev/peps/pep-0488:PEP 488|).  See also *|index-12:⚓|*
+   |:envvar-PYTHONOPTIMIZE:PYTHONOPTIMIZE|.
+
+   Changed in version 3.5: Modify ".pyc" filenames according to *|index-13:⚓|*
+   |:www.python.org/dev/peps/pep-0488:PEP 488|.
+
+*cmdoption-OO:-OO*
+
+   Do |:cmdoption-O:-O| and also discard docstrings.  Augment the filename for compiled (
+   |:glossary.txt/term-bytecode:bytecode|) files by adding ".opt-2" before the ".pyc" extension (see
+   *|index-14:⚓|* |:www.python.org/dev/peps/pep-0488:PEP 488|).
+
+   Changed in version 3.5: Modify ".pyc" filenames according to *|index-15:⚓|*
+   |:www.python.org/dev/peps/pep-0488:PEP 488|.
+
+*cmdoption-q:-q*
+
+   Don’t display the copyright and version messages even in interactive mode.
+
+   New in version 3.2.
+
+*cmdoption-R:-R*
+
+   Turn on hash randomization. This option only has an effect if the *|index-16:⚓|*
+   |:envvar-PYTHONHASHSEED:PYTHONHASHSEED| environment variable is set to "0", since hash randomization is
+   enabled by default.
+
+   On previous versions of Python, this option turns on hash randomization, so that
+   the "__hash__()" values of str and bytes objects are “salted” with an
+   unpredictable random value.  Although they remain constant within an individual
+   Python process, they are not predictable between repeated invocations of Python.
+
+   Hash randomization is intended to provide protection against a denial-of-service
+   caused by carefully-chosen inputs that exploit the worst case performance of a
+   dict construction, O(n^2) complexity.  See
+   |:www.ocert.org/advisories/ocert-2011-003.html:http://www.ocert.org/advisories/ocert-2011-003.html| for details.
+
+   *|index-17:⚓|* |:envvar-PYTHONHASHSEED:PYTHONHASHSEED| allows you to set a fixed value for the hash
+   seed secret.
+
+   Changed in version 3.7: The option is no longer ignored.
+
+   New in version 3.2.3.
+
+*cmdoption-s:-s*
+
+   Don’t add the |:library/site.txt/site.USER_SITE:user site-packages directory| to |:library/sys.txt/sys.path:sys.path|.
+
+   See also:
+
+     *|index-18:⚓|* |:www.python.org/dev/peps/pep-0370:PEP 370| – Per user site-packages directory
+
+*cmdoption-S:-S*
+
+   Disable the import of the module |:library/site.txt/module-site:site| and the site-dependent manipulations of
+   |:library/sys.txt/sys.path:sys.path| that it entails.  Also disable these manipulations if |:library/site.txt/module-site:site| is
+   explicitly imported later (call |:library/site.txt/site.main:site.main()| if you want them to be triggered).
+
+*cmdoption-u:-u*
+
+   Force the stdout and stderr streams to be unbuffered.  This option has no effect
+   on the stdin stream.
+
+   See also *|index-19:⚓|* |:envvar-PYTHONUNBUFFERED:PYTHONUNBUFFERED|.
+
+   Changed in version 3.7: The text layer of the stdout and stderr streams now is
+   unbuffered.
+
+*cmdoption-1:-v*
+
+   Print a message each time a module is initialized, showing the place (filename
+   or built-in module) from which it is loaded.  When given twice ("-vv"), print a
+   message for each file that is checked for when searching for a module.  Also
+   provides information on module cleanup at exit. See also *|index-20:⚓|*
+   |:envvar-PYTHONVERBOSE:PYTHONVERBOSE|.
+
+*|using-on-warnings:⚓|*
+
+*cmdoption-W:-W arg*
+
+   Warning control.  Python’s warning machinery by default prints warning messages
+   to |:library/sys.txt/sys.stderr:sys.stderr|.  A typical warning message has the following form:
+
+```rst
+file:line: category: message
+```
+
+   By default, each warning is printed once for each source line where it occurs.
+   This option controls how often warnings are printed.
+
+   Multiple |:cmdoption-W:-W| options may be given; when a warning matches more than one option,
+   the action for the last matching option is performed.  Invalid |:cmdoption-W:-W| options are
+   ignored (though, a warning message is printed about invalid options when the
+   first warning is issued).
+
+   Warnings can also be controlled using the *|index-21:⚓|* |:envvar-PYTHONWARNINGS:PYTHONWARNINGS|
+   environment variable and from within a Python program using the |:library/warnings.txt/module-warnings:warnings|
+   module.
+
+   The simplest settings apply a particular action unconditionally to all warnings
+   emitted by a process (even those that are otherwise ignored by default):
+
+```rst
+-Wdefault  # Warn once per call location
+-Werror    # Convert to exceptions
+-Walways   # Warn every time
+-Wmodule   # Warn once per calling module
+-Wonce     # Warn once per Python process
+-Wignore   # Never warn
+```
+
+   The action names can be abbreviated as desired (e.g. "-Wi", "-Wd", "-Wa", "-We")
+   and the interpreter will resolve them to the appropriate action name.
+
+   See |:library/warnings.txt/warning-filter:The Warnings Filter| and |:library/warnings.txt/describing-warning-filters:Describing Warning Filters| for more details.
+
+*cmdoption-x:-x*
+
+   Skip the first line of the source, allowing use of non-Unix forms of "#!cmd".
+   This is intended for a DOS specific hack only.
+
+*cmdoption-X:-X*
+
+   Reserved for various implementation-specific options.  CPython currently defines
+   the following possible values:
+
+   * "-X faulthandler" to enable |:library/faulthandler.txt/module-faulthandler:faulthandler|;
+
+   * "-X showrefcount" to output the total reference count and number of used memory
+     blocks when the program finishes or after each statement in the interactive
+     interpreter. This only works on debug builds.
+
+   * "-X tracemalloc" to start tracing Python memory allocations using the
+     |:library/tracemalloc.txt/module-tracemalloc:tracemalloc| module. By default, only the most recent frame is stored in a
+     traceback of a trace. Use "-X tracemalloc=NFRAME" to start tracing with a
+     traceback limit of *NFRAME* frames. See the |:library/tracemalloc.txt/tracemalloc.start:tracemalloc.start()| for more
+     information.
+
+   * "-X showalloccount" to output the total count of allocated objects for each type
+     when the program finishes. This only works when Python was built with "
+     COUNT_ALLOCS" defined.
+
+   * "-X importtime" to show how long each import takes. It shows module name,
+     cumulative time (including nested imports) and self time (excluding nested
+     imports).  Note that its output may be broken in multi-threaded application.
+     Typical usage is "python3 -X importtime -c 'import asyncio'".  See also
+     *|index-22:⚓|* |:envvar-PYTHONPROFILEIMPORTTIME:PYTHONPROFILEIMPORTTIME|.
+
+   * "-X dev": enable CPython’s “development mode”, introducing additional runtime
+     checks which are too expensive to be enabled by default. It should not be more
+     verbose than the default if the code is correct: new warnings are only emitted
+     when an issue is detected. Effect of the developer mode:
+
+     * Add "default" warning filter, as |:cmdoption-W:-W| "default".
+
+     * Install debug hooks on memory allocators: see the |:c-api/memory.txt/c.PyMem_SetupDebugHooks:PyMem_SetupDebugHooks()| C
+       function.
+
+     * Enable the |:library/faulthandler.txt/module-faulthandler:faulthandler| module to dump the Python traceback on a crash.
+
+     * Enable |:library/asyncio-dev.txt/asyncio-debug-mode:asyncio debug mode|.
+
+     * Set the "dev_mode" attribute of |:library/sys.txt/sys.flags:sys.flags| to "True".
+
+     * |:library/io.txt/io.IOBase:io.IOBase| destructor logs "close()" exceptions.
+
+   * "-X utf8" enables UTF-8 mode for operating system interfaces, overriding the
+     default locale-aware mode. "-X utf8=0" explicitly disables UTF-8 mode (even when
+     it would otherwise activate automatically). See *|index-23:⚓|* |:envvar-PYTHONUTF8:PYTHONUTF8| for
+     more details.
+
+   * "-X pycache_prefix=PATH" enables writing ".pyc" files to a parallel tree rooted
+     at the given directory instead of to the code tree. See also *|index-24:⚓|*
+     |:envvar-PYTHONPYCACHEPREFIX:PYTHONPYCACHEPREFIX|.
+
+   It also allows passing arbitrary values and retrieving them through the
+   |:library/sys.txt/sys._xoptions:sys._xoptions| dictionary.
+
+   Changed in version 3.2: The |:cmdoption-X:-X| option was added.
+
+   New in version 3.3: The "-X faulthandler" option.
+
+   New in version 3.4: The "-X showrefcount" and "-X tracemalloc" options.
+
+   New in version 3.6: The "-X showalloccount" option.
+
+   New in version 3.7: The "-X importtime", "-X dev" and "-X utf8" options.
+
+   New in version 3.8: The "-X pycache_prefix" option. The "-X dev" option now logs
+   "close()" exceptions in |:library/io.txt/io.IOBase:io.IOBase| destructor.
+
+## options-you-shouldn-t-use:Options you shouldn’t use
+
+*cmdoption-J:-J*
+
+   Reserved for use by |:www.jython.org:Jython|.
+
+*|jython:⚓|* *|using-on-envvars:⚓|* # environment-variables:Environment
+variables
+
+These environment variables influence Python’s behavior, they are processed
+before the command-line switches other than -E or -I.  It is customary that
+command-line switches override environmental variables where there is a
+conflict.
+
+*envvar-PYTHONHOME:PYTHONHOME*
+
+   Change the location of the standard Python libraries.  By default, the libraries
+   are searched in "*prefix*/lib/python*version*" and "*exec_prefix*/lib/python*
+   version*", where "*prefix*" and "*exec_prefix*" are installation-dependent
+   directories, both defaulting to "/usr/local".
+
+   When *|index-25:⚓|* |:envvar-PYTHONHOME:PYTHONHOME| is set to a single directory, its value
+   replaces both "*prefix*" and "*exec_prefix*".  To specify different values for
+   these, set *|index-26:⚓|* |:envvar-PYTHONHOME:PYTHONHOME| to "*prefix*:*exec_prefix*".
+
+*envvar-PYTHONPATH:PYTHONPATH*
+
+   Augment the default search path for module files.  The format is the same as the
+   shell’s *|index-27:⚓|* "PATH": one or more directory pathnames separated by
+   |:library/os.txt/os.pathsep:os.pathsep| (e.g. colons on Unix or semicolons on Windows). Non-existent
+   directories are silently ignored.
+
+   In addition to normal directories, individual *|index-28:⚓|* |:envvar-PYTHONPATH:PYTHONPATH|
+   entries may refer to zipfiles containing pure Python modules (in either source
+   or compiled form). Extension modules cannot be imported from zipfiles.
+
+   The default search path is installation dependent, but generally begins with "*
+   prefix*/lib/python*version*" (see *|index-29:⚓|* |:envvar-PYTHONHOME:PYTHONHOME| above).  It is *
+   always* appended to *|index-30:⚓|* |:envvar-PYTHONPATH:PYTHONPATH|.
+
+   An additional directory will be inserted in the search path in front of
+   *|index-31:⚓|* |:envvar-PYTHONPATH:PYTHONPATH| as described above under |:using-on-interface-options:Interface options|. The
+   search path can be manipulated from within a Python program as the variable
+   |:library/sys.txt/sys.path:sys.path|.
+
+*envvar-PYTHONSTARTUP:PYTHONSTARTUP*
+
+   If this is the name of a readable file, the Python commands in that file are
+   executed before the first prompt is displayed in interactive mode.  The file is
+   executed in the same namespace where interactive commands are executed so that
+   objects defined or imported in it can be used without qualification in the
+   interactive session.  You can also change the prompts |:library/sys.txt/sys.ps1:sys.ps1| and |:library/sys.txt/sys.ps2:sys.ps2|
+   and the hook |:library/sys.txt/sys.__interactivehook__:sys.__interactivehook__| in this file.
+
+   Raises an |:library/sys.txt/auditing:auditing event| "cpython.run_startup" with the filename as the
+   argument when called on startup.
+
+*envvar-PYTHONOPTIMIZE:PYTHONOPTIMIZE*
+
+   If this is set to a non-empty string it is equivalent to specifying the |:cmdoption-O:-O|
+   option.  If set to an integer, it is equivalent to specifying |:cmdoption-O:-O| multiple
+   times.
+
+*envvar-PYTHONBREAKPOINT:PYTHONBREAKPOINT*
+
+   If this is set, it names a callable using dotted-path notation.  The module
+   containing the callable will be imported and then the callable will be run by
+   the default implementation of |:library/sys.txt/sys.breakpointhook:sys.breakpointhook()| which itself is called by
+   built-in |:library/functions.txt/breakpoint:breakpoint()|.  If not set, or set to the empty string, it is
+   equivalent to the value “pdb.set_trace”.  Setting this to the string “0” causes
+   the default implementation of |:library/sys.txt/sys.breakpointhook:sys.breakpointhook()| to do nothing but return
+   immediately.
+
+   New in version 3.7.
+
+*envvar-PYTHONDEBUG:PYTHONDEBUG*
+
+   If this is set to a non-empty string it is equivalent to specifying the |:cmdoption-d:-d|
+   option.  If set to an integer, it is equivalent to specifying |:cmdoption-d:-d| multiple
+   times.
+
+*envvar-PYTHONINSPECT:PYTHONINSPECT*
+
+   If this is set to a non-empty string it is equivalent to specifying the |:cmdoption-i:-i|
+   option.
+
+   This variable can also be modified by Python code using |:library/os.txt/os.environ:os.environ| to force
+   inspect mode on program termination.
+
+*envvar-PYTHONUNBUFFERED:PYTHONUNBUFFERED*
+
+   If this is set to a non-empty string it is equivalent to specifying the |:cmdoption-u:-u|
+   option.
+
+*envvar-PYTHONVERBOSE:PYTHONVERBOSE*
+
+   If this is set to a non-empty string it is equivalent to specifying the |:cmdoption-1:-v|
+   option.  If set to an integer, it is equivalent to specifying |:cmdoption-1:-v| multiple
+   times.
+
+*envvar-PYTHONCASEOK:PYTHONCASEOK*
+
+   If this is set, Python ignores case in |:reference/simple_stmts.txt/import:import| statements.  This only works on
+   Windows and OS X.
+
+*envvar-PYTHONDONTWRITEBYTECODE:PYTHONDONTWRITEBYTECODE*
+
+   If this is set to a non-empty string, Python won’t try to write ".pyc" files on
+   the import of source modules.  This is equivalent to specifying the |:cmdoption-B:-B| option.
+
+*envvar-PYTHONPYCACHEPREFIX:PYTHONPYCACHEPREFIX*
+
+   If this is set, Python will write ".pyc" files in a mirror directory tree at
+   this path, instead of in "__pycache__" directories within the source tree. This
+   is equivalent to specifying the |:cmdoption-X:-X| "pycache_prefix=PATH" option.
+
+   New in version 3.8.
+
+*envvar-PYTHONHASHSEED:PYTHONHASHSEED*
+
+   If this variable is not set or set to "random", a random value is used to seed
+   the hashes of str and bytes objects.
+
+   If *|index-32:⚓|* |:envvar-PYTHONHASHSEED:PYTHONHASHSEED| is set to an integer value, it is used as a
+   fixed seed for generating the hash() of the types covered by the hash
+   randomization.
+
+   Its purpose is to allow repeatable hashing, such as for selftests for the
+   interpreter itself, or to allow a cluster of python processes to share hash
+   values.
+
+   The integer must be a decimal number in the range [0,4294967295].  Specifying
+   the value 0 will disable hash randomization.
+
+   New in version 3.2.3.
+
+*envvar-PYTHONIOENCODING:PYTHONIOENCODING*
+
+   If this is set before running the interpreter, it overrides the encoding used
+   for stdin/stdout/stderr, in the syntax "encodingname:errorhandler".  Both the "
+   encodingname" and the ":errorhandler" parts are optional and have the same
+   meaning as in |:library/stdtypes.txt/str.encode:str.encode()|.
+
+   For stderr, the ":errorhandler" part is ignored; the handler will always be "
+   'backslashreplace'".
+
+   Changed in version 3.4: The "encodingname" part is now optional.
+
+   Changed in version 3.6: On Windows, the encoding specified by this variable is
+   ignored for interactive console buffers unless *|index-33:⚓|*
+   |:envvar-PYTHONLEGACYWINDOWSSTDIO:PYTHONLEGACYWINDOWSSTDIO| is also specified. Files and pipes redirected through
+   the standard streams are not affected.
+
+*envvar-PYTHONNOUSERSITE:PYTHONNOUSERSITE*
+
+   If this is set, Python won’t add the |:library/site.txt/site.USER_SITE:user site-packages directory| to
+   |:library/sys.txt/sys.path:sys.path|.
+
+   See also:
+
+     *|index-34:⚓|* |:www.python.org/dev/peps/pep-0370:PEP 370| – Per user site-packages directory
+
+*envvar-PYTHONUSERBASE:PYTHONUSERBASE*
+
+   Defines the |:library/site.txt/site.USER_BASE:user base directory|, which is used to compute the path of the
+   |:library/site.txt/site.USER_SITE:user site-packages directory| and |:install/index.txt/inst-alt-install-user:Distutils installation paths| for "python
+   setup.py install --user".
+
+   See also:
+
+     *|index-35:⚓|* |:www.python.org/dev/peps/pep-0370:PEP 370| – Per user site-packages directory
+
+*envvar-PYTHONEXECUTABLE:PYTHONEXECUTABLE*
+
+   If this environment variable is set, "sys.argv[0]" will be set to its value
+   instead of the value got through the C runtime.  Only works on Mac OS X.
+
+*envvar-PYTHONWARNINGS:PYTHONWARNINGS*
+
+   This is equivalent to the |:cmdoption-W:-W| option. If set to a comma separated string, it is
+   equivalent to specifying |:cmdoption-W:-W| multiple times, with filters later in the list
+   taking precedence over those earlier in the list.
+
+   The simplest settings apply a particular action unconditionally to all warnings
+   emitted by a process (even those that are otherwise ignored by default):
+
+```rst
+PYTHONWARNINGS=default  # Warn once per call location
+PYTHONWARNINGS=error    # Convert to exceptions
+PYTHONWARNINGS=always   # Warn every time
+PYTHONWARNINGS=module   # Warn once per calling module
+PYTHONWARNINGS=once     # Warn once per Python process
+PYTHONWARNINGS=ignore   # Never warn
+```
+
+   See |:library/warnings.txt/warning-filter:The Warnings Filter| and |:library/warnings.txt/describing-warning-filters:Describing Warning Filters| for more details.
+
+*envvar-PYTHONFAULTHANDLER:PYTHONFAULTHANDLER*
+
+   If this environment variable is set to a non-empty string,
+   |:library/faulthandler.txt/faulthandler.enable:faulthandler.enable()| is called at startup: install a handler for "SIGSEGV", "
+   SIGFPE", "SIGABRT", "SIGBUS" and "SIGILL" signals to dump the Python traceback.
+   This is equivalent to |:cmdoption-X:-X| "faulthandler" option.
+
+   New in version 3.3.
+
+*envvar-PYTHONTRACEMALLOC:PYTHONTRACEMALLOC*
+
+   If this environment variable is set to a non-empty string, start tracing Python
+   memory allocations using the |:library/tracemalloc.txt/module-tracemalloc:tracemalloc| module. The value of the variable is
+   the maximum number of frames stored in a traceback of a trace. For example, "
+   PYTHONTRACEMALLOC=1" stores only the most recent frame. See the
+   |:library/tracemalloc.txt/tracemalloc.start:tracemalloc.start()| for more information.
+
+   New in version 3.4.
+
+*envvar-PYTHONPROFILEIMPORTTIME:PYTHONPROFILEIMPORTTIME*
+
+   If this environment variable is set to a non-empty string, Python will show how
+   long each import takes.  This is exactly equivalent to setting "-X importtime"
+   on the command line.
+
+   New in version 3.7.
+
+*envvar-PYTHONASYNCIODEBUG:PYTHONASYNCIODEBUG*
+
+   If this environment variable is set to a non-empty string, enable the
+   |:library/asyncio-dev.txt/asyncio-debug-mode:debug mode| of the |:library/asyncio.txt/module-asyncio:asyncio| module.
+
+   New in version 3.4.
+
+*envvar-PYTHONMALLOC:PYTHONMALLOC*
+
+   Set the Python memory allocators and/or install debug hooks.
+
+   Set the family of memory allocators used by Python:
+
+   * "default": use the |:c-api/memory.txt/default-memory-allocators:default memory allocators|.
+
+   * "malloc": use the "malloc()" function of the C library for all domains ("
+     PYMEM_DOMAIN_RAW", "PYMEM_DOMAIN_MEM", "PYMEM_DOMAIN_OBJ").
+
+   * "pymalloc": use the |:c-api/memory.txt/pymalloc:pymalloc allocator| for "PYMEM_DOMAIN_MEM" and "
+     PYMEM_DOMAIN_OBJ" domains and use the "malloc()" function for the "
+     PYMEM_DOMAIN_RAW" domain.
+
+   Install debug hooks:
+
+   * "debug": install debug hooks on top of the |:c-api/memory.txt/default-memory-allocators:default memory
+allocators|.
+
+   * "malloc_debug": same as "malloc" but also install debug hooks.
+
+   * "pymalloc_debug": same as "pymalloc" but also install debug hooks.
+
+   See the |:c-api/memory.txt/default-memory-allocators:default memory allocators| and the |:c-api/memory.txt/c.PyMem_SetupDebugHooks:PyMem_SetupDebugHooks()| function
+   (install debug hooks on Python memory allocators).
+
+   Changed in version 3.7: Added the ""default"" allocator.
+
+   New in version 3.6.
+
+*envvar-PYTHONMALLOCSTATS:PYTHONMALLOCSTATS*
+
+   If set to a non-empty string, Python will print statistics of the
+   |:c-api/memory.txt/pymalloc:pymalloc memory allocator| every time a new pymalloc object arena is created,
+   and on shutdown.
+
+   This variable is ignored if the *|index-36:⚓|* |:envvar-PYTHONMALLOC:PYTHONMALLOC| environment
+   variable is used to force the "malloc()" allocator of the C library, or if
+   Python is configured without "pymalloc" support.
+
+   Changed in version 3.6: This variable can now also be used on Python compiled in
+   release mode. It now has no effect if set to an empty string.
+
+*envvar-PYTHONLEGACYWINDOWSFSENCODING:PYTHONLEGACYWINDOWSFSENCODING*
+
+   If set to a non-empty string, the default filesystem encoding and errors mode
+   will revert to their pre-3.6 values of ‘mbcs’ and ‘replace’, respectively.
+   Otherwise, the new defaults ‘utf-8’ and ‘surrogatepass’ are used.
+
+   This may also be enabled at runtime with |:library/sys.txt/sys._enablelegacywindowsfsencoding:sys._enablelegacywindowsfsencoding()|.
+
+   |:library/intro.txt/availability:Availability|: Windows.
+
+   New in version 3.6: See *|index-37:⚓|* |:www.python.org/dev/peps/pep-0529:PEP 529| for more details.
+
+*envvar-PYTHONLEGACYWINDOWSSTDIO:PYTHONLEGACYWINDOWSSTDIO*
+
+   If set to a non-empty string, does not use the new console reader and writer.
+   This means that Unicode characters will be encoded according to the active
+   console code page, rather than using utf-8.
+
+   This variable is ignored if the standard streams are redirected (to files or
+   pipes) rather than referring to console buffers.
+
+   |:library/intro.txt/availability:Availability|: Windows.
+
+   New in version 3.6.
+
+*envvar-PYTHONCOERCECLOCALE:PYTHONCOERCECLOCALE*
+
+   If set to the value "0", causes the main Python command line application to skip
+   coercing the legacy ASCII-based C and POSIX locales to a more capable UTF-8
+   based alternative.
+
+   If this variable is *not* set (or is set to a value other than "0"), the "LC_ALL
+   " locale override environment variable is also not set, and the current locale
+   reported for the "LC_CTYPE" category is either the default "C" locale, or else
+   the explicitly ASCII-based "POSIX" locale, then the Python CLI will attempt to
+   configure the following locales for the "LC_CTYPE" category in the order listed
+   before loading the interpreter runtime:
+
+   * "C.UTF-8"
+
+   * "C.utf8"
+
+   * "UTF-8"
+
+   If setting one of these locale categories succeeds, then the "LC_CTYPE"
+   environment variable will also be set accordingly in the current process
+   environment before the Python runtime is initialized. This ensures that in
+   addition to being seen by both the interpreter itself and other locale-aware
+   components running in the same process (such as the GNU "readline" library), the
+   updated setting is also seen in subprocesses (regardless of whether or not those
+   processes are running a Python interpreter), as well as in operations that query
+   the environment rather than the current C locale (such as Python’s own
+   |:library/locale.txt/locale.getdefaultlocale:locale.getdefaultlocale()|).
+
+   Configuring one of these locales (either explicitly or via the above implicit
+   locale coercion) automatically enables the "surrogateescape" |:library/codecs.txt/error-handlers:error handler| for
+   |:library/sys.txt/sys.stdin:sys.stdin| and |:library/sys.txt/sys.stdout:sys.stdout| (|:library/sys.txt/sys.stderr:sys.stderr| continues to use "backslashreplace"
+   as it does in any other locale). This stream handling behavior can be overridden
+   using *|index-38:⚓|* |:envvar-PYTHONIOENCODING:PYTHONIOENCODING| as usual.
+
+   For debugging purposes, setting "PYTHONCOERCECLOCALE=warn" will cause Python to
+   emit warning messages on "stderr" if either the locale coercion activates, or
+   else if a locale that *would* have triggered coercion is still active when the
+   Python runtime is initialized.
+
+   Also note that even when locale coercion is disabled, or when it fails to find a
+   suitable target locale, *|index-39:⚓|* |:envvar-PYTHONUTF8:PYTHONUTF8| will still activate by
+   default in legacy ASCII-based locales. Both features must be disabled in order
+   to force the interpreter to use "ASCII" instead of "UTF-8" for system
+   interfaces.
+
+   |:library/intro.txt/availability:Availability|: *nix.
+
+   New in version 3.7: See *|index-40:⚓|* |:www.python.org/dev/peps/pep-0538:PEP 538| for more details.
+
+*envvar-PYTHONDEVMODE:PYTHONDEVMODE*
+
+   If this environment variable is set to a non-empty string, enable the CPython
+   “development mode”. See the |:cmdoption-X:-X| "dev" option.
+
+   New in version 3.7.
+
+*envvar-PYTHONUTF8:PYTHONUTF8*
+
+   If set to "1", enables the interpreter’s UTF-8 mode, where "UTF-8" is used as
+   the text encoding for system interfaces, regardless of the current locale
+   setting.
+
+   This means that:
+
+      * |:library/sys.txt/sys.getfilesystemencoding:sys.getfilesystemencoding()| returns "'UTF-8'" (the locale encoding is
+        ignored).
+
+      * |:library/locale.txt/locale.getpreferredencoding:locale.getpreferredencoding()| returns "'UTF-8'" (the locale encoding is
+        ignored, and the function’s "do_setlocale" parameter has no effect).
+
+      * |:library/sys.txt/sys.stdin:sys.stdin|, |:library/sys.txt/sys.stdout:sys.stdout|, and |:library/sys.txt/sys.stderr:sys.stderr| all use UTF-8 as their text
+        encoding, with the "surrogateescape" |:library/codecs.txt/error-handlers:error handler| being enabled for
+        |:library/sys.txt/sys.stdin:sys.stdin| and |:library/sys.txt/sys.stdout:sys.stdout| (|:library/sys.txt/sys.stderr:sys.stderr| continues to use "backslashreplace"
+        as it does in the default locale-aware mode)
+
+   As a consequence of the changes in those lower level APIs, other higher level
+   APIs also exhibit different default behaviours:
+
+      * Command line arguments, environment variables and filenames are decoded to text
+        using the UTF-8 encoding.
+
+      * |:library/os.txt/os.fsdecode:os.fsdecode()| and |:library/os.txt/os.fsencode:os.fsencode()| use the UTF-8 encoding.
+
+      * |:library/functions.txt/open:open()|, |:library/io.txt/io.open:io.open()|, and |:library/codecs.txt/codecs.open:codecs.open()| use the UTF-8 encoding by default.
+        However, they still use the strict error handler by default so that attempting
+        to open a binary file in text mode is likely to raise an exception rather than
+        producing nonsense data.
+
+   Note that the standard stream settings in UTF-8 mode can be overridden by
+   *|index-41:⚓|* |:envvar-PYTHONIOENCODING:PYTHONIOENCODING| (just as they can be in the default locale-
+   aware mode).
+
+   If set to "0", the interpreter runs in its default locale-aware mode.
+
+   Setting any other non-empty string causes an error during interpreter
+   initialisation.
+
+   If this environment variable is not set at all, then the interpreter defaults to
+   using the current locale settings, *unless* the current locale is identified as
+   a legacy ASCII-based locale (as described for *|index-42:⚓|*
+   |:envvar-PYTHONCOERCECLOCALE:PYTHONCOERCECLOCALE|), and locale coercion is either disabled or fails. In such
+   legacy locales, the interpreter will default to enabling UTF-8 mode unless
+   explicitly instructed not to do so.
+
+   Also available as the |:cmdoption-X:-X| "utf8" option.
+
+   New in version 3.7: See *|index-43:⚓|* |:www.python.org/dev/peps/pep-0540:PEP 540| for more details.
+
+## debug-mode-variables:Debug-mode variables
+
+Setting these variables only has an effect in a debug build of Python.
+
+*envvar-PYTHONTHREADDEBUG:PYTHONTHREADDEBUG*
+
+   If set, Python will print threading debug info.
+
+   Need Python configured with the "--with-pydebug" build option.
+
+*envvar-PYTHONDUMPREFS:PYTHONDUMPREFS*
+
+   If set, Python will dump objects and reference counts still alive after shutting
+   down the interpreter.
+
+   Need Python configured with the "--with-trace-refs" build option.
+
+
+

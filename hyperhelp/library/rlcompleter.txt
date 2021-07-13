@@ -1,0 +1,54 @@
+%hyperhelp title="rlcompleter" date="2021-07-11"
+*|module-rlcompleter:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/rlcompleter.py:Lib/rlcompleter.py|
+
+======================================================================
+
+The |:module-rlcompleter:rlcompleter| module defines a completion function suitable for the
+|:library/readline.txt/module-readline:readline| module by completing valid Python identifiers and keywords.
+
+When this module is imported on a Unix platform with the |:library/readline.txt/module-readline:readline| module
+available, an instance of the "Completer" class is automatically created and its
+"complete()" method is set as the |:library/readline.txt/module-readline:readline| completer.
+
+Example:
+
+```rst
+>>> import rlcompleter
+>>> import readline
+>>> readline.parse_and_bind("tab: complete")
+>>> readline. <TAB PRESSED>
+readline.__doc__          readline.get_line_buffer(  readline.read_init_file(
+readline.__file__         readline.insert_text(      readline.set_completer(
+readline.__name__         readline.parse_and_bind(
+>>> readline.
+```
+
+The |:module-rlcompleter:rlcompleter| module is designed for use with Python’s |:tutorial/interpreter.txt/tut-interactive:interactive mode|.
+Unless Python is run with the |:using/cmdline.txt/cmdoption-S:-S| option, the module is automatically imported
+and configured (see |:library/site.txt/rlcompleter-config:Readline configuration|).
+
+On platforms without |:library/readline.txt/module-readline:readline|, the "Completer" class defined by this module
+can still be used for custom purposes.
+
+# completer-objects:Completer Objects
+
+Completer objects have the following method:
+
+*rlcompleter.Completer.complete:Completer.complete(text, state)*
+
+   Return the *state*th completion for *text*.
+
+   If called for *text* that doesn’t include a period character ("'.'"), it will
+   complete from names currently defined in |:library/__main__.txt/module-__main__:__main__|, |:library/builtins.txt/module-builtins:builtins| and keywords (as
+   defined by the |:library/keyword.txt/module-keyword:keyword| module).
+
+   If called for a dotted name, it will try to evaluate anything without obvious
+   side-effects (functions will not be evaluated, but it can generate calls to "
+   __getattr__()") up to the last part, and find matches for the rest via the
+   |:library/functions.txt/dir:dir()| function.  Any exception raised during the evaluation of the expression
+   is caught, silenced and |:library/constants.txt/None:None| is returned.
+
+
+

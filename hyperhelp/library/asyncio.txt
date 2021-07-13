@@ -1,0 +1,92 @@
+%hyperhelp title="asyncio" date="2021-07-11"
+*|module-asyncio:⚓|*
+
+======================================================================
+
+ Hello World!
+
+```rst
+import asyncio
+
+async def main():
+    print('Hello ...')
+    await asyncio.sleep(1)
+    print('... World!')
+
+# Python 3.7+
+asyncio.run(main())
+```
+
+asyncio is a library to write *concurrent* code using the *async/await* syntax.
+
+asyncio is used as a foundation for multiple Python asynchronous frameworks that
+provide high-performance network and web-servers, database connection libraries,
+distributed task queues, etc.
+
+asyncio is often a perfect fit for IO-bound and high-level *structured* network
+code.
+
+asyncio provides a set of *high-level* APIs to:
+
+* |:library/asyncio-task.txt/coroutine:run Python coroutines| concurrently and have full control over their execution;
+
+* perform |:library/asyncio-stream.txt/asyncio-streams:network IO and IPC|;
+
+* control |:library/asyncio-subprocess.txt/asyncio-subprocess:subprocesses|;
+
+* distribute tasks via |:library/asyncio-queue.txt/asyncio-queues:queues|;
+
+* |:library/asyncio-sync.txt/asyncio-sync:synchronize| concurrent code;
+
+Additionally, there are *low-level* APIs for *library and framework developers*
+to:
+
+* create and manage |:library/asyncio-eventloop.txt/asyncio-event-loop:event loops|, which provide asynchronous APIs for
+  |:library/asyncio-eventloop.txt/asyncio.loop.create_server:networking|, running |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_exec:subprocesses|, handling |:library/asyncio-eventloop.txt/asyncio.loop.add_signal_handler:OS signals|, etc;
+
+* implement efficient protocols using |:library/asyncio-protocol.txt/asyncio-transports-protocols:transports|;
+
+* |:library/asyncio-future.txt/asyncio-futures:bridge| callback-based libraries and code with async/await syntax.
+
+-[ Reference ]-
+
+ High-level APIs
+
+* |:library/asyncio-task.txt:Coroutines and Tasks|
+
+* |:library/asyncio-stream.txt:Streams|
+
+* |:library/asyncio-sync.txt:Synchronization Primitives|
+
+* |:library/asyncio-subprocess.txt:Subprocesses|
+
+* |:library/asyncio-queue.txt:Queues|
+
+* |:library/asyncio-exceptions.txt:Exceptions|
+
+ Low-level APIs
+
+* |:library/asyncio-eventloop.txt:Event Loop|
+
+* |:library/asyncio-future.txt:Futures|
+
+* |:library/asyncio-protocol.txt:Transports and Protocols|
+
+* |:library/asyncio-policy.txt:Policies|
+
+* |:library/asyncio-platforms.txt:Platform Support|
+
+ Guides and Tutorials
+
+* |:library/asyncio-api-index.txt:High-level API Index|
+
+* |:library/asyncio-llapi-index.txt:Low-level API Index|
+
+* |:library/asyncio-dev.txt:Developing with asyncio|
+
+Note:
+
+  The source code for asyncio can be found in |:github.com/python/cpython/tree/3.8/Lib/asyncio:Lib/asyncio/|.
+
+
+

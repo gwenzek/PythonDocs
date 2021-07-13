@@ -1,0 +1,518 @@
+%hyperhelp title="What’s New In Python 3.1" date="2021-07-11"
+*|what-s-new-in-python-3-1:⚓|*
+
+Author:
+   Raymond Hettinger
+
+This article explains the new features in Python 3.1, compared to 3.0.
+
+# pep-372-ordered-dictionaries:PEP 372: Ordered Dictionaries
+
+Regular Python dictionaries iterate over key/value pairs in arbitrary order.
+Over the years, a number of authors have written alternative implementations
+that remember the order that the keys were originally inserted.  Based on the
+experiences from those implementations, a new |:library/collections.txt/collections.OrderedDict:collections.OrderedDict| class
+has been introduced.
+
+The OrderedDict API is substantially the same as regular dictionaries but will
+iterate over keys and values in a guaranteed order depending on when a key was
+first inserted.  If a new entry overwrites an existing entry, the original
+insertion position is left unchanged.  Deleting an entry and reinserting it will
+move it to the end.
+
+The standard library now supports use of ordered dictionaries in several
+modules.  The |:library/configparser.txt/module-configparser:configparser| module uses them by default.  This lets
+configuration files be read, modified, and then written back in their original
+order.  The *_asdict()* method for |:library/collections.txt/collections.namedtuple:collections.namedtuple()| now returns an
+ordered dictionary with the values appearing in the same order as the underlying
+tuple indices.  The |:library/json.txt/module-json:json| module is being built-out with an *object_pairs_hook*
+to allow OrderedDicts to be built by the decoder. Support was also added for
+third-party tools like |:pyyaml.org:PyYAML|*|pyyaml:⚓|* .
+
+See also:
+
+  *|index-0:⚓|*
+  |:www.python.org/dev/peps/pep-0372:PEP 372| - Ordered Dictionaries
+     PEP written by Armin Ronacher and Raymond Hettinger.  Implementation written by
+     Raymond Hettinger.
+
+# pep-378-format-specifier-for-thousands-separator:PEP 378: Format Specifier for
+Thousands Separator
+
+The built-in |:library/functions.txt/format:format()| function and the |:library/stdtypes.txt/str.format:str.format()| method use a mini-
+language that now includes a simple, non-locale aware way to format a number
+with a thousands separator.  That provides a way to humanize a program’s output,
+improving its professional appearance and readability:
+
+```rst
+>>> format(1234567, ',d')
+'1,234,567'
+>>> format(1234567.89, ',.2f')
+'1,234,567.89'
+>>> format(12345.6 + 8901234.12j, ',f')
+'12,345.600000+8,901,234.120000j'
+>>> format(Decimal('1234567.89'), ',f')
+'1,234,567.89'
+```
+
+The supported types are |:library/functions.txt/int:int|, |:library/functions.txt/float:float|, |:library/functions.txt/complex:complex| and |:library/decimal.txt/decimal.Decimal:decimal.Decimal|.
+
+Discussions are underway about how to specify alternative separators like dots,
+spaces, apostrophes, or underscores.  Locale-aware applications should use the
+existing *n* format specifier which already has some support for thousands
+separators.
+
+See also:
+
+  *|index-1:⚓|*
+  |:www.python.org/dev/peps/pep-0378:PEP 378| - Format Specifier for Thousands Separator
+     PEP written by Raymond Hettinger and implemented by Eric Smith and Mark
+     Dickinson.
+
+# other-language-changes:Other Language Changes
+
+Some smaller changes made to the core Python language are:
+
+* Directories and zip archives containing a "__main__.py" file can now be executed
+  directly by passing their name to the interpreter. The directory/zipfile is
+  automatically inserted as the first entry in sys.path.  (Suggestion and initial
+  patch by Andy Chu; revised patch by Phillip J. Eby and Nick Coghlan;
+  |:bugs.python.org/issue1739468:bpo-1739468|.)
+
+* The |:library/functions.txt/int:int()| type gained a "bit_length" method that returns the number of bits
+  necessary to represent its argument in binary:
+
+```rst
+>>> n = 37
+>>> bin(37)
+'0b100101'
+>>> n.bit_length()
+6
+>>> n = 2**123-1
+>>> n.bit_length()
+123
+>>> (n+1).bit_length()
+124
+```
+
+  (Contributed by Fredrik Johansson, Victor Stinner, Raymond Hettinger, and Mark
+  Dickinson; |:bugs.python.org/issue3439:bpo-3439|.)
+
+* The fields in |:library/functions.txt/format:format()| strings can now be automatically numbered:
+
+```rst
+>>> 'Sir {} of {}'.format('Gallahad', 'Camelot')
+'Sir Gallahad of Camelot'
+```
+
+  Formerly, the string would have required numbered fields such as: "'Sir {0} of
+  {1}'".
+
+  (Contributed by Eric Smith; |:bugs.python.org/issue5237:bpo-5237|.)
+
+* The "string.maketrans()" function is deprecated and is replaced by new static
+  methods, |:library/stdtypes.txt/bytes.maketrans:bytes.maketrans()| and |:library/stdtypes.txt/bytearray.maketrans:bytearray.maketrans()|. This change solves the
+  confusion around which types were supported by the |:library/string.txt/module-string:string| module. Now, |:library/stdtypes.txt/str:str|,
+  |:library/stdtypes.txt/bytes:bytes|, and |:library/stdtypes.txt/bytearray:bytearray| each have their own *maketrans* and *translate* methods
+  with intermediate translation tables of the appropriate type.
+
+  (Contributed by Georg Brandl; |:bugs.python.org/issue5675:bpo-5675|.)
+
+* The syntax of the |:reference/compound_stmts.txt/with:with| statement now allows multiple context managers in a
+  single statement:
+
+```rst
+>>> with open('mylog.txt') as infile, open('a.out', 'w') as outfile:
+...     for line in infile:
+...         if '<critical>' in line:
+...             outfile.write(line)
+```
+
+  With the new syntax, the "contextlib.nested()" function is no longer needed and
+  is now deprecated.
+
+  (Contributed by Georg Brandl and Mattias Brändström; |:codereview.appspot.com/53094:appspot issue 53094|
+  *|appspot-issue-53094:⚓|* .)
+
+* "round(x, n)" now returns an integer if *x* is an integer. Previously it
+  returned a float:
+
+```rst
+>>> round(1123, -2)
+1100
+```
+
+  (Contributed by Mark Dickinson; |:bugs.python.org/issue4707:bpo-4707|.)
+
+* Python now uses David Gay’s algorithm for finding the shortest floating point
+  representation that doesn’t change its value.  This should help mitigate some of
+  the confusion surrounding binary floating point numbers.
+
+  The significance is easily seen with a number like "1.1" which does not have an
+  exact equivalent in binary floating point.  Since there is no exact equivalent,
+  an expression like "float('1.1')" evaluates to the nearest representable value
+  which is "0x1.199999999999ap+0" in hex or "
+  1.100000000000000088817841970012523233890533447265625" in decimal. That nearest
+  value was and still is used in subsequent floating point calculations.
+
+  What is new is how the number gets displayed.  Formerly, Python used a simple
+  approach.  The value of "repr(1.1)" was computed as "format(1.1, '.17g')" which
+  evaluated to "'1.1000000000000001'". The advantage of using 17 digits was that
+  it relied on IEEE-754 guarantees to assure that "eval(repr(1.1))" would round-
+  trip exactly to its original value.  The disadvantage is that many people found
+  the output to be confusing (mistaking intrinsic limitations of binary floating
+  point representation as being a problem with Python itself).
+
+  The new algorithm for "repr(1.1)" is smarter and returns "'1.1'". Effectively,
+  it searches all equivalent string representations (ones that get stored with the
+  same underlying float value) and returns the shortest representation.
+
+  The new algorithm tends to emit cleaner representations when possible, but it
+  does not change the underlying values.  So, it is still the case that "1.1 + 2.2
+  != 3.3" even though the representations may suggest otherwise.
+
+  The new algorithm depends on certain features in the underlying floating point
+  implementation.  If the required features are not found, the old algorithm will
+  continue to be used.  Also, the text pickle protocols assure cross-platform
+  portability by using the old algorithm.
+
+  (Contributed by Eric Smith and Mark Dickinson; |:bugs.python.org/issue1580:bpo-1580|)
+
+# new-improved-and-deprecated-modules:New, Improved, and Deprecated Modules
+
+* Added a |:library/collections.txt/collections.Counter:collections.Counter| class to support convenient counting of unique
+  items in a sequence or iterable:
+
+```rst
+>>> Counter(['red', 'blue', 'red', 'green', 'blue', 'blue'])
+Counter({'blue': 3, 'red': 2, 'green': 1})
+```
+
+  (Contributed by Raymond Hettinger; |:bugs.python.org/issue1696199:bpo-1696199|.)
+
+* Added a new module, |:library/tkinter.ttk.txt/module-tkinter.ttk:tkinter.ttk| for access to the Tk themed widget set. The
+  basic idea of ttk is to separate, to the extent possible, the code implementing
+  a widget’s behavior from the code implementing its appearance.
+
+  (Contributed by Guilherme Polo; |:bugs.python.org/issue2983:bpo-2983|.)
+
+* The |:library/gzip.txt/gzip.GzipFile:gzip.GzipFile| and |:library/bz2.txt/bz2.BZ2File:bz2.BZ2File| classes now support the context management
+  protocol:
+
+```rst
+>>> # Automatically close file after writing
+>>> with gzip.GzipFile(filename, "wb") as f:
+...     f.write(b"xxx")
+```
+
+  (Contributed by Antoine Pitrou.)
+
+* The |:library/decimal.txt/module-decimal:decimal| module now supports methods for creating a decimal object from a
+  binary |:library/functions.txt/float:float|.  The conversion is exact but can sometimes be surprising:
+
+```rst
+>>> Decimal.from_float(1.1)
+Decimal('1.100000000000000088817841970012523233890533447265625')
+```
+
+  The long decimal result shows the actual binary fraction being stored for *1.1*.
+  The fraction has many digits because *1.1* cannot be exactly represented in
+  binary.
+
+  (Contributed by Raymond Hettinger and Mark Dickinson.)
+
+* The |:library/itertools.txt/module-itertools:itertools| module grew two new functions.  The
+  |:library/itertools.txt/itertools.combinations_with_replacement:itertools.combinations_with_replacement()| function is one of four for
+  generating combinatorics including permutations and Cartesian products.  The
+  |:library/itertools.txt/itertools.compress:itertools.compress()| function mimics its namesake from APL.  Also, the
+  existing |:library/itertools.txt/itertools.count:itertools.count()| function now has an optional *step* argument and
+  can accept any type of counting sequence including |:library/fractions.txt/fractions.Fraction:fractions.Fraction| and
+  |:library/decimal.txt/decimal.Decimal:decimal.Decimal|:
+
+```rst
+>>> [p+q for p,q in combinations_with_replacement('LOVE', 2)]
+['LL', 'LO', 'LV', 'LE', 'OO', 'OV', 'OE', 'VV', 'VE', 'EE']
+
+>>> list(compress(data=range(10), selectors=[0,0,1,1,0,1,0,1,0,0]))
+[2, 3, 5, 7]
+
+>>> c = count(start=Fraction(1,2), step=Fraction(1,6))
+>>> [next(c), next(c), next(c), next(c)]
+[Fraction(1, 2), Fraction(2, 3), Fraction(5, 6), Fraction(1, 1)]
+```
+
+  (Contributed by Raymond Hettinger.)
+
+* |:library/collections.txt/collections.namedtuple:collections.namedtuple()| now supports a keyword argument *rename* which lets
+  invalid fieldnames be automatically converted to positional names in the form
+  _0, _1, etc.  This is useful when the field names are being created by an
+  external source such as a CSV header, SQL field list, or user input:
+
+```rst
+>>> query = input()
+SELECT region, dept, count(*) FROM main GROUPBY region, dept
+
+>>> cursor.execute(query)
+>>> query_fields = [desc[0] for desc in cursor.description]
+>>> UserQuery = namedtuple('UserQuery', query_fields, rename=True)
+>>> pprint.pprint([UserQuery(*row) for row in cursor])
+[UserQuery(region='South', dept='Shipping', _2=185),
+ UserQuery(region='North', dept='Accounting', _2=37),
+ UserQuery(region='West', dept='Sales', _2=419)]
+```
+
+  (Contributed by Raymond Hettinger; |:bugs.python.org/issue1818:bpo-1818|.)
+
+* The |:library/re.txt/re.sub:re.sub()|, |:library/re.txt/re.subn:re.subn()| and |:library/re.txt/re.split:re.split()| functions now accept a flags
+  parameter.
+
+  (Contributed by Gregory Smith.)
+
+* The |:library/logging.txt/module-logging:logging| module now implements a simple |:library/logging.handlers.txt/logging.NullHandler:logging.NullHandler| class for
+  applications that are not using logging but are calling library code that does.
+  Setting-up a null handler will suppress spurious warnings such as “No handlers
+  could be found for logger foo”:
+
+```rst
+>>> h = logging.NullHandler()
+>>> logging.getLogger("foo").addHandler(h)
+```
+
+  (Contributed by Vinay Sajip; |:bugs.python.org/issue4384:bpo-4384|).
+
+* The |:library/runpy.txt/module-runpy:runpy| module which supports the "-m" command line switch now supports the
+  execution of packages by looking for and executing a "__main__" submodule when a
+  package name is supplied.
+
+  (Contributed by Andi Vajda; |:bugs.python.org/issue4195:bpo-4195|.)
+
+* The |:library/pdb.txt/module-pdb:pdb| module can now access and display source code loaded via |:library/zipimport.txt/module-zipimport:zipimport|
+  (or any other conformant *|index-2:⚓|* |:www.python.org/dev/peps/pep-0302:PEP 302| loader).
+
+  (Contributed by Alexander Belopolsky; |:bugs.python.org/issue4201:bpo-4201|.)
+
+* |:library/functools.txt/functools.partial:functools.partial| objects can now be pickled.
+
+   (Suggested by Antoine Pitrou and Jesse Noller.  Implemented by Jack Diederich;
+   |:bugs.python.org/issue5228:bpo-5228|.)
+
+* Add |:library/pydoc.txt/module-pydoc:pydoc| help topics for symbols so that "help('@')" works as expected in the
+  interactive environment.
+
+  (Contributed by David Laban; |:bugs.python.org/issue4739:bpo-4739|.)
+
+* The |:library/unittest.txt/module-unittest:unittest| module now supports skipping individual tests or classes of
+  tests. And it supports marking a test as an expected failure, a test that is
+  known to be broken, but shouldn’t be counted as a failure on a TestResult:
+
+```rst
+class TestGizmo(unittest.TestCase):
+
+    @unittest.skipUnless(sys.platform.startswith("win"), "requires Windows")
+    def test_gizmo_on_windows(self):
+        ...
+
+    @unittest.expectedFailure
+    def test_gimzo_without_required_library(self):
+        ...
+```
+
+  Also, tests for exceptions have been builtout to work with context managers
+  using the |:reference/compound_stmts.txt/with:with| statement:
+
+```rst
+def test_division_by_zero(self):
+    with self.assertRaises(ZeroDivisionError):
+        x / 0
+```
+
+  In addition, several new assertion methods were added including "
+  assertSetEqual()", "assertDictEqual()", "assertDictContainsSubset()", "
+  assertListEqual()", "assertTupleEqual()", "assertSequenceEqual()", "
+  assertRaisesRegexp()", "assertIsNone()", and "assertIsNotNone()".
+
+  (Contributed by Benjamin Peterson and Antoine Pitrou.)
+
+* The |:library/io.txt/module-io:io| module has three new constants for the "seek()" method "SEEK_SET", "
+  SEEK_CUR", and "SEEK_END".
+
+* The |:library/sys.txt/sys.version_info:sys.version_info| tuple is now a named tuple:
+
+```rst
+>>> sys.version_info
+sys.version_info(major=3, minor=1, micro=0, releaselevel='alpha', serial=2)
+```
+
+  (Contributed by Ross Light; |:bugs.python.org/issue4285:bpo-4285|.)
+
+* The |:library/nntplib.txt/module-nntplib:nntplib| and |:library/imaplib.txt/module-imaplib:imaplib| modules now support IPv6.
+
+  (Contributed by Derek Morr; |:bugs.python.org/issue1655:bpo-1655| and |:bugs.python.org/issue1664:bpo-1664|.)
+
+* The |:library/pickle.txt/module-pickle:pickle| module has been adapted for better interoperability with Python 2.x
+  when used with protocol 2 or lower.  The reorganization of the standard library
+  changed the formal reference for many objects.  For example, "__builtin__.set"
+  in Python 2 is called "builtins.set" in Python 3. This change confounded efforts
+  to share data between different versions of Python.  But now when protocol 2 or
+  lower is selected, the pickler will automatically use the old Python 2 names for
+  both loading and dumping. This remapping is turned-on by default but can be
+  disabled with the *fix_imports* option:
+
+```rst
+>>> s = {1, 2, 3}
+>>> pickle.dumps(s, protocol=0)
+b'c__builtin__\nset\np0\n((lp1\nL1L\naL2L\naL3L\natp2\nRp3\n.'
+>>> pickle.dumps(s, protocol=0, fix_imports=False)
+b'cbuiltins\nset\np0\n((lp1\nL1L\naL2L\naL3L\natp2\nRp3\n.'
+```
+
+  An unfortunate but unavoidable side-effect of this change is that protocol 2
+  pickles produced by Python 3.1 won’t be readable with Python 3.0. The latest
+  pickle protocol, protocol 3, should be used when migrating data between Python
+  3.x implementations, as it doesn’t attempt to remain compatible with Python 2.x.
+
+  (Contributed by Alexandre Vassalotti and Antoine Pitrou, |:bugs.python.org/issue6137:bpo-6137|.)
+
+* A new module, |:library/importlib.txt/module-importlib:importlib| was added.  It provides a complete, portable, pure
+  Python reference implementation of the |:reference/simple_stmts.txt/import:import| statement and its counterpart,
+  the |:library/functions.txt/import__:__import__()| function.  It represents a substantial step forward in
+  documenting and defining the actions that take place during imports.
+
+  (Contributed by Brett Cannon.)
+
+# optimizations:Optimizations
+
+Major performance enhancements have been added:
+
+* The new I/O library (as defined in *|index-3:⚓|* |:www.python.org/dev/peps/pep-3116:PEP 3116|) was mostly written
+  in Python and quickly proved to be a problematic bottleneck in Python 3.0. In
+  Python 3.1, the I/O library has been entirely rewritten in C and is 2 to 20
+  times faster depending on the task at hand. The pure Python version is still
+  available for experimentation purposes through the "_pyio" module.
+
+  (Contributed by Amaury Forgeot d’Arc and Antoine Pitrou.)
+
+* Added a heuristic so that tuples and dicts containing only untrackable objects
+  are not tracked by the garbage collector. This can reduce the size of
+  collections and therefore the garbage collection overhead on long-running
+  programs, depending on their particular use of datatypes.
+
+  (Contributed by Antoine Pitrou, |:bugs.python.org/issue4688:bpo-4688|.)
+
+* Enabling a configure option named "--with-computed-gotos" on compilers that
+  support it (notably: gcc, SunPro, icc), the bytecode evaluation loop is compiled
+  with a new dispatch mechanism which gives speedups of up to 20%, depending on
+  the system, the compiler, and the benchmark.
+
+  (Contributed by Antoine Pitrou along with a number of other participants,
+  |:bugs.python.org/issue4753:bpo-4753|).
+
+* The decoding of UTF-8, UTF-16 and LATIN-1 is now two to four times faster.
+
+  (Contributed by Antoine Pitrou and Amaury Forgeot d’Arc, |:bugs.python.org/issue4868:bpo-4868|.)
+
+* The |:library/json.txt/module-json:json| module now has a C extension to substantially improve its
+  performance.  In addition, the API was modified so that json works only with
+  |:library/stdtypes.txt/str:str|, not with |:library/stdtypes.txt/bytes:bytes|.  That change makes the module closely match the
+  |:json.org:JSON specification|*|json-specification:⚓|*  which is defined in terms of
+  Unicode.
+
+  (Contributed by Bob Ippolito and converted to Py3.1 by Antoine Pitrou and
+  Benjamin Peterson; |:bugs.python.org/issue4136:bpo-4136|.)
+
+* Unpickling now interns the attribute names of pickled objects.  This saves
+  memory and allows pickles to be smaller.
+
+  (Contributed by Jake McGuire and Antoine Pitrou; |:bugs.python.org/issue5084:bpo-5084|.)
+
+# idle:IDLE
+
+* IDLE’s format menu now provides an option to strip trailing whitespace from a
+  source file.
+
+  (Contributed by Roger D. Serwy; |:bugs.python.org/issue5150:bpo-5150|.)
+
+# build-and-c-api-changes:Build and C API Changes
+
+Changes to Python’s build process and to the C API include:
+
+* Integers are now stored internally either in base 2**15 or in base 2**30, the
+  base being determined at build time.  Previously, they were always stored in
+  base 2**15.  Using base 2**30 gives significant performance improvements on
+  64-bit machines, but benchmark results on 32-bit machines have been mixed.
+  Therefore, the default is to use base 2**30 on 64-bit machines and base 2**15 on
+  32-bit machines; on Unix, there’s a new configure option "--enable-big-digits"
+  that can be used to override this default.
+
+  Apart from the performance improvements this change should be invisible to end
+  users, with one exception: for testing and debugging purposes there’s a new
+  |:library/sys.txt/sys.int_info:sys.int_info| that provides information about the internal format, giving the
+  number of bits per digit and the size in bytes of the C type used to store each
+  digit:
+
+```rst
+>>> import sys
+>>> sys.int_info
+sys.int_info(bits_per_digit=30, sizeof_digit=4)
+```
+
+  (Contributed by Mark Dickinson; |:bugs.python.org/issue4258:bpo-4258|.)
+
+* The |:c-api/long.txt/c.PyLong_AsUnsignedLongLong:PyLong_AsUnsignedLongLong()| function now handles a negative *pylong* by
+  raising |:library/exceptions.txt/OverflowError:OverflowError| instead of |:library/exceptions.txt/TypeError:TypeError|.
+
+  (Contributed by Mark Dickinson and Lisandro Dalcrin; |:bugs.python.org/issue5175:bpo-5175|.)
+
+* Deprecated "PyNumber_Int()".  Use |:c-api/number.txt/c.PyNumber_Long:PyNumber_Long()| instead.
+
+  (Contributed by Mark Dickinson; |:bugs.python.org/issue4910:bpo-4910|.)
+
+* Added a new |:c-api/conversion.txt/c.PyOS_string_to_double:PyOS_string_to_double()| function to replace the deprecated
+  functions "PyOS_ascii_strtod()" and "PyOS_ascii_atof()".
+
+  (Contributed by Mark Dickinson; |:bugs.python.org/issue5914:bpo-5914|.)
+
+* Added |:c-api/capsule.txt/c.PyCapsule:PyCapsule| as a replacement for the "PyCObject" API. The principal
+  difference is that the new type has a well defined interface for passing typing
+  safety information and a less complicated signature for calling a destructor.
+  The old type had a problematic API and is now deprecated.
+
+  (Contributed by Larry Hastings; |:bugs.python.org/issue5630:bpo-5630|.)
+
+# porting-to-python-3-1:Porting to Python 3.1
+
+This section lists previously described changes and other bugfixes that may
+require changes to your code:
+
+* The new floating point string representations can break existing doctests. For
+  example:
+
+```rst
+def e():
+    '''Compute the base of natural logarithms.
+
+    >>> e()
+    2.7182818284590451
+
+    '''
+    return sum(1/math.factorial(x) for x in reversed(range(30)))
+
+doctest.testmod()
+
+**********************************************************************
+Failed example:
+    e()
+Expected:
+    2.7182818284590451
+Got:
+    2.718281828459045
+**********************************************************************
+```
+
+* The automatic name remapping in the pickle module for protocol 2 or lower can
+  make Python 3.1 pickles unreadable in Python 3.0.  One solution is to use
+  protocol 3.  Another solution is to set the *fix_imports* option to "False". See
+  the discussion above for more details.
+
+
+

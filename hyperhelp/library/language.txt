@@ -1,0 +1,87 @@
+%hyperhelp title="Python Language Services" date="2021-07-11"
+*|python-language-services:⚓|*
+
+Python provides a number of modules to assist in working with the Python
+language.  These modules support tokenizing, parsing, syntax analysis, bytecode
+disassembly, and various other facilities.
+
+These modules include:
+
+* |:library/parser.txt:parser — Access Python parse trees|
+
+  * |:library/parser.txt/creating-st-objects:Creating ST Objects|
+
+  * |:library/parser.txt/converting-st-objects:Converting ST Objects|
+
+  * |:library/parser.txt/queries-on-st-objects:Queries on ST Objects|
+
+  * |:library/parser.txt/exceptions-and-error-handling:Exceptions and Error Handling|
+
+  * |:library/parser.txt/st-objects:ST Objects|
+
+  * |:library/parser.txt/example-emulation-of-compile:Example: Emulation of compile()|
+
+* |:library/ast.txt:ast — Abstract Syntax Trees|
+
+  * |:library/ast.txt/node-classes:Node classes|
+
+  * |:library/ast.txt/abstract-grammar:Abstract Grammar|
+
+  * |:library/ast.txt/ast-helpers:ast Helpers|
+
+* |:library/symtable.txt:symtable — Access to the compiler’s symbol tables|
+
+  * |:library/symtable.txt/generating-symbol-tables:Generating Symbol Tables|
+
+  * |:library/symtable.txt/examining-symbol-tables:Examining Symbol Tables|
+
+* |:library/symbol.txt:symbol — Constants used with Python parse trees|
+
+* |:library/token.txt:token — Constants used with Python parse trees|
+
+* |:library/keyword.txt:keyword — Testing for Python keywords|
+
+* |:library/tokenize.txt:tokenize — Tokenizer for Python source|
+
+  * |:library/tokenize.txt/tokenizing-input:Tokenizing Input|
+
+  * |:library/tokenize.txt/command-line-usage:Command-Line Usage|
+
+  * |:library/tokenize.txt/examples:Examples|
+
+* |:library/tabnanny.txt:tabnanny — Detection of ambiguous indentation|
+
+* |:library/pyclbr.txt:pyclbr — Python module browser support|
+
+  * |:library/pyclbr.txt/function-objects:Function Objects|
+
+  * |:library/pyclbr.txt/class-objects:Class Objects|
+
+* |:library/py_compile.txt:py_compile — Compile Python source files|
+
+* |:library/compileall.txt:compileall — Byte-compile Python libraries|
+
+  * |:library/compileall.txt/command-line-use:Command-line use|
+
+  * |:library/compileall.txt/public-functions:Public functions|
+
+* |:library/dis.txt:dis — Disassembler for Python bytecode|
+
+  * |:library/dis.txt/bytecode-analysis:Bytecode analysis|
+
+  * |:library/dis.txt/analysis-functions:Analysis functions|
+
+  * |:library/dis.txt/python-bytecode-instructions:Python Bytecode Instructions|
+
+  * |:library/dis.txt/opcode-collections:Opcode collections|
+
+* |:library/pickletools.txt:pickletools — Tools for pickle developers|
+
+  * |:library/pickletools.txt/command-line-usage:Command line usage|
+
+    * |:library/pickletools.txt/command-line-options:Command line options|
+
+  * |:library/pickletools.txt/programmatic-interface:Programmatic Interface|
+
+
+

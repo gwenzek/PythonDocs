@@ -1,0 +1,14 @@
+%hyperhelp title="The Python Package Index (PyPI)" date="2021-07-11"
+*|the-python-package-index-pypi:⚓|*
+
+The |:pypi.org:Python Package Index (PyPI)| stores metadata describing distributions
+packaged with distutils and other publishing tools, as well the distribution
+archives themselves.
+
+References to up to date PyPI documentation can be found at
+|:distributing/index.txt/publishing-python-packages:Reading the Python Packaging User Guide|.
+
+*|python-package-index-pypi:⚓|*
+
+
+

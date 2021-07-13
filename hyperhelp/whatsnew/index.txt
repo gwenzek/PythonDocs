@@ -1,0 +1,587 @@
+%hyperhelp title="What’s New in Python" date="2021-07-11"
+*|what-s-new-in-python:⚓|*
+
+The “What’s New in Python” series of essays takes tours through the most
+important changes between major Python versions.  They are a “must read” for
+anyone wishing to stay up-to-date after a new release.
+
+* |:whatsnew/3.8.txt:What’s New In Python 3.8|
+
+  * |:whatsnew/3.8.txt/summary-release-highlights:Summary – Release highlights|
+
+  * |:whatsnew/3.8.txt/new-features:New Features|
+
+  * |:whatsnew/3.8.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/3.8.txt/new-modules:New Modules|
+
+  * |:whatsnew/3.8.txt/improved-modules:Improved Modules|
+
+  * |:whatsnew/3.8.txt/optimizations:Optimizations|
+
+  * |:whatsnew/3.8.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/3.8.txt/deprecated:Deprecated|
+
+  * |:whatsnew/3.8.txt/api-and-feature-removals:API and Feature Removals|
+
+  * |:whatsnew/3.8.txt/porting-to-python-3-8:Porting to Python 3.8|
+
+  * |:whatsnew/3.8.txt/notable-changes-in-python-3-8-1:Notable changes in Python 3.8.1|
+
+  * |:whatsnew/3.8.txt/notable-changes-in-python-3-8-2:Notable changes in Python 3.8.2|
+
+  * |:whatsnew/3.8.txt/notable-changes-in-python-3-8-3:Notable changes in Python 3.8.3|
+
+  * |:whatsnew/3.8.txt/notable-changes-in-python-3-8-8:Notable changes in Python 3.8.8|
+
+* |:whatsnew/3.7.txt:What’s New In Python 3.7|
+
+  * |:whatsnew/3.7.txt/summary-release-highlights:Summary – Release Highlights|
+
+  * |:whatsnew/3.7.txt/new-features:New Features|
+
+  * |:whatsnew/3.7.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/3.7.txt/new-modules:New Modules|
+
+  * |:whatsnew/3.7.txt/improved-modules:Improved Modules|
+
+  * |:whatsnew/3.7.txt/c-api-changes:C API Changes|
+
+  * |:whatsnew/3.7.txt/build-changes:Build Changes|
+
+  * |:whatsnew/3.7.txt/optimizations:Optimizations|
+
+  * |:whatsnew/3.7.txt/other-cpython-implementation-changes:Other CPython Implementation Changes|
+
+  * |:whatsnew/3.7.txt/deprecated-python-behavior:Deprecated Python Behavior|
+
+  * |:whatsnew/3.7.txt/deprecated-python-modules-functions-and-methods:Deprecated Python modules, functions and methods|
+
+  * |:whatsnew/3.7.txt/deprecated-functions-and-types-of-the-c-api:Deprecated functions and types of the C API|
+
+  * |:whatsnew/3.7.txt/platform-support-removals:Platform Support Removals|
+
+  * |:whatsnew/3.7.txt/api-and-feature-removals:API and Feature Removals|
+
+  * |:whatsnew/3.7.txt/module-removals:Module Removals|
+
+  * |:whatsnew/3.7.txt/windows-only-changes:Windows-only Changes|
+
+  * |:whatsnew/3.7.txt/porting-to-python-3-7:Porting to Python 3.7|
+
+  * |:whatsnew/3.7.txt/notable-changes-in-python-3-7-1:Notable changes in Python 3.7.1|
+
+  * |:whatsnew/3.7.txt/notable-changes-in-python-3-7-2:Notable changes in Python 3.7.2|
+
+  * |:whatsnew/3.7.txt/notable-changes-in-python-3-7-6:Notable changes in Python 3.7.6|
+
+  * |:whatsnew/3.7.txt/notable-changes-in-python-3-7-10:Notable changes in Python 3.7.10|
+
+* |:whatsnew/3.6.txt:What’s New In Python 3.6|
+
+  * |:whatsnew/3.6.txt/summary-release-highlights:Summary – Release highlights|
+
+  * |:whatsnew/3.6.txt/new-features:New Features|
+
+  * |:whatsnew/3.6.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/3.6.txt/new-modules:New Modules|
+
+  * |:whatsnew/3.6.txt/improved-modules:Improved Modules|
+
+  * |:whatsnew/3.6.txt/optimizations:Optimizations|
+
+  * |:whatsnew/3.6.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/3.6.txt/other-improvements:Other Improvements|
+
+  * |:whatsnew/3.6.txt/deprecated:Deprecated|
+
+  * |:whatsnew/3.6.txt/removed:Removed|
+
+  * |:whatsnew/3.6.txt/porting-to-python-3-6:Porting to Python 3.6|
+
+  * |:whatsnew/3.6.txt/notable-changes-in-python-3-6-2:Notable changes in Python 3.6.2|
+
+  * |:whatsnew/3.6.txt/notable-changes-in-python-3-6-4:Notable changes in Python 3.6.4|
+
+  * |:whatsnew/3.6.txt/notable-changes-in-python-3-6-5:Notable changes in Python 3.6.5|
+
+  * |:whatsnew/3.6.txt/notable-changes-in-python-3-6-7:Notable changes in Python 3.6.7|
+
+  * |:whatsnew/3.6.txt/notable-changes-in-python-3-6-10:Notable changes in Python 3.6.10|
+
+  * |:whatsnew/3.6.txt/notable-changes-in-python-3-6-13:Notable changes in Python 3.6.13|
+
+* |:whatsnew/3.5.txt:What’s New In Python 3.5|
+
+  * |:whatsnew/3.5.txt/summary-release-highlights:Summary – Release highlights|
+
+  * |:whatsnew/3.5.txt/new-features:New Features|
+
+  * |:whatsnew/3.5.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/3.5.txt/new-modules:New Modules|
+
+  * |:whatsnew/3.5.txt/improved-modules:Improved Modules|
+
+  * |:whatsnew/3.5.txt/other-module-level-changes:Other module-level changes|
+
+  * |:whatsnew/3.5.txt/optimizations:Optimizations|
+
+  * |:whatsnew/3.5.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/3.5.txt/deprecated:Deprecated|
+
+  * |:whatsnew/3.5.txt/removed:Removed|
+
+  * |:whatsnew/3.5.txt/porting-to-python-3-5:Porting to Python 3.5|
+
+  * |:whatsnew/3.5.txt/notable-changes-in-python-3-5-4:Notable changes in Python 3.5.4|
+
+* |:whatsnew/3.4.txt:What’s New In Python 3.4|
+
+  * |:whatsnew/3.4.txt/summary-release-highlights:Summary – Release Highlights|
+
+  * |:whatsnew/3.4.txt/new-features:New Features|
+
+  * |:whatsnew/3.4.txt/new-modules:New Modules|
+
+  * |:whatsnew/3.4.txt/improved-modules:Improved Modules|
+
+  * |:whatsnew/3.4.txt/cpython-implementation-changes:CPython Implementation Changes|
+
+  * |:whatsnew/3.4.txt/deprecated:Deprecated|
+
+  * |:whatsnew/3.4.txt/removed:Removed|
+
+  * |:whatsnew/3.4.txt/porting-to-python-3-4:Porting to Python 3.4|
+
+  * |:whatsnew/3.4.txt/changed-in-3-4-3:Changed in 3.4.3|
+
+* |:whatsnew/3.3.txt:What’s New In Python 3.3|
+
+  * |:whatsnew/3.3.txt/summary-release-highlights:Summary – Release highlights|
+
+  * |:whatsnew/3.3.txt/pep-405-virtual-environments:PEP 405: Virtual Environments|
+
+  * |:whatsnew/3.3.txt/pep-420-implicit-namespace-packages:PEP 420: Implicit Namespace Packages|
+
+  * |:whatsnew/3.3.txt/pep-3118-new-memoryview-implementation-and-buffer-protocol-documentation:PEP 3118: New memoryview implementation and buffer protocol documentation|
+
+  * |:whatsnew/3.3.txt/pep-393-flexible-string-representation:PEP 393: Flexible String Representation|
+
+  * |:whatsnew/3.3.txt/pep-397-python-launcher-for-windows:PEP 397: Python Launcher for Windows|
+
+  * |:whatsnew/3.3.txt/pep-3151-reworking-the-os-and-io-exception-hierarchy:PEP 3151: Reworking the OS and IO exception hierarchy|
+
+  * |:whatsnew/3.3.txt/pep-380-syntax-for-delegating-to-a-subgenerator:PEP 380: Syntax for Delegating to a Subgenerator|
+
+  * |:whatsnew/3.3.txt/pep-409-suppressing-exception-context:PEP 409: Suppressing exception context|
+
+  * |:whatsnew/3.3.txt/pep-414-explicit-unicode-literals:PEP 414: Explicit Unicode literals|
+
+  * |:whatsnew/3.3.txt/pep-3155-qualified-name-for-classes-and-functions:PEP 3155: Qualified name for classes and functions|
+
+  * |:whatsnew/3.3.txt/pep-412-key-sharing-dictionary:PEP 412: Key-Sharing Dictionary|
+
+  * |:whatsnew/3.3.txt/pep-362-function-signature-object:PEP 362: Function Signature Object|
+
+  * |:whatsnew/3.3.txt/pep-421-adding-sys-implementation:PEP 421: Adding sys.implementation|
+
+  * |:whatsnew/3.3.txt/using-importlib-as-the-implementation-of-import:Using importlib as the Implementation of Import|
+
+  * |:whatsnew/3.3.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/3.3.txt/a-finer-grained-import-lock:A Finer-Grained Import Lock|
+
+  * |:whatsnew/3.3.txt/builtin-functions-and-types:Builtin functions and types|
+
+  * |:whatsnew/3.3.txt/new-modules:New Modules|
+
+  * |:whatsnew/3.3.txt/improved-modules:Improved Modules|
+
+  * |:whatsnew/3.3.txt/optimizations:Optimizations|
+
+  * |:whatsnew/3.3.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/3.3.txt/deprecated:Deprecated|
+
+  * |:whatsnew/3.3.txt/porting-to-python-3-3:Porting to Python 3.3|
+
+* |:whatsnew/3.2.txt:What’s New In Python 3.2|
+
+  * |:whatsnew/3.2.txt/pep-384-defining-a-stable-abi:PEP 384: Defining a Stable ABI|
+
+  * |:whatsnew/3.2.txt/pep-389-argparse-command-line-parsing-module:PEP 389: Argparse Command Line Parsing Module|
+
+  * |:whatsnew/3.2.txt/pep-391-dictionary-based-configuration-for-logging:PEP 391:  Dictionary Based Configuration for Logging|
+
+  * |:whatsnew/3.2.txt/pep-3148-the-concurrent-futures-module:PEP 3148:  The concurrent.futures module|
+
+  * |:whatsnew/3.2.txt/pep-3147-pyc-repository-directories:PEP 3147:  PYC Repository Directories|
+
+  * |:whatsnew/3.2.txt/pep-3149-abi-version-tagged-so-files:PEP 3149: ABI Version Tagged .so Files|
+
+  * |:whatsnew/3.2.txt/pep-3333-python-web-server-gateway-interface-v1-0-1:PEP 3333: Python Web Server Gateway Interface v1.0.1|
+
+  * |:whatsnew/3.2.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/3.2.txt/new-improved-and-deprecated-modules:New, Improved, and Deprecated Modules|
+
+  * |:whatsnew/3.2.txt/multi-threading:Multi-threading|
+
+  * |:whatsnew/3.2.txt/optimizations:Optimizations|
+
+  * |:whatsnew/3.2.txt/unicode:Unicode|
+
+  * |:whatsnew/3.2.txt/codecs:Codecs|
+
+  * |:whatsnew/3.2.txt/documentation:Documentation|
+
+  * |:whatsnew/3.2.txt/idle:IDLE|
+
+  * |:whatsnew/3.2.txt/code-repository:Code Repository|
+
+  * |:whatsnew/3.2.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/3.2.txt/porting-to-python-3-2:Porting to Python 3.2|
+
+* |:whatsnew/3.1.txt:What’s New In Python 3.1|
+
+  * |:whatsnew/3.1.txt/pep-372-ordered-dictionaries:PEP 372: Ordered Dictionaries|
+
+  * |:whatsnew/3.1.txt/pep-378-format-specifier-for-thousands-separator:PEP 378: Format Specifier for Thousands Separator|
+
+  * |:whatsnew/3.1.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/3.1.txt/new-improved-and-deprecated-modules:New, Improved, and Deprecated Modules|
+
+  * |:whatsnew/3.1.txt/optimizations:Optimizations|
+
+  * |:whatsnew/3.1.txt/idle:IDLE|
+
+  * |:whatsnew/3.1.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/3.1.txt/porting-to-python-3-1:Porting to Python 3.1|
+
+* |:whatsnew/3.0.txt:What’s New In Python 3.0|
+
+  * |:whatsnew/3.0.txt/common-stumbling-blocks:Common Stumbling Blocks|
+
+  * |:whatsnew/3.0.txt/overview-of-syntax-changes:Overview Of Syntax Changes|
+
+  * |:whatsnew/3.0.txt/changes-already-present-in-python-2-6:Changes Already Present In Python 2.6|
+
+  * |:whatsnew/3.0.txt/library-changes:Library Changes|
+
+  * |:whatsnew/3.0.txt/pep-3101-a-new-approach-to-string-formatting:PEP 3101: A New Approach To String Formatting|
+
+  * |:whatsnew/3.0.txt/changes-to-exceptions:Changes To Exceptions|
+
+  * |:whatsnew/3.0.txt/miscellaneous-other-changes:Miscellaneous Other Changes|
+
+  * |:whatsnew/3.0.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/3.0.txt/performance:Performance|
+
+  * |:whatsnew/3.0.txt/porting-to-python-3-0:Porting To Python 3.0|
+
+* |:whatsnew/2.7.txt:What’s New in Python 2.7|
+
+  * |:whatsnew/2.7.txt/the-future-for-python-2-x:The Future for Python 2.x|
+
+  * |:whatsnew/2.7.txt/changes-to-the-handling-of-deprecation-warnings:Changes to the Handling of Deprecation Warnings|
+
+  * |:whatsnew/2.7.txt/python-3-1-features:Python 3.1 Features|
+
+  * |:whatsnew/2.7.txt/pep-372-adding-an-ordered-dictionary-to-collections:PEP 372: Adding an Ordered Dictionary to collections|
+
+  * |:whatsnew/2.7.txt/pep-378-format-specifier-for-thousands-separator:PEP 378: Format Specifier for Thousands Separator|
+
+  * |:whatsnew/2.7.txt/pep-389-the-argparse-module-for-parsing-command-lines:PEP 389: The argparse Module for Parsing Command Lines|
+
+  * |:whatsnew/2.7.txt/pep-391-dictionary-based-configuration-for-logging:PEP 391: Dictionary-Based Configuration For Logging|
+
+  * |:whatsnew/2.7.txt/pep-3106-dictionary-views:PEP 3106: Dictionary Views|
+
+  * |:whatsnew/2.7.txt/pep-3137-the-memoryview-object:PEP 3137: The memoryview Object|
+
+  * |:whatsnew/2.7.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/2.7.txt/new-and-improved-modules:New and Improved Modules|
+
+  * |:whatsnew/2.7.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/2.7.txt/other-changes-and-fixes:Other Changes and Fixes|
+
+  * |:whatsnew/2.7.txt/porting-to-python-2-7:Porting to Python 2.7|
+
+  * |:whatsnew/2.7.txt/new-features-added-to-python-2-7-maintenance-releases:New Features Added to Python 2.7 Maintenance Releases|
+
+  * |:whatsnew/2.7.txt/acknowledgements:Acknowledgements|
+
+* |:whatsnew/2.6.txt:What’s New in Python 2.6|
+
+  * |:whatsnew/2.6.txt/python-3-0:Python 3.0|
+
+  * |:whatsnew/2.6.txt/changes-to-the-development-process:Changes to the Development Process|
+
+  * |:whatsnew/2.6.txt/pep-343-the-with-statement:PEP 343: The ‘with’ statement|
+
+  * |:whatsnew/2.6.txt/pep-366-explicit-relative-imports-from-a-main-module:PEP 366: Explicit Relative Imports From a Main Module|
+
+  * |:whatsnew/2.6.txt/pep-370-per-user-site-packages-directory:PEP 370: Per-user site-packages Directory|
+
+  * |:whatsnew/2.6.txt/pep-371-the-multiprocessing-package:PEP 371: The multiprocessing Package|
+
+  * |:whatsnew/2.6.txt/pep-3101-advanced-string-formatting:PEP 3101: Advanced String Formatting|
+
+  * |:whatsnew/2.6.txt/pep-3105-print-as-a-function:PEP 3105: print As a Function|
+
+  * |:whatsnew/2.6.txt/pep-3110-exception-handling-changes:PEP 3110: Exception-Handling Changes|
+
+  * |:whatsnew/2.6.txt/pep-3112-byte-literals:PEP 3112: Byte Literals|
+
+  * |:whatsnew/2.6.txt/pep-3116-new-i-o-library:PEP 3116: New I/O Library|
+
+  * |:whatsnew/2.6.txt/pep-3118-revised-buffer-protocol:PEP 3118: Revised Buffer Protocol|
+
+  * |:whatsnew/2.6.txt/pep-3119-abstract-base-classes:PEP 3119: Abstract Base Classes|
+
+  * |:whatsnew/2.6.txt/pep-3127-integer-literal-support-and-syntax:PEP 3127: Integer Literal Support and Syntax|
+
+  * |:whatsnew/2.6.txt/pep-3129-class-decorators:PEP 3129: Class Decorators|
+
+  * |:whatsnew/2.6.txt/pep-3141-a-type-hierarchy-for-numbers:PEP 3141: A Type Hierarchy for Numbers|
+
+  * |:whatsnew/2.6.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/2.6.txt/new-and-improved-modules:New and Improved Modules|
+
+  * |:whatsnew/2.6.txt/deprecations-and-removals:Deprecations and Removals|
+
+  * |:whatsnew/2.6.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/2.6.txt/porting-to-python-2-6:Porting to Python 2.6|
+
+  * |:whatsnew/2.6.txt/acknowledgements:Acknowledgements|
+
+* |:whatsnew/2.5.txt:What’s New in Python 2.5|
+
+  * |:whatsnew/2.5.txt/pep-308-conditional-expressions:PEP 308: Conditional Expressions|
+
+  * |:whatsnew/2.5.txt/pep-309-partial-function-application:PEP 309: Partial Function Application|
+
+  * |:whatsnew/2.5.txt/pep-314-metadata-for-python-software-packages-v1-1:PEP 314: Metadata for Python Software Packages v1.1|
+
+  * |:whatsnew/2.5.txt/pep-328-absolute-and-relative-imports:PEP 328: Absolute and Relative Imports|
+
+  * |:whatsnew/2.5.txt/pep-338-executing-modules-as-scripts:PEP 338: Executing Modules as Scripts|
+
+  * |:whatsnew/2.5.txt/pep-341-unified-try-except-finally:PEP 341: Unified try/except/finally|
+
+  * |:whatsnew/2.5.txt/pep-342-new-generator-features:PEP 342: New Generator Features|
+
+  * |:whatsnew/2.5.txt/pep-343-the-with-statement:PEP 343: The ‘with’ statement|
+
+  * |:whatsnew/2.5.txt/pep-352-exceptions-as-new-style-classes:PEP 352: Exceptions as New-Style Classes|
+
+  * |:whatsnew/2.5.txt/pep-353-using-ssize-t-as-the-index-type:PEP 353: Using ssize_t as the index type|
+
+  * |:whatsnew/2.5.txt/pep-357-the-index-method:PEP 357: The ‘__index__’ method|
+
+  * |:whatsnew/2.5.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/2.5.txt/new-improved-and-removed-modules:New, Improved, and Removed Modules|
+
+  * |:whatsnew/2.5.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/2.5.txt/porting-to-python-2-5:Porting to Python 2.5|
+
+  * |:whatsnew/2.5.txt/acknowledgements:Acknowledgements|
+
+* |:whatsnew/2.4.txt:What’s New in Python 2.4|
+
+  * |:whatsnew/2.4.txt/pep-218-built-in-set-objects:PEP 218: Built-In Set Objects|
+
+  * |:whatsnew/2.4.txt/pep-237-unifying-long-integers-and-integers:PEP 237: Unifying Long Integers and Integers|
+
+  * |:whatsnew/2.4.txt/pep-289-generator-expressions:PEP 289: Generator Expressions|
+
+  * |:whatsnew/2.4.txt/pep-292-simpler-string-substitutions:PEP 292: Simpler String Substitutions|
+
+  * |:whatsnew/2.4.txt/pep-318-decorators-for-functions-and-methods:PEP 318: Decorators for Functions and Methods|
+
+  * |:whatsnew/2.4.txt/pep-322-reverse-iteration:PEP 322: Reverse Iteration|
+
+  * |:whatsnew/2.4.txt/pep-324-new-subprocess-module:PEP 324: New subprocess Module|
+
+  * |:whatsnew/2.4.txt/pep-327-decimal-data-type:PEP 327: Decimal Data Type|
+
+  * |:whatsnew/2.4.txt/pep-328-multi-line-imports:PEP 328: Multi-line Imports|
+
+  * |:whatsnew/2.4.txt/pep-331-locale-independent-float-string-conversions:PEP 331: Locale-Independent Float/String Conversions|
+
+  * |:whatsnew/2.4.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/2.4.txt/new-improved-and-deprecated-modules:New, Improved, and Deprecated Modules|
+
+  * |:whatsnew/2.4.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/2.4.txt/porting-to-python-2-4:Porting to Python 2.4|
+
+  * |:whatsnew/2.4.txt/acknowledgements:Acknowledgements|
+
+* |:whatsnew/2.3.txt:What’s New in Python 2.3|
+
+  * |:whatsnew/2.3.txt/pep-218-a-standard-set-datatype:PEP 218: A Standard Set Datatype|
+
+  * |:whatsnew/2.3.txt/pep-255-simple-generators:PEP 255: Simple Generators|
+
+  * |:whatsnew/2.3.txt/pep-263-source-code-encodings:PEP 263: Source Code Encodings|
+
+  * |:whatsnew/2.3.txt/pep-273-importing-modules-from-zip-archives:PEP 273: Importing Modules from ZIP Archives|
+
+  * |:whatsnew/2.3.txt/pep-277-unicode-file-name-support-for-windows-nt:PEP 277: Unicode file name support for Windows NT|
+
+  * |:whatsnew/2.3.txt/pep-278-universal-newline-support:PEP 278: Universal Newline Support|
+
+  * |:whatsnew/2.3.txt/pep-279-enumerate:PEP 279: enumerate()|
+
+  * |:whatsnew/2.3.txt/pep-282-the-logging-package:PEP 282: The logging Package|
+
+  * |:whatsnew/2.3.txt/pep-285-a-boolean-type:PEP 285: A Boolean Type|
+
+  * |:whatsnew/2.3.txt/pep-293-codec-error-handling-callbacks:PEP 293: Codec Error Handling Callbacks|
+
+  * |:whatsnew/2.3.txt/pep-301-package-index-and-metadata-for-distutils:PEP 301: Package Index and Metadata for Distutils|
+
+  * |:whatsnew/2.3.txt/pep-302-new-import-hooks:PEP 302: New Import Hooks|
+
+  * |:whatsnew/2.3.txt/pep-305-comma-separated-files:PEP 305: Comma-separated Files|
+
+  * |:whatsnew/2.3.txt/pep-307-pickle-enhancements:PEP 307: Pickle Enhancements|
+
+  * |:whatsnew/2.3.txt/extended-slices:Extended Slices|
+
+  * |:whatsnew/2.3.txt/other-language-changes:Other Language Changes|
+
+  * |:whatsnew/2.3.txt/new-improved-and-deprecated-modules:New, Improved, and Deprecated Modules|
+
+  * |:whatsnew/2.3.txt/pymalloc-a-specialized-object-allocator:Pymalloc: A Specialized Object Allocator|
+
+  * |:whatsnew/2.3.txt/build-and-c-api-changes:Build and C API Changes|
+
+  * |:whatsnew/2.3.txt/other-changes-and-fixes:Other Changes and Fixes|
+
+  * |:whatsnew/2.3.txt/porting-to-python-2-3:Porting to Python 2.3|
+
+  * |:whatsnew/2.3.txt/acknowledgements:Acknowledgements|
+
+* |:whatsnew/2.2.txt:What’s New in Python 2.2|
+
+  * |:whatsnew/2.2.txt/introduction:Introduction|
+
+  * |:whatsnew/2.2.txt/peps-252-and-253-type-and-class-changes:PEPs 252 and 253: Type and Class Changes|
+
+  * |:whatsnew/2.2.txt/pep-234-iterators:PEP 234: Iterators|
+
+  * |:whatsnew/2.2.txt/pep-255-simple-generators:PEP 255: Simple Generators|
+
+  * |:whatsnew/2.2.txt/pep-237-unifying-long-integers-and-integers:PEP 237: Unifying Long Integers and Integers|
+
+  * |:whatsnew/2.2.txt/pep-238-changing-the-division-operator:PEP 238: Changing the Division Operator|
+
+  * |:whatsnew/2.2.txt/unicode-changes:Unicode Changes|
+
+  * |:whatsnew/2.2.txt/pep-227-nested-scopes:PEP 227: Nested Scopes|
+
+  * |:whatsnew/2.2.txt/new-and-improved-modules:New and Improved Modules|
+
+  * |:whatsnew/2.2.txt/interpreter-changes-and-fixes:Interpreter Changes and Fixes|
+
+  * |:whatsnew/2.2.txt/other-changes-and-fixes:Other Changes and Fixes|
+
+  * |:whatsnew/2.2.txt/acknowledgements:Acknowledgements|
+
+* |:whatsnew/2.1.txt:What’s New in Python 2.1|
+
+  * |:whatsnew/2.1.txt/introduction:Introduction|
+
+  * |:whatsnew/2.1.txt/pep-227-nested-scopes:PEP 227: Nested Scopes|
+
+  * |:whatsnew/2.1.txt/pep-236-future-directives:PEP 236: __future__ Directives|
+
+  * |:whatsnew/2.1.txt/pep-207-rich-comparisons:PEP 207: Rich Comparisons|
+
+  * |:whatsnew/2.1.txt/pep-230-warning-framework:PEP 230: Warning Framework|
+
+  * |:whatsnew/2.1.txt/pep-229-new-build-system:PEP 229: New Build System|
+
+  * |:whatsnew/2.1.txt/pep-205-weak-references:PEP 205: Weak References|
+
+  * |:whatsnew/2.1.txt/pep-232-function-attributes:PEP 232: Function Attributes|
+
+  * |:whatsnew/2.1.txt/pep-235-importing-modules-on-case-insensitive-platforms:PEP 235: Importing Modules on Case-Insensitive Platforms|
+
+  * |:whatsnew/2.1.txt/pep-217-interactive-display-hook:PEP 217: Interactive Display Hook|
+
+  * |:whatsnew/2.1.txt/pep-208-new-coercion-model:PEP 208: New Coercion Model|
+
+  * |:whatsnew/2.1.txt/pep-241-metadata-in-python-packages:PEP 241: Metadata in Python Packages|
+
+  * |:whatsnew/2.1.txt/new-and-improved-modules:New and Improved Modules|
+
+  * |:whatsnew/2.1.txt/other-changes-and-fixes:Other Changes and Fixes|
+
+  * |:whatsnew/2.1.txt/acknowledgements:Acknowledgements|
+
+* |:whatsnew/2.0.txt:What’s New in Python 2.0|
+
+  * |:whatsnew/2.0.txt/introduction:Introduction|
+
+  * |:whatsnew/2.0.txt/what-about-python-1-6:What About Python 1.6?|
+
+  * |:whatsnew/2.0.txt/new-development-process:New Development Process|
+
+  * |:whatsnew/2.0.txt/unicode:Unicode|
+
+  * |:whatsnew/2.0.txt/list-comprehensions:List Comprehensions|
+
+  * |:whatsnew/2.0.txt/augmented-assignment:Augmented Assignment|
+
+  * |:whatsnew/2.0.txt/string-methods:String Methods|
+
+  * |:whatsnew/2.0.txt/garbage-collection-of-cycles:Garbage Collection of Cycles|
+
+  * |:whatsnew/2.0.txt/other-core-changes:Other Core Changes|
+
+  * |:whatsnew/2.0.txt/porting-to-2-0:Porting to 2.0|
+
+  * |:whatsnew/2.0.txt/extending-embedding-changes:Extending/Embedding Changes|
+
+  * |:whatsnew/2.0.txt/distutils-making-modules-easy-to-install:Distutils: Making Modules Easy to Install|
+
+  * |:whatsnew/2.0.txt/xml-modules:XML Modules|
+
+  * |:whatsnew/2.0.txt/module-changes:Module changes|
+
+  * |:whatsnew/2.0.txt/new-modules:New modules|
+
+  * |:whatsnew/2.0.txt/idle-improvements:IDLE Improvements|
+
+  * |:whatsnew/2.0.txt/deleted-and-deprecated-modules:Deleted and Deprecated Modules|
+
+  * |:whatsnew/2.0.txt/acknowledgements:Acknowledgements|
+
+The “Changelog” is an HTML version of the |:pypi.org/project/blurb:file built|*|file-built:⚓|*  from the
+contents of the |:github.com/python/cpython/tree/3.8/Misc/NEWS.d:Misc/NEWS.d| directory tree, which contains *all* nontrivial
+changes to Python for the current version.
+
+* |:whatsnew/changelog.txt:Changelog|
+
+
+

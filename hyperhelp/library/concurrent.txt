@@ -1,0 +1,9 @@
+%hyperhelp title="The " date="2021-07-11"
+*|the-concurrent-package:⚓|*
+
+Currently, there is only one module in this package:
+
+* |:library/concurrent.futures.txt/module-concurrent.futures:concurrent.futures| – Launching parallel tasks
+
+
+

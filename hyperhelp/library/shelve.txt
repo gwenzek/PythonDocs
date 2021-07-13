@@ -1,0 +1,184 @@
+%hyperhelp title="shelve" date="2021-07-11"
+*|module-shelve:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/shelve.py:Lib/shelve.py|
+
+*|index-0:⚓|*
+
+======================================================================
+
+A “shelf” is a persistent, dictionary-like object.  The difference with “dbm”
+databases is that the values (not the keys!) in a shelf can be essentially
+arbitrary Python objects — anything that the |:library/pickle.txt/module-pickle:pickle| module can handle. This
+includes most class instances, recursive data types, and objects containing lots
+of shared  sub-objects.  The keys are ordinary strings.
+
+*shelve.open:shelve.open(filename, flag='c', protocol=None, writeback=False)*
+
+   Open a persistent dictionary.  The filename specified is the base filename for
+   the underlying database.  As a side-effect, an extension may be added to the
+   filename and more than one file may be created.  By default, the underlying
+   database file is opened for reading and writing.  The optional *flag* parameter
+   has the same interpretation as the *flag* parameter of |:library/dbm.txt/dbm.open:dbm.open()|.
+
+   By default, version 3 pickles are used to serialize values.  The version of the
+   pickle protocol can be specified with the *protocol* parameter.
+
+   Because of Python semantics, a shelf cannot know when a mutable persistent-
+   dictionary entry is modified.  By default modified objects are written *only*
+   when assigned to the shelf (see |:shelve-example:Example|).  If the optional *writeback*
+   parameter is set to "True", all entries accessed are also cached in memory, and
+   written back on |:shelve.Shelf.sync:sync()| and |:shelve.Shelf.close:close()|; this can make it handier to mutate
+   mutable entries in the persistent dictionary, but, if many entries are accessed,
+   it can consume vast amounts of memory for the cache, and it can make the close
+   operation very slow since all accessed entries are written back (there is no way
+   to determine which accessed entries are mutable, nor which ones were actually
+   mutated).
+
+   Note:
+
+     Do not rely on the shelf being closed automatically; always call |:shelve.Shelf.close:close()|
+     explicitly when you don’t need it any more, or use |:shelve.open:shelve.open()| as a context
+     manager:
+
+```rst
+with shelve.open('spam') as db:
+    db['eggs'] = 'eggs'
+```
+
+Warning:
+
+  Because the |:module-shelve:shelve| module is backed by |:library/pickle.txt/module-pickle:pickle|, it is insecure to load a
+  shelf from an untrusted source.  Like with pickle, loading a shelf can execute
+  arbitrary code.
+
+Shelf objects support all methods supported by dictionaries.  This eases the
+transition from dictionary based scripts to those requiring persistent storage.
+
+Two additional methods are supported:
+
+*shelve.Shelf.sync:Shelf.sync()*
+
+   Write back all entries in the cache if the shelf was opened with *writeback* set
+   to |:library/constants.txt/True:True|.  Also empty the cache and synchronize the persistent dictionary on
+   disk, if feasible.  This is called automatically when the shelf is closed with
+   |:shelve.Shelf.close:close()|.
+
+*shelve.Shelf.close:Shelf.close()*
+
+   Synchronize and close the persistent *dict* object.  Operations on a closed
+   shelf will fail with a |:library/exceptions.txt/ValueError:ValueError|.
+
+See also:
+
+  |:code.activestate.com/recipes/576642:Persistent dictionary recipe|*|persistent-dictionary-recipe:⚓|*  with widely
+  supported storage formats and having the speed of native dictionaries.
+
+# restrictions:Restrictions
+
+   *|index-1:⚓|*
+
+* The choice of which database package will be used (such as |:library/dbm.txt/module-dbm.ndbm:dbm.ndbm| or
+  |:library/dbm.txt/module-dbm.gnu:dbm.gnu|) depends on which interface is available.  Therefore it is not safe to
+  open the database directly using |:library/dbm.txt/module-dbm:dbm|.  The database is also (unfortunately)
+  subject to the limitations of |:library/dbm.txt/module-dbm:dbm|, if it is used — this means that (the
+  pickled representation of) the objects stored in the database should be fairly
+  small, and in rare cases key collisions may cause the database to refuse
+  updates.
+
+* The |:module-shelve:shelve| module does not support *concurrent* read/write access to shelved
+  objects.  (Multiple simultaneous read accesses are safe.)  When a program has a
+  shelf open for writing, no other program should have it open for reading or
+  writing.  Unix file locking can be used to solve this, but this differs across
+  Unix versions and requires knowledge about the database implementation used.
+
+*shelve.Shelf:class shelve.Shelf(dict, protocol=None, writeback=False, keyencoding='utf-8')*
+
+   A subclass of |:library/collections.abc.txt/collections.abc.MutableMapping:collections.abc.MutableMapping| which stores pickled values in
+   the *dict* object.
+
+   By default, version 3 pickles are used to serialize values.  The version of the
+   pickle protocol can be specified with the *protocol* parameter. See the |:library/pickle.txt/module-pickle:pickle|
+   documentation for a discussion of the pickle protocols.
+
+   If the *writeback* parameter is "True", the object will hold a cache of all
+   entries accessed and write them back to the *dict* at sync and close times. This
+   allows natural operations on mutable entries, but can consume much more memory
+   and make sync and close take a long time.
+
+   The *keyencoding* parameter is the encoding used to encode keys before they are
+   used with the underlying dict.
+
+   A |:shelve.Shelf:Shelf| object can also be used as a context manager, in which case it will be
+   automatically closed when the |:reference/compound_stmts.txt/with:with| block ends.
+
+   Changed in version 3.2: Added the *keyencoding* parameter; previously, keys were
+   always encoded in UTF-8.
+
+   Changed in version 3.4: Added context manager support.
+
+*shelve.BsdDbShelf:class shelve.BsdDbShelf(dict, protocol=None, writeback=False, keyencoding='utf-8')*
+
+   A subclass of |:shelve.Shelf:Shelf| which exposes "first()", "next()", "previous()", "last()"
+   and "set_location()" which are available in the third-party "bsddb" module from
+   |:www.jcea.es/programacion/pybsddb.htm:pybsddb|*|pybsddb:⚓|*  but not in other database modules.  The *dict* object
+   passed to the constructor must support those methods.  This is generally
+   accomplished by calling one of "bsddb.hashopen()", "bsddb.btopen()" or "
+   bsddb.rnopen()".  The optional *protocol*, *writeback*, and *keyencoding*
+   parameters have the same interpretation as for the |:shelve.Shelf:Shelf| class.
+
+*shelve.DbfilenameShelf:class shelve.DbfilenameShelf(filename, flag='c', protocol=None, writeback=False)*
+
+   A subclass of |:shelve.Shelf:Shelf| which accepts a *filename* instead of a dict-like object.
+   The underlying file will be opened using |:library/dbm.txt/dbm.open:dbm.open()|.  By default, the file
+   will be created and opened for both read and write.  The optional *flag*
+   parameter has the same interpretation as for the |:shelve.open:open()| function.  The
+   optional *protocol* and *writeback* parameters have the same interpretation as
+   for the |:shelve.Shelf:Shelf| class.
+
+*|shelve-example:⚓|* # example:Example
+
+To summarize the interface ("key" is a string, "data" is an arbitrary object):
+
+```rst
+import shelve
+
+d = shelve.open(filename)  # open -- file may get suffix added by low-level
+                           # library
+
+d[key] = data              # store data at key (overwrites old data if
+                           # using an existing key)
+data = d[key]              # retrieve a COPY of data at key (raise KeyError
+                           # if no such key)
+del d[key]                 # delete data stored at key (raises KeyError
+                           # if no such key)
+
+flag = key in d            # true if the key exists
+klist = list(d.keys())     # a list of all existing keys (slow!)
+
+# as d was opened WITHOUT writeback=True, beware:
+d['xx'] = [0, 1, 2]        # this works as expected, but...
+d['xx'].append(3)          # *this doesn't!* -- d['xx'] is STILL [0, 1, 2]!
+
+# having opened d without writeback=True, you need to code carefully:
+temp = d['xx']             # extracts the copy
+temp.append(5)             # mutates the copy
+d['xx'] = temp             # stores the copy right back, to persist it
+
+# or, d=shelve.open(filename,writeback=True) would let you just code
+# d['xx'].append(5) and have it work as expected, BUT it would also
+# consume more memory and make the d.close() operation slower.
+
+d.close()                  # close it
+```
+
+See also:
+
+  Module |:library/dbm.txt/module-dbm:dbm|
+     Generic interface to "dbm"-style databases.
+
+  Module |:library/pickle.txt/module-pickle:pickle|
+     Object serialization used by |:module-shelve:shelve|.
+
+
+

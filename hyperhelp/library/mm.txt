@@ -1,0 +1,39 @@
+%hyperhelp title="Multimedia Services" date="2021-07-11"
+*|multimedia-services:⚓|*
+
+The modules described in this chapter implement various algorithms or interfaces
+that are mainly useful for multimedia applications.  They are available at the
+discretion of the installation.  Here’s an overview:
+
+* |:library/audioop.txt:audioop — Manipulate raw audio data|
+
+* |:library/aifc.txt:aifc — Read and write AIFF and AIFC files|
+
+* |:library/sunau.txt:sunau — Read and write Sun AU files|
+
+  * |:library/sunau.txt/au-read-objects:AU_read Objects|
+
+  * |:library/sunau.txt/au-write-objects:AU_write Objects|
+
+* |:library/wave.txt:wave — Read and write WAV files|
+
+  * |:library/wave.txt/wave-read-objects:Wave_read Objects|
+
+  * |:library/wave.txt/wave-write-objects:Wave_write Objects|
+
+* |:library/chunk.txt:chunk — Read IFF chunked data|
+
+* |:library/colorsys.txt:colorsys — Conversions between color systems|
+
+* |:library/imghdr.txt:imghdr — Determine the type of an image|
+
+* |:library/sndhdr.txt:sndhdr — Determine type of sound file|
+
+* |:library/ossaudiodev.txt:ossaudiodev — Access to OSS-compatible audio devices|
+
+  * |:library/ossaudiodev.txt/audio-device-objects:Audio Device Objects|
+
+  * |:library/ossaudiodev.txt/mixer-device-objects:Mixer Device Objects|
+
+
+

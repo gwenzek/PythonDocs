@@ -1,0 +1,215 @@
+%hyperhelp title="Data Types" date="2021-07-11"
+*|data-types:⚓|*
+
+The modules described in this chapter provide a variety of specialized data
+types such as dates and times, fixed-type arrays, heap queues, double-ended
+queues, and enumerations.
+
+Python also provides some built-in data types, in particular, |:library/stdtypes.txt/dict:dict|, |:library/stdtypes.txt/list:list|,
+|:library/stdtypes.txt/set:set| and |:library/stdtypes.txt/frozenset:frozenset|, and |:library/stdtypes.txt/tuple:tuple|.  The |:library/stdtypes.txt/str:str| class is used to hold Unicode
+strings, and the |:library/stdtypes.txt/bytes:bytes| and |:library/stdtypes.txt/bytearray:bytearray| classes are used to hold binary data.
+
+The following modules are documented in this chapter:
+
+* |:library/datetime.txt:datetime — Basic date and time types|
+
+  * |:library/datetime.txt/aware-and-naive-objects:Aware and Naive Objects|
+
+  * |:library/datetime.txt/constants:Constants|
+
+  * |:library/datetime.txt/available-types:Available Types|
+
+    * |:library/datetime.txt/common-properties:Common Properties|
+
+    * |:library/datetime.txt/determining-if-an-object-is-aware-or-naive:Determining if an Object is Aware or Naive|
+
+  * |:library/datetime.txt/timedelta-objects:timedelta Objects|
+
+    * |:library/datetime.txt/examples-of-usage-timedelta:Examples of usage: timedelta|
+
+  * |:library/datetime.txt/date-objects:date Objects|
+
+    * |:library/datetime.txt/examples-of-usage-date:Examples of Usage: date|
+
+  * |:library/datetime.txt/datetime-objects:datetime Objects|
+
+    * |:library/datetime.txt/examples-of-usage-datetime:Examples of Usage: datetime|
+
+  * |:library/datetime.txt/time-objects:time Objects|
+
+    * |:library/datetime.txt/examples-of-usage-time:Examples of Usage: time|
+
+  * |:library/datetime.txt/tzinfo-objects:tzinfo Objects|
+
+  * |:library/datetime.txt/timezone-objects:timezone Objects|
+
+  * |:library/datetime.txt/strftime-and-strptime-behavior:strftime() and strptime() Behavior|
+
+    * |:library/datetime.txt/strftime-and-strptime-format-codes:strftime() and strptime() Format Codes|
+
+    * |:library/datetime.txt/technical-detail:Technical Detail|
+
+* |:library/calendar.txt:calendar — General calendar-related functions|
+
+* |:library/collections.txt:collections — Container datatypes|
+
+  * |:library/collections.txt/chainmap-objects:ChainMap objects|
+
+    * |:library/collections.txt/chainmap-examples-and-recipes:ChainMap Examples and Recipes|
+
+  * |:library/collections.txt/counter-objects:Counter objects|
+
+  * |:library/collections.txt/deque-objects:deque objects|
+
+    * |:library/collections.txt/deque-recipes:deque Recipes|
+
+  * |:library/collections.txt/defaultdict-objects:defaultdict objects|
+
+    * |:library/collections.txt/defaultdict-examples:defaultdict Examples|
+
+  * |:library/collections.txt/namedtuple-factory-function-for-tuples-with-named-fields:namedtuple() Factory Function for Tuples with Named Fields|
+
+  * |:library/collections.txt/ordereddict-objects:OrderedDict objects|
+
+    * |:library/collections.txt/ordereddict-examples-and-recipes:OrderedDict Examples and Recipes|
+
+  * |:library/collections.txt/userdict-objects:UserDict objects|
+
+  * |:library/collections.txt/userlist-objects:UserList objects|
+
+  * |:library/collections.txt/userstring-objects:UserString objects|
+
+* |:library/collections.abc.txt:collections.abc — Abstract Base Classes for Containers|
+
+  * |:library/collections.abc.txt/collections-abstract-base-classes:Collections Abstract Base Classes|
+
+* |:library/heapq.txt:heapq — Heap queue algorithm|
+
+  * |:library/heapq.txt/basic-examples:Basic Examples|
+
+  * |:library/heapq.txt/priority-queue-implementation-notes:Priority Queue Implementation Notes|
+
+  * |:library/heapq.txt/theory:Theory|
+
+* |:library/bisect.txt:bisect — Array bisection algorithm|
+
+  * |:library/bisect.txt/searching-sorted-lists:Searching Sorted Lists|
+
+  * |:library/bisect.txt/other-examples:Other Examples|
+
+* |:library/array.txt:array — Efficient arrays of numeric values|
+
+* |:library/weakref.txt:weakref — Weak references|
+
+  * |:library/weakref.txt/weak-reference-objects:Weak Reference Objects|
+
+  * |:library/weakref.txt/example:Example|
+
+  * |:library/weakref.txt/finalizer-objects:Finalizer Objects|
+
+  * |:library/weakref.txt/comparing-finalizers-with-del-methods:Comparing finalizers with __del__() methods|
+
+* |:library/types.txt:types — Dynamic type creation and names for built-in types|
+
+  * |:library/types.txt/dynamic-type-creation:Dynamic Type Creation|
+
+  * |:library/types.txt/standard-interpreter-types:Standard Interpreter Types|
+
+  * |:library/types.txt/additional-utility-classes-and-functions:Additional Utility Classes and Functions|
+
+  * |:library/types.txt/coroutine-utility-functions:Coroutine Utility Functions|
+
+* |:library/copy.txt:copy — Shallow and deep copy operations|
+
+* |:library/pprint.txt:pprint — Data pretty printer|
+
+  * |:library/pprint.txt/prettyprinter-objects:PrettyPrinter Objects|
+
+  * |:library/pprint.txt/example:Example|
+
+* |:library/reprlib.txt:reprlib — Alternate repr() implementation|
+
+  * |:library/reprlib.txt/repr-objects:Repr Objects|
+
+  * |:library/reprlib.txt/subclassing-repr-objects:Subclassing Repr Objects|
+
+* |:library/enum.txt:enum — Support for enumerations|
+
+  * |:library/enum.txt/module-contents:Module Contents|
+
+  * |:library/enum.txt/creating-an-enum:Creating an Enum|
+
+  * |:library/enum.txt/programmatic-access-to-enumeration-members-and-their-attributes:Programmatic access to enumeration members and their attributes|
+
+  * |:library/enum.txt/duplicating-enum-members-and-values:Duplicating enum members and values|
+
+  * |:library/enum.txt/ensuring-unique-enumeration-values:Ensuring unique enumeration values|
+
+  * |:library/enum.txt/using-automatic-values:Using automatic values|
+
+  * |:library/enum.txt/iteration:Iteration|
+
+  * |:library/enum.txt/comparisons:Comparisons|
+
+  * |:library/enum.txt/allowed-members-and-attributes-of-enumerations:Allowed members and attributes of enumerations|
+
+  * |:library/enum.txt/restricted-enum-subclassing:Restricted Enum subclassing|
+
+  * |:library/enum.txt/pickling:Pickling|
+
+  * |:library/enum.txt/functional-api:Functional API|
+
+  * |:library/enum.txt/derived-enumerations:Derived Enumerations|
+
+    * |:library/enum.txt/intenum:IntEnum|
+
+    * |:library/enum.txt/intflag:IntFlag|
+
+    * |:library/enum.txt/flag:Flag|
+
+    * |:library/enum.txt/others:Others|
+
+  * |:library/enum.txt/when-to-use-new-vs-init:When to use __new__() vs. __init__()|
+
+  * |:library/enum.txt/interesting-examples:Interesting examples|
+
+    * |:library/enum.txt/omitting-values:Omitting values|
+
+      * |:library/enum.txt/using-auto:Using auto|
+
+      * |:library/enum.txt/using-object:Using object|
+
+      * |:library/enum.txt/using-a-descriptive-string:Using a descriptive string|
+
+      * |:library/enum.txt/using-a-custom-new:Using a custom __new__()|
+
+    * |:library/enum.txt/orderedenum:OrderedEnum|
+
+    * |:library/enum.txt/duplicatefreeenum:DuplicateFreeEnum|
+
+    * |:library/enum.txt/planet:Planet|
+
+    * |:library/enum.txt/timeperiod:TimePeriod|
+
+  * |:library/enum.txt/how-are-enums-different:How are Enums different?|
+
+    * |:library/enum.txt/enum-classes:Enum Classes|
+
+    * |:library/enum.txt/enum-members-aka-instances:Enum Members (aka instances)|
+
+    * |:library/enum.txt/finer-points:Finer Points|
+
+      * |:library/enum.txt/supported-dunder-names:Supported __dunder__ names|
+
+      * |:library/enum.txt/supported-sunder-names:Supported _sunder_ names|
+
+      * |:library/enum.txt/enum-member-type:Enum member type|
+
+      * |:library/enum.txt/boolean-value-of-enum-classes-and-members:Boolean value of Enum classes and members|
+
+      * |:library/enum.txt/enum-classes-with-methods:Enum classes with methods|
+
+      * |:library/enum.txt/combining-members-of-flag:Combining members of Flag|
+
+
+

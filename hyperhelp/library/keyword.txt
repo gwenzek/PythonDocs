@@ -1,0 +1,21 @@
+%hyperhelp title="keyword" date="2021-07-11"
+*|module-keyword:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/keyword.py:Lib/keyword.py|
+
+======================================================================
+
+This module allows a Python program to determine if a string is a |:reference/lexical_analysis.txt/keywords:keyword|.
+
+*keyword.iskeyword:keyword.iskeyword(s)*
+
+   Return "True" if *s* is a Python |:reference/lexical_analysis.txt/keywords:keyword|.
+
+*keyword.kwlist:keyword.kwlist*
+
+   Sequence containing all the |:reference/lexical_analysis.txt/keywords:keywords| defined for the interpreter.  If any
+   keywords are defined to only be active when particular |:library/__future__.txt/module-__future__:__future__| statements
+   are in effect, these will be included as well.
+
+
+

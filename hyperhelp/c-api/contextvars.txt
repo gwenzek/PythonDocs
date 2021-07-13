@@ -1,0 +1,159 @@
+%hyperhelp title="Context Variables Objects" date="2021-07-11"
+*|context-variables-objects:⚓|*
+
+*|contextvarsobjects-pointertype-change:⚓|*
+
+Note:
+
+  Changed in version 3.7.1: In Python 3.7.1 the signatures of all context
+  variables C APIs were *changed* to use |:c-api/structures.txt/c.PyObject:PyObject| pointers instead of
+  |:c.PyContext:PyContext|, |:c.PyContextVar:PyContextVar|, and |:c.PyContextToken:PyContextToken|, e.g.:
+
+```rst
+// in 3.7.0:
+PyContext *PyContext_New(void);
+
+// in 3.7.1+:
+PyObject *PyContext_New(void);
+```
+
+  See |:bugs.python.org/issue34762:bpo-34762| for more details.
+
+New in version 3.7.
+
+This section details the public C API for the |:library/contextvars.txt/module-contextvars:contextvars| module.
+
+*c.PyContext:type PyContext
+*
+
+   The C structure used to represent a |:library/contextvars.txt/contextvars.Context:contextvars.Context| object.
+
+*c.PyContextVar:type PyContextVar
+*
+
+   The C structure used to represent a |:library/contextvars.txt/contextvars.ContextVar:contextvars.ContextVar| object.
+
+*c.PyContextToken:type PyContextToken
+*
+
+   The C structure used to represent a "contextvars.Token" object.
+
+*c.PyContext_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyContext_Type
+*
+
+   The type object representing the *context* type.
+
+*c.PyContextVar_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyContextVar_Type
+*
+
+   The type object representing the *context variable* type.
+
+*c.PyContextToken_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyContextToken_Type
+*
+
+   The type object representing the *context variable token* type.
+
+Type-check macros:
+
+*c.PyContext_CheckExact:int PyContext_CheckExact(PyObject *o)
+*
+
+   Return true if *o* is of type |:c.PyContext_Type:PyContext_Type|. *o* must not be "NULL".  This
+   function always succeeds.
+
+*c.PyContextVar_CheckExact:int PyContextVar_CheckExact(PyObject *o)
+*
+
+   Return true if *o* is of type |:c.PyContextVar_Type:PyContextVar_Type|. *o* must not be "NULL".  This
+   function always succeeds.
+
+*c.PyContextToken_CheckExact:int PyContextToken_CheckExact(PyObject *o)
+*
+
+   Return true if *o* is of type |:c.PyContextToken_Type:PyContextToken_Type|. *o* must not be "NULL".
+   This function always succeeds.
+
+Context object management functions:
+
+*c.PyContext_New:|:c-api/structures.txt/c.PyObject:PyObject| *PyContext_New(void)
+*
+    *Return value: New reference.*
+
+   Create a new empty context object.  Returns "NULL" if an error has occurred.
+
+*c.PyContext_Copy:|:c-api/structures.txt/c.PyObject:PyObject| *PyContext_Copy(PyObject *ctx)
+*
+    *Return value: New reference.*
+
+   Create a shallow copy of the passed *ctx* context object. Returns "NULL" if an
+   error has occurred.
+
+*c.PyContext_CopyCurrent:|:c-api/structures.txt/c.PyObject:PyObject| *PyContext_CopyCurrent(void)
+*
+    *Return value: New reference.*
+
+   Create a shallow copy of the current thread context. Returns "NULL" if an error
+   has occurred.
+
+*c.PyContext_Enter:int PyContext_Enter(PyObject *ctx)
+*
+
+   Set *ctx* as the current context for the current thread. Returns "0" on success,
+   and "-1" on error.
+
+*c.PyContext_Exit:int PyContext_Exit(PyObject *ctx)
+*
+
+   Deactivate the *ctx* context and restore the previous context as the current
+   context for the current thread.  Returns "0" on success, and "-1" on error.
+
+*c.PyContext_ClearFreeList:int PyContext_ClearFreeList()
+*
+
+   Clear the context variable free list. Return the total number of freed items.
+   This function always succeeds.
+
+Context variable functions:
+
+*c.PyContextVar_New:|:c-api/structures.txt/c.PyObject:PyObject| *PyContextVar_New(const char *name, PyObject *def)
+*
+    *Return value: New reference.*
+
+   Create a new "ContextVar" object.  The *name* parameter is used for
+   introspection and debug purposes.  The *def* parameter may optionally specify
+   the default value for the context variable.  If an error has occurred, this
+   function returns "NULL".
+
+*c.PyContextVar_Get:int PyContextVar_Get(PyObject *var, PyObject *default_value, PyObject **value)
+*
+
+   Get the value of a context variable.  Returns "-1" if an error has occurred
+   during lookup, and "0" if no error occurred, whether or not a value was found.
+
+   If the context variable was found, *value* will be a pointer to it. If the
+   context variable was *not* found, *value* will point to:
+
+   * *default_value*, if not "NULL";
+
+   * the default value of *var*, if not "NULL";
+
+   * "NULL"
+
+   If the value was found, the function will create a new reference to it.
+
+*c.PyContextVar_Set:|:c-api/structures.txt/c.PyObject:PyObject| *PyContextVar_Set(PyObject *var, PyObject *value)
+*
+    *Return value: New reference.*
+
+   Set the value of *var* to *value* in the current context.  Returns a pointer to
+   a |:c-api/structures.txt/c.PyObject:PyObject| object, or "NULL" if an error has occurred.
+
+*c.PyContextVar_Reset:int PyContextVar_Reset(PyObject *var, PyObject *token)
+*
+
+   Reset the state of the *var* context variable to that it was in before
+   |:c.PyContextVar_Set:PyContextVar_Set()| that returned the *token* was called. This function returns
+   "0" on success and "-1" on error.
+
+
+

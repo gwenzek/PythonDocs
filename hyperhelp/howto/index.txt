@@ -1,0 +1,44 @@
+%hyperhelp title="Python HOWTOs" date="2021-07-11"
+*|python-howtos:⚓|*
+
+Python HOWTOs are documents that cover a single, specific topic, and attempt to
+cover it fairly completely. Modelled on the Linux Documentation Project’s HOWTO
+collection, this collection is an effort to foster documentation that’s more
+detailed than the Python Library Reference.
+
+Currently, the HOWTOs are:
+
+* |:howto/pyporting.txt:Porting Python 2 Code to Python 3|
+
+* |:howto/cporting.txt:Porting Extension Modules to Python 3|
+
+* |:howto/curses.txt:Curses Programming with Python|
+
+* |:howto/descriptor.txt:Descriptor HowTo Guide|
+
+* |:howto/functional.txt:Functional Programming HOWTO|
+
+* |:howto/logging.txt:Logging HOWTO|
+
+* |:howto/logging-cookbook.txt:Logging Cookbook|
+
+* |:howto/regex.txt:Regular Expression HOWTO|
+
+* |:howto/sockets.txt:Socket Programming HOWTO|
+
+* |:howto/sorting.txt:Sorting HOW TO|
+
+* |:howto/unicode.txt:Unicode HOWTO|
+
+* |:howto/urllib2.txt:HOWTO Fetch Internet Resources Using The urllib Package|
+
+* |:howto/argparse.txt:Argparse Tutorial|
+
+* |:howto/ipaddress.txt:An introduction to the ipaddress module|
+
+* |:howto/clinic.txt:Argument Clinic How-To|
+
+* |:howto/instrumentation.txt:Instrumenting CPython with DTrace and SystemTap|
+
+
+

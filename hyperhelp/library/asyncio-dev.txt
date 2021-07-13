@@ -1,0 +1,236 @@
+%hyperhelp title="Developing with asyncio" date="2021-07-11"
+*|developing-with-asyncio:⚓|*
+
+Asynchronous programming is different from classic “sequential” programming.
+
+This page lists common mistakes and traps and explains how to avoid them.
+
+# debug-mode:Debug Mode
+
+By default asyncio runs in production mode.  In order to ease the development
+asyncio has a *debug mode*.
+
+There are several ways to enable asyncio debug mode:
+
+* Setting the *|index-0:⚓|* |:using/cmdline.txt/envvar-PYTHONASYNCIODEBUG:PYTHONASYNCIODEBUG| environment variable to "1".
+
+* Using the |:using/cmdline.txt/cmdoption-X:-X| "dev" Python command line option.
+
+* Passing "debug=True" to |:library/asyncio-task.txt/asyncio.run:asyncio.run()|.
+
+* Calling |:library/asyncio-eventloop.txt/asyncio.loop.set_debug:loop.set_debug()|.
+
+In addition to enabling the debug mode, consider also:
+
+* setting the log level of the |:asyncio-logger:asyncio logger| to "logging.DEBUG", for example
+  the following snippet of code can be run at startup of the application:
+
+```rst
+logging.basicConfig(level=logging.DEBUG)
+```
+
+* configuring the |:library/warnings.txt/module-warnings:warnings| module to display |:library/exceptions.txt/ResourceWarning:ResourceWarning| warnings.  One
+  way of doing that is by using the |:using/cmdline.txt/cmdoption-W:-W| "default" command line option.
+
+When the debug mode is enabled:
+
+* asyncio checks for |:asyncio-coroutine-not-scheduled:coroutines that were not awaited| and logs them; this
+  mitigates the “forgotten await” pitfall.
+
+* Many non-threadsafe asyncio APIs (such as |:library/asyncio-eventloop.txt/asyncio.loop.call_soon:loop.call_soon()| and
+  |:library/asyncio-eventloop.txt/asyncio.loop.call_at:loop.call_at()| methods) raise an exception if they are called from a wrong
+  thread.
+
+* The execution time of the I/O selector is logged if it takes too long to perform
+  an I/O operation.
+
+* Callbacks taking longer than 100ms are logged.  The "loop.slow_callback_duration
+  " attribute can be used to set the minimum execution duration in seconds that is
+  considered “slow”.
+
+*|asyncio-multithreading:⚓|* # concurrency-and-multithreading:Concurrency and
+Multithreading
+
+An event loop runs in a thread (typically the main thread) and executes all
+callbacks and Tasks in its thread.  While a Task is running in the event loop,
+no other Tasks can run in the same thread.  When a Task executes an "await"
+expression, the running Task gets suspended, and the event loop executes the
+next Task.
+
+To schedule a |:glossary.txt/term-callback:callback| from another OS thread, the
+|:library/asyncio-eventloop.txt/asyncio.loop.call_soon_threadsafe:loop.call_soon_threadsafe()| method should be used. Example:
+
+```rst
+loop.call_soon_threadsafe(callback, *args)
+```
+
+Almost all asyncio objects are not thread safe, which is typically not a problem
+unless there is code that works with them from outside of a Task or a callback.
+If there’s a need for such code to call a low-level asyncio API, the
+|:library/asyncio-eventloop.txt/asyncio.loop.call_soon_threadsafe:loop.call_soon_threadsafe()| method should be used, e.g.:
+
+```rst
+loop.call_soon_threadsafe(fut.cancel)
+```
+
+To schedule a coroutine object from a different OS thread, the
+|:library/asyncio-task.txt/asyncio.run_coroutine_threadsafe:run_coroutine_threadsafe()| function should be used. It returns a
+|:library/concurrent.futures.txt/concurrent.futures.Future:concurrent.futures.Future| to access the result:
+
+```rst
+async def coro_func():
+     return await asyncio.sleep(1, 42)
+
+# Later in another OS thread:
+
+future = asyncio.run_coroutine_threadsafe(coro_func(), loop)
+# Wait for the result:
+result = future.result()
+```
+
+To handle signals and to execute subprocesses, the event loop must be run in the
+main thread.
+
+The |:library/asyncio-eventloop.txt/asyncio.loop.run_in_executor:loop.run_in_executor()| method can be used with a
+|:library/concurrent.futures.txt/concurrent.futures.ThreadPoolExecutor:concurrent.futures.ThreadPoolExecutor| to execute blocking code in a different
+OS thread without blocking the OS thread that the event loop runs in.
+
+There is currently no way to schedule coroutines or callbacks directly from a
+different process (such as one started with |:library/multiprocessing.txt/module-multiprocessing:multiprocessing|). The
+|:library/asyncio-eventloop.txt/asyncio-event-loop:Event Loop Methods| section lists APIs that can read from pipes and watch file
+descriptors without blocking the event loop. In addition, asyncio’s |:library/asyncio-subprocess.txt/asyncio-subprocess:Subprocess|
+APIs provide a way to start a process and communicate with it from the event
+loop. Lastly, the aforementioned |:library/asyncio-eventloop.txt/asyncio.loop.run_in_executor:loop.run_in_executor()| method can also be
+used with a |:library/concurrent.futures.txt/concurrent.futures.ProcessPoolExecutor:concurrent.futures.ProcessPoolExecutor| to execute code in a
+different process.
+
+*|asyncio-handle-blocking:⚓|* # running-blocking-code:Running Blocking Code
+
+Blocking (CPU-bound) code should not be called directly.  For example, if a
+function performs a CPU-intensive calculation for 1 second, all concurrent
+asyncio Tasks and IO operations would be delayed by 1 second.
+
+An executor can be used to run a task in a different thread or even in a
+different process to avoid blocking the OS thread with the event loop.  See the
+|:library/asyncio-eventloop.txt/asyncio.loop.run_in_executor:loop.run_in_executor()| method for more details.
+
+*|asyncio-logger:⚓|* # logging:Logging
+
+asyncio uses the |:library/logging.txt/module-logging:logging| module and all logging is performed via the "
+"asyncio"" logger.
+
+The default log level is "logging.INFO", which can be easily adjusted:
+
+```rst
+logging.getLogger("asyncio").setLevel(logging.WARNING)
+```
+
+*|asyncio-coroutine-not-scheduled:⚓|* # detect-never-awaited-coroutines:Detect
+never-awaited coroutines
+
+When a coroutine function is called, but not awaited (e.g. "coro()" instead of "
+await coro()") or the coroutine is not scheduled with |:library/asyncio-task.txt/asyncio.create_task:asyncio.create_task()|,
+asyncio will emit a |:library/exceptions.txt/RuntimeWarning:RuntimeWarning|:
+
+```rst
+import asyncio
+
+async def test():
+    print("never scheduled")
+
+async def main():
+    test()
+
+asyncio.run(main())
+```
+
+Output:
+
+```rst
+test.py:7: RuntimeWarning: coroutine 'test' was never awaited
+  test()
+```
+
+Output in debug mode:
+
+```rst
+test.py:7: RuntimeWarning: coroutine 'test' was never awaited
+Coroutine created at (most recent call last)
+  File "../t.py", line 9, in <module>
+    asyncio.run(main(), debug=True)
+
+  < .. >
+
+  File "../t.py", line 7, in main
+    test()
+  test()
+```
+
+The usual fix is to either await the coroutine or call the
+|:library/asyncio-task.txt/asyncio.create_task:asyncio.create_task()| function:
+
+```rst
+async def main():
+    await test()
+```
+
+# detect-never-retrieved-exceptions:Detect never-retrieved exceptions
+
+If a |:library/asyncio-future.txt/asyncio.Future.set_exception:Future.set_exception()| is called but the Future object is never awaited
+on, the exception would never be propagated to the user code.  In this case,
+asyncio would emit a log message when the Future object is garbage collected.
+
+Example of an unhandled exception:
+
+```rst
+import asyncio
+
+async def bug():
+    raise Exception("not consumed")
+
+async def main():
+    asyncio.create_task(bug())
+
+asyncio.run(main())
+```
+
+Output:
+
+```rst
+Task exception was never retrieved
+future: <Task finished coro=<bug() done, defined at test.py:3>
+  exception=Exception('not consumed')>
+
+Traceback (most recent call last):
+  File "test.py", line 4, in bug
+    raise Exception("not consumed")
+Exception: not consumed
+```
+
+|:asyncio-debug-mode:Enable the debug mode| to get the traceback where the task was created:
+
+```rst
+asyncio.run(main(), debug=True)
+```
+
+Output in debug mode:
+
+```rst
+Task exception was never retrieved
+future: <Task finished coro=<bug() done, defined at test.py:3>
+    exception=Exception('not consumed') created at asyncio/tasks.py:321>
+
+source_traceback: Object created at (most recent call last):
+  File "../t.py", line 9, in <module>
+    asyncio.run(main(), debug=True)
+
+< .. >
+
+Traceback (most recent call last):
+  File "../t.py", line 4, in bug
+    raise Exception("not consumed")
+Exception: not consumed
+```
+
+
+

@@ -1,0 +1,83 @@
+%hyperhelp title="Data Compression and Archiving" date="2021-07-11"
+*|data-compression-and-archiving:⚓|*
+
+The modules described in this chapter support data compression with the zlib,
+gzip, bzip2 and lzma algorithms, and the creation of ZIP- and tar-format
+archives.  See also |:library/shutil.txt/archiving-operations:Archiving operations| provided by the |:library/shutil.txt/module-shutil:shutil| module.
+
+* |:library/zlib.txt:zlib — Compression compatible with gzip|
+
+* |:library/gzip.txt:gzip — Support for gzip files|
+
+  * |:library/gzip.txt/examples-of-usage:Examples of usage|
+
+  * |:library/gzip.txt/command-line-interface:Command Line Interface|
+
+    * |:library/gzip.txt/command-line-options:Command line options|
+
+* |:library/bz2.txt:bz2 — Support for bzip2 compression|
+
+  * |:library/bz2.txt/de-compression-of-files:(De)compression of files|
+
+  * |:library/bz2.txt/incremental-de-compression:Incremental (de)compression|
+
+  * |:library/bz2.txt/one-shot-de-compression:One-shot (de)compression|
+
+  * |:library/bz2.txt/examples-of-usage:Examples of usage|
+
+* |:library/lzma.txt:lzma — Compression using the LZMA algorithm|
+
+  * |:library/lzma.txt/reading-and-writing-compressed-files:Reading and writing compressed files|
+
+  * |:library/lzma.txt/compressing-and-decompressing-data-in-memory:Compressing and decompressing data in memory|
+
+  * |:library/lzma.txt/miscellaneous:Miscellaneous|
+
+  * |:library/lzma.txt/specifying-custom-filter-chains:Specifying custom filter chains|
+
+  * |:library/lzma.txt/examples:Examples|
+
+* |:library/zipfile.txt:zipfile — Work with ZIP archives|
+
+  * |:library/zipfile.txt/zipfile-objects:ZipFile Objects|
+
+  * |:library/zipfile.txt/path-objects:Path Objects|
+
+  * |:library/zipfile.txt/pyzipfile-objects:PyZipFile Objects|
+
+  * |:library/zipfile.txt/zipinfo-objects:ZipInfo Objects|
+
+  * |:library/zipfile.txt/command-line-interface:Command-Line Interface|
+
+    * |:library/zipfile.txt/command-line-options:Command-line options|
+
+  * |:library/zipfile.txt/decompression-pitfalls:Decompression pitfalls|
+
+    * |:library/zipfile.txt/from-file-itself:From file itself|
+
+    * |:library/zipfile.txt/file-system-limitations:File System limitations|
+
+    * |:library/zipfile.txt/resources-limitations:Resources limitations|
+
+    * |:library/zipfile.txt/interruption:Interruption|
+
+    * |:library/zipfile.txt/default-behaviors-of-extraction:Default behaviors of extraction|
+
+* |:library/tarfile.txt:tarfile — Read and write tar archive files|
+
+  * |:library/tarfile.txt/tarfile-objects:TarFile Objects|
+
+  * |:library/tarfile.txt/tarinfo-objects:TarInfo Objects|
+
+  * |:library/tarfile.txt/command-line-interface:Command-Line Interface|
+
+    * |:library/tarfile.txt/command-line-options:Command-line options|
+
+  * |:library/tarfile.txt/examples:Examples|
+
+  * |:library/tarfile.txt/supported-tar-formats:Supported tar formats|
+
+  * |:library/tarfile.txt/unicode-issues:Unicode issues|
+
+
+

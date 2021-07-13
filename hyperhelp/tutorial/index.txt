@@ -1,0 +1,306 @@
+%hyperhelp title="The Python Tutorial" date="2021-07-11"
+*|the-python-tutorial:⚓|*
+
+Python is an easy to learn, powerful programming language. It has efficient
+high-level data structures and a simple but effective approach to object-
+oriented programming. Python’s elegant syntax and dynamic typing, together with
+its interpreted nature, make it an ideal language for scripting and rapid
+application development in many areas on most platforms.
+
+The Python interpreter and the extensive standard library are freely available
+in source or binary form for all major platforms from the Python Web site,
+|:www.python.org:https://www.python.org/|, and may be freely distributed. The same site also
+contains distributions of and pointers to many free third party Python modules,
+programs and tools, and additional documentation.
+
+The Python interpreter is easily extended with new functions and data types
+implemented in C or C++ (or other languages callable from C). Python is also
+suitable as an extension language for customizable applications.
+
+This tutorial introduces the reader informally to the basic concepts and
+features of the Python language and system. It helps to have a Python
+interpreter handy for hands-on experience, but all examples are self-contained,
+so the tutorial can be read off-line as well.
+
+For a description of standard objects and modules, see
+|:library/index.txt/library-index:The Python Standard Library|. |:reference/index.txt/reference-index:The Python Language Reference| gives a more
+formal definition of the language.  To write extensions in C or C++, read
+|:extending/index.txt/extending-index:Extending and Embedding the Python Interpreter| and
+|:c-api/index.txt/c-api-index:Python/C API Reference Manual|. There are also several books covering Python in
+depth.
+
+This tutorial does not attempt to be comprehensive and cover every single
+feature, or even every commonly used feature. Instead, it introduces many of
+Python’s most noteworthy features, and will give you a good idea of the
+language’s flavor and style. After reading it, you will be able to read and
+write Python modules and programs, and you will be ready to learn more about the
+various Python library modules described in |:library/index.txt/library-index:The Python Standard Library|.
+
+The |:glossary.txt/glossary:Glossary| is also worth going through.
+
+* |:tutorial/appetite.txt:Whetting Your Appetite|
+
+* |:tutorial/interpreter.txt:Using the Python Interpreter|
+
+  * |:tutorial/interpreter.txt/invoking-the-interpreter:Invoking the Interpreter|
+
+    * |:tutorial/interpreter.txt/argument-passing:Argument Passing|
+
+    * |:tutorial/interpreter.txt/interactive-mode:Interactive Mode|
+
+  * |:tutorial/interpreter.txt/the-interpreter-and-its-environment:The Interpreter and Its Environment|
+
+    * |:tutorial/interpreter.txt/source-code-encoding:Source Code Encoding|
+
+* |:tutorial/introduction.txt:An Informal Introduction to Python|
+
+  * |:tutorial/introduction.txt/using-python-as-a-calculator:Using Python as a Calculator|
+
+    * |:tutorial/introduction.txt/numbers:Numbers|
+
+    * |:tutorial/introduction.txt/strings:Strings|
+
+    * |:tutorial/introduction.txt/lists:Lists|
+
+  * |:tutorial/introduction.txt/first-steps-towards-programming:First Steps Towards Programming|
+
+* |:tutorial/controlflow.txt:More Control Flow Tools|
+
+  * |:tutorial/controlflow.txt/if-statements:if Statements|
+
+  * |:tutorial/controlflow.txt/for-statements:for Statements|
+
+  * |:tutorial/controlflow.txt/the-range-function:The range() Function|
+
+  * |:tutorial/controlflow.txt/break-and-continue-statements-and-else-clauses-on-loops:break and continue Statements, and else Clauses on Loops|
+
+  * |:tutorial/controlflow.txt/pass-statements:pass Statements|
+
+  * |:tutorial/controlflow.txt/defining-functions:Defining Functions|
+
+  * |:tutorial/controlflow.txt/more-on-defining-functions:More on Defining Functions|
+
+    * |:tutorial/controlflow.txt/default-argument-values:Default Argument Values|
+
+    * |:tutorial/controlflow.txt/keyword-arguments:Keyword Arguments|
+
+    * |:tutorial/controlflow.txt/special-parameters:Special parameters|
+
+      * |:tutorial/controlflow.txt/positional-or-keyword-arguments:Positional-or-Keyword Arguments|
+
+      * |:tutorial/controlflow.txt/positional-only-parameters:Positional-Only Parameters|
+
+      * |:tutorial/controlflow.txt/keyword-only-arguments:Keyword-Only Arguments|
+
+      * |:tutorial/controlflow.txt/function-examples:Function Examples|
+
+      * |:tutorial/controlflow.txt/recap:Recap|
+
+    * |:tutorial/controlflow.txt/arbitrary-argument-lists:Arbitrary Argument Lists|
+
+    * |:tutorial/controlflow.txt/unpacking-argument-lists:Unpacking Argument Lists|
+
+    * |:tutorial/controlflow.txt/lambda-expressions:Lambda Expressions|
+
+    * |:tutorial/controlflow.txt/documentation-strings:Documentation Strings|
+
+    * |:tutorial/controlflow.txt/function-annotations:Function Annotations|
+
+  * |:tutorial/controlflow.txt/intermezzo-coding-style:Intermezzo: Coding Style|
+
+* |:tutorial/datastructures.txt:Data Structures|
+
+  * |:tutorial/datastructures.txt/more-on-lists:More on Lists|
+
+    * |:tutorial/datastructures.txt/using-lists-as-stacks:Using Lists as Stacks|
+
+    * |:tutorial/datastructures.txt/using-lists-as-queues:Using Lists as Queues|
+
+    * |:tutorial/datastructures.txt/list-comprehensions:List Comprehensions|
+
+    * |:tutorial/datastructures.txt/nested-list-comprehensions:Nested List Comprehensions|
+
+  * |:tutorial/datastructures.txt/the-del-statement:The del statement|
+
+  * |:tutorial/datastructures.txt/tuples-and-sequences:Tuples and Sequences|
+
+  * |:tutorial/datastructures.txt/sets:Sets|
+
+  * |:tutorial/datastructures.txt/dictionaries:Dictionaries|
+
+  * |:tutorial/datastructures.txt/looping-techniques:Looping Techniques|
+
+  * |:tutorial/datastructures.txt/more-on-conditions:More on Conditions|
+
+  * |:tutorial/datastructures.txt/comparing-sequences-and-other-types:Comparing Sequences and Other Types|
+
+* |:tutorial/modules.txt:Modules|
+
+  * |:tutorial/modules.txt/more-on-modules:More on Modules|
+
+    * |:tutorial/modules.txt/executing-modules-as-scripts:Executing modules as scripts|
+
+    * |:tutorial/modules.txt/the-module-search-path:The Module Search Path|
+
+    * |:tutorial/modules.txt/compiled-python-files:“Compiled” Python files|
+
+  * |:tutorial/modules.txt/standard-modules:Standard Modules|
+
+  * |:tutorial/modules.txt/the-dir-function:The dir() Function|
+
+  * |:tutorial/modules.txt/packages:Packages|
+
+    * |:tutorial/modules.txt/importing-from-a-package:Importing * From a Package|
+
+    * |:tutorial/modules.txt/intra-package-references:Intra-package References|
+
+    * |:tutorial/modules.txt/packages-in-multiple-directories:Packages in Multiple Directories|
+
+* |:tutorial/inputoutput.txt:Input and Output|
+
+  * |:tutorial/inputoutput.txt/fancier-output-formatting:Fancier Output Formatting|
+
+    * |:tutorial/inputoutput.txt/formatted-string-literals:Formatted String Literals|
+
+    * |:tutorial/inputoutput.txt/the-string-format-method:The String format() Method|
+
+    * |:tutorial/inputoutput.txt/manual-string-formatting:Manual String Formatting|
+
+    * |:tutorial/inputoutput.txt/old-string-formatting:Old string formatting|
+
+  * |:tutorial/inputoutput.txt/reading-and-writing-files:Reading and Writing Files|
+
+    * |:tutorial/inputoutput.txt/methods-of-file-objects:Methods of File Objects|
+
+    * |:tutorial/inputoutput.txt/saving-structured-data-with-json:Saving structured data with json|
+
+* |:tutorial/errors.txt:Errors and Exceptions|
+
+  * |:tutorial/errors.txt/syntax-errors:Syntax Errors|
+
+  * |:tutorial/errors.txt/exceptions:Exceptions|
+
+  * |:tutorial/errors.txt/handling-exceptions:Handling Exceptions|
+
+  * |:tutorial/errors.txt/raising-exceptions:Raising Exceptions|
+
+  * |:tutorial/errors.txt/user-defined-exceptions:User-defined Exceptions|
+
+  * |:tutorial/errors.txt/defining-clean-up-actions:Defining Clean-up Actions|
+
+  * |:tutorial/errors.txt/predefined-clean-up-actions:Predefined Clean-up Actions|
+
+* |:tutorial/classes.txt:Classes|
+
+  * |:tutorial/classes.txt/a-word-about-names-and-objects:A Word About Names and Objects|
+
+  * |:tutorial/classes.txt/python-scopes-and-namespaces:Python Scopes and Namespaces|
+
+    * |:tutorial/classes.txt/scopes-and-namespaces-example:Scopes and Namespaces Example|
+
+  * |:tutorial/classes.txt/a-first-look-at-classes:A First Look at Classes|
+
+    * |:tutorial/classes.txt/class-definition-syntax:Class Definition Syntax|
+
+    * |:tutorial/classes.txt/class-objects:Class Objects|
+
+    * |:tutorial/classes.txt/instance-objects:Instance Objects|
+
+    * |:tutorial/classes.txt/method-objects:Method Objects|
+
+    * |:tutorial/classes.txt/class-and-instance-variables:Class and Instance Variables|
+
+  * |:tutorial/classes.txt/random-remarks:Random Remarks|
+
+  * |:tutorial/classes.txt/inheritance:Inheritance|
+
+    * |:tutorial/classes.txt/multiple-inheritance:Multiple Inheritance|
+
+  * |:tutorial/classes.txt/private-variables:Private Variables|
+
+  * |:tutorial/classes.txt/odds-and-ends:Odds and Ends|
+
+  * |:tutorial/classes.txt/iterators:Iterators|
+
+  * |:tutorial/classes.txt/generators:Generators|
+
+  * |:tutorial/classes.txt/generator-expressions:Generator Expressions|
+
+* |:tutorial/stdlib.txt:Brief Tour of the Standard Library|
+
+  * |:tutorial/stdlib.txt/operating-system-interface:Operating System Interface|
+
+  * |:tutorial/stdlib.txt/file-wildcards:File Wildcards|
+
+  * |:tutorial/stdlib.txt/command-line-arguments:Command Line Arguments|
+
+  * |:tutorial/stdlib.txt/error-output-redirection-and-program-termination:Error Output Redirection and Program Termination|
+
+  * |:tutorial/stdlib.txt/string-pattern-matching:String Pattern Matching|
+
+  * |:tutorial/stdlib.txt/mathematics:Mathematics|
+
+  * |:tutorial/stdlib.txt/internet-access:Internet Access|
+
+  * |:tutorial/stdlib.txt/dates-and-times:Dates and Times|
+
+  * |:tutorial/stdlib.txt/data-compression:Data Compression|
+
+  * |:tutorial/stdlib.txt/performance-measurement:Performance Measurement|
+
+  * |:tutorial/stdlib.txt/quality-control:Quality Control|
+
+  * |:tutorial/stdlib.txt/batteries-included:Batteries Included|
+
+* |:tutorial/stdlib2.txt:Brief Tour of the Standard Library — Part II|
+
+  * |:tutorial/stdlib2.txt/output-formatting:Output Formatting|
+
+  * |:tutorial/stdlib2.txt/templating:Templating|
+
+  * |:tutorial/stdlib2.txt/working-with-binary-data-record-layouts:Working with Binary Data Record Layouts|
+
+  * |:tutorial/stdlib2.txt/multi-threading:Multi-threading|
+
+  * |:tutorial/stdlib2.txt/logging:Logging|
+
+  * |:tutorial/stdlib2.txt/weak-references:Weak References|
+
+  * |:tutorial/stdlib2.txt/tools-for-working-with-lists:Tools for Working with Lists|
+
+  * |:tutorial/stdlib2.txt/decimal-floating-point-arithmetic:Decimal Floating Point Arithmetic|
+
+* |:tutorial/venv.txt:Virtual Environments and Packages|
+
+  * |:tutorial/venv.txt/introduction:Introduction|
+
+  * |:tutorial/venv.txt/creating-virtual-environments:Creating Virtual Environments|
+
+  * |:tutorial/venv.txt/managing-packages-with-pip:Managing Packages with pip|
+
+* |:tutorial/whatnow.txt:What Now?|
+
+* |:tutorial/interactive.txt:Interactive Input Editing and History Substitution|
+
+  * |:tutorial/interactive.txt/tab-completion-and-history-editing:Tab Completion and History Editing|
+
+  * |:tutorial/interactive.txt/alternatives-to-the-interactive-interpreter:Alternatives to the Interactive Interpreter|
+
+* |:tutorial/floatingpoint.txt:Floating Point Arithmetic:  Issues and Limitations|
+
+  * |:tutorial/floatingpoint.txt/representation-error:Representation Error|
+
+* |:tutorial/appendix.txt:Appendix|
+
+  * |:tutorial/appendix.txt/interactive-mode:Interactive Mode|
+
+    * |:tutorial/appendix.txt/error-handling:Error Handling|
+
+    * |:tutorial/appendix.txt/executable-python-scripts:Executable Python Scripts|
+
+    * |:tutorial/appendix.txt/the-interactive-startup-file:The Interactive Startup File|
+
+    * |:tutorial/appendix.txt/the-customization-modules:The Customization Modules|
+
+
+

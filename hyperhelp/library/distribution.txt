@@ -1,0 +1,46 @@
+%hyperhelp title="Software Packaging and Distribution" date="2021-07-11"
+*|software-packaging-and-distribution:⚓|*
+
+These libraries help you with publishing and installing Python software. While
+these modules are designed to work in conjunction with the
+|:pypi.org:Python Package Index|, they can also be used with a local index server, or
+without any index server at all.
+
+* |:library/distutils.txt:distutils — Building and installing Python modules|
+
+* |:library/ensurepip.txt:ensurepip — Bootstrapping the pip installer|
+
+  * |:library/ensurepip.txt/command-line-interface:Command line interface|
+
+  * |:library/ensurepip.txt/module-api:Module API|
+
+* |:library/venv.txt:venv — Creation of virtual environments|
+
+  * |:library/venv.txt/creating-virtual-environments:Creating virtual environments|
+
+  * |:library/venv.txt/api:API|
+
+  * |:library/venv.txt/an-example-of-extending-envbuilder:An example of extending EnvBuilder|
+
+* |:library/zipapp.txt:zipapp — Manage executable Python zip archives|
+
+  * |:library/zipapp.txt/basic-example:Basic Example|
+
+  * |:library/zipapp.txt/command-line-interface:Command-Line Interface|
+
+  * |:library/zipapp.txt/python-api:Python API|
+
+  * |:library/zipapp.txt/examples:Examples|
+
+  * |:library/zipapp.txt/specifying-the-interpreter:Specifying the Interpreter|
+
+  * |:library/zipapp.txt/creating-standalone-applications-with-zipapp:Creating Standalone Applications with zipapp|
+
+    * |:library/zipapp.txt/making-a-windows-executable:Making a Windows executable|
+
+    * |:library/zipapp.txt/caveats:Caveats|
+
+  * |:library/zipapp.txt/the-python-zip-application-archive-format:The Python Zip Application Archive Format|
+
+
+

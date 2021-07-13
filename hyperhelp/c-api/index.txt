@@ -1,0 +1,199 @@
+%hyperhelp title="Python/C API Reference Manual" date="2021-07-11"
+*|python-c-api-reference-manual:⚓|*
+
+This manual documents the API used by C and C++ programmers who want to write
+extension modules or embed Python.  It is a companion to
+|:extending/index.txt/extending-index:Extending and Embedding the Python Interpreter|, which describes the general
+principles of extension writing but does not document the API functions in
+detail.
+
+* |:c-api/intro.txt:Introduction|
+
+  * |:c-api/intro.txt/coding-standards:Coding standards|
+
+  * |:c-api/intro.txt/include-files:Include Files|
+
+  * |:c-api/intro.txt/useful-macros:Useful macros|
+
+  * |:c-api/intro.txt/objects-types-and-reference-counts:Objects, Types and Reference Counts|
+
+  * |:c-api/intro.txt/exceptions:Exceptions|
+
+  * |:c-api/intro.txt/embedding-python:Embedding Python|
+
+  * |:c-api/intro.txt/debugging-builds:Debugging Builds|
+
+* |:c-api/stable.txt:Stable Application Binary Interface|
+
+* |:c-api/veryhigh.txt:The Very High Level Layer|
+
+* |:c-api/refcounting.txt:Reference Counting|
+
+* |:c-api/exceptions.txt:Exception Handling|
+
+  * |:c-api/exceptions.txt/printing-and-clearing:Printing and clearing|
+
+  * |:c-api/exceptions.txt/raising-exceptions:Raising exceptions|
+
+  * |:c-api/exceptions.txt/issuing-warnings:Issuing warnings|
+
+  * |:c-api/exceptions.txt/querying-the-error-indicator:Querying the error indicator|
+
+  * |:c-api/exceptions.txt/signal-handling:Signal Handling|
+
+  * |:c-api/exceptions.txt/exception-classes:Exception Classes|
+
+  * |:c-api/exceptions.txt/exception-objects:Exception Objects|
+
+  * |:c-api/exceptions.txt/unicode-exception-objects:Unicode Exception Objects|
+
+  * |:c-api/exceptions.txt/recursion-control:Recursion Control|
+
+  * |:c-api/exceptions.txt/standard-exceptions:Standard Exceptions|
+
+  * |:c-api/exceptions.txt/standard-warning-categories:Standard Warning Categories|
+
+* |:c-api/utilities.txt:Utilities|
+
+  * |:c-api/sys.txt:Operating System Utilities|
+
+  * |:c-api/sys.txt/system-functions:System Functions|
+
+  * |:c-api/sys.txt/process-control:Process Control|
+
+  * |:c-api/import.txt:Importing Modules|
+
+  * |:c-api/marshal.txt:Data marshalling support|
+
+  * |:c-api/arg.txt:Parsing arguments and building values|
+
+  * |:c-api/conversion.txt:String conversion and formatting|
+
+  * |:c-api/reflection.txt:Reflection|
+
+  * |:c-api/codec.txt:Codec registry and support functions|
+
+* |:c-api/abstract.txt:Abstract Objects Layer|
+
+  * |:c-api/object.txt:Object Protocol|
+
+  * |:c-api/number.txt:Number Protocol|
+
+  * |:c-api/sequence.txt:Sequence Protocol|
+
+  * |:c-api/mapping.txt:Mapping Protocol|
+
+  * |:c-api/iter.txt:Iterator Protocol|
+
+  * |:c-api/buffer.txt:Buffer Protocol|
+
+  * |:c-api/objbuffer.txt:Old Buffer Protocol|
+
+* |:c-api/concrete.txt:Concrete Objects Layer|
+
+  * |:c-api/concrete.txt/fundamental-objects:Fundamental Objects|
+
+  * |:c-api/concrete.txt/numeric-objects:Numeric Objects|
+
+  * |:c-api/concrete.txt/sequence-objects:Sequence Objects|
+
+  * |:c-api/concrete.txt/container-objects:Container Objects|
+
+  * |:c-api/concrete.txt/function-objects:Function Objects|
+
+  * |:c-api/concrete.txt/other-objects:Other Objects|
+
+* |:c-api/init.txt:Initialization, Finalization, and Threads|
+
+  * |:c-api/init.txt/before-python-initialization:Before Python Initialization|
+
+  * |:c-api/init.txt/global-configuration-variables:Global configuration variables|
+
+  * |:c-api/init.txt/initializing-and-finalizing-the-interpreter:Initializing and finalizing the interpreter|
+
+  * |:c-api/init.txt/process-wide-parameters:Process-wide parameters|
+
+  * |:c-api/init.txt/thread-state-and-the-global-interpreter-lock:Thread State and the Global Interpreter Lock|
+
+  * |:c-api/init.txt/sub-interpreter-support:Sub-interpreter support|
+
+  * |:c-api/init.txt/asynchronous-notifications:Asynchronous Notifications|
+
+  * |:c-api/init.txt/profiling-and-tracing:Profiling and Tracing|
+
+  * |:c-api/init.txt/advanced-debugger-support:Advanced Debugger Support|
+
+  * |:c-api/init.txt/thread-local-storage-support:Thread Local Storage Support|
+
+* |:c-api/init_config.txt:Python Initialization Configuration|
+
+  * |:c-api/init_config.txt/pywidestringlist:PyWideStringList|
+
+  * |:c-api/init_config.txt/pystatus:PyStatus|
+
+  * |:c-api/init_config.txt/pypreconfig:PyPreConfig|
+
+  * |:c-api/init_config.txt/preinitialization-with-pypreconfig:Preinitialization with PyPreConfig|
+
+  * |:c-api/init_config.txt/pyconfig:PyConfig|
+
+  * |:c-api/init_config.txt/initialization-with-pyconfig:Initialization with PyConfig|
+
+  * |:c-api/init_config.txt/isolated-configuration:Isolated Configuration|
+
+  * |:c-api/init_config.txt/python-configuration:Python Configuration|
+
+  * |:c-api/init_config.txt/path-configuration:Path Configuration|
+
+  * |:c-api/init_config.txt/py-runmain:Py_RunMain()|
+
+  * |:c-api/init_config.txt/multi-phase-initialization-private-provisional-api:Multi-Phase Initialization Private Provisional API|
+
+* |:c-api/memory.txt:Memory Management|
+
+  * |:c-api/memory.txt/overview:Overview|
+
+  * |:c-api/memory.txt/raw-memory-interface:Raw Memory Interface|
+
+  * |:c-api/memory.txt/memory-interface:Memory Interface|
+
+  * |:c-api/memory.txt/object-allocators:Object allocators|
+
+  * |:c-api/memory.txt/default-memory-allocators:Default Memory Allocators|
+
+  * |:c-api/memory.txt/customize-memory-allocators:Customize Memory Allocators|
+
+  * |:c-api/memory.txt/the-pymalloc-allocator:The pymalloc allocator|
+
+  * |:c-api/memory.txt/tracemalloc-c-api:tracemalloc C API|
+
+  * |:c-api/memory.txt/examples:Examples|
+
+* |:c-api/objimpl.txt:Object Implementation Support|
+
+  * |:c-api/allocation.txt:Allocating Objects on the Heap|
+
+  * |:c-api/structures.txt:Common Object Structures|
+
+  * |:c-api/typeobj.txt:Type Objects|
+
+  * |:c-api/typeobj.txt/number-object-structures:Number Object Structures|
+
+  * |:c-api/typeobj.txt/mapping-object-structures:Mapping Object Structures|
+
+  * |:c-api/typeobj.txt/sequence-object-structures:Sequence Object Structures|
+
+  * |:c-api/typeobj.txt/buffer-object-structures:Buffer Object Structures|
+
+  * |:c-api/typeobj.txt/async-object-structures:Async Object Structures|
+
+  * |:c-api/typeobj.txt/slot-type-typedefs:Slot Type typedefs|
+
+  * |:c-api/typeobj.txt/examples:Examples|
+
+  * |:c-api/gcsupport.txt:Supporting Cyclic Garbage Collection|
+
+* |:c-api/apiabiversion.txt:API and ABI Versioning|
+
+
+

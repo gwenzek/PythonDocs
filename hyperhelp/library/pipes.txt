@@ -1,0 +1,81 @@
+%hyperhelp title="pipes" date="2021-07-11"
+*|module-pipes:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/pipes.py:Lib/pipes.py|
+
+======================================================================
+
+The |:module-pipes:pipes| module defines a class to abstract the concept of a *pipeline* — a
+sequence of converters from one file to  another.
+
+Because the module uses */bin/sh* command lines, a POSIX or compatible shell for
+|:library/os.txt/os.system:os.system()| and |:library/os.txt/os.popen:os.popen()| is required.
+
+The |:module-pipes:pipes| module defines the following class:
+
+*pipes.Template:class pipes.Template*
+
+   An abstraction of a pipeline.
+
+Example:
+
+```rst
+>>> import pipes
+>>> t = pipes.Template()
+>>> t.append('tr a-z A-Z', '--')
+>>> f = t.open('pipefile', 'w')
+>>> f.write('hello world')
+>>> f.close()
+>>> open('pipefile').read()
+'HELLO WORLD'
+```
+
+# template-objects:Template Objects
+
+Template objects following methods:
+
+*pipes.Template.reset:Template.reset()*
+
+   Restore a pipeline template to its initial state.
+
+*pipes.Template.clone:Template.clone()*
+
+   Return a new, equivalent, pipeline template.
+
+*pipes.Template.debug:Template.debug(flag)*
+
+   If *flag* is true, turn debugging on. Otherwise, turn debugging off. When
+   debugging is on, commands to be executed are printed, and the shell is given "
+   set -x" command to be more verbose.
+
+*pipes.Template.append:Template.append(cmd, kind)*
+
+   Append a new action at the end. The *cmd* variable must be a valid bourne shell
+   command. The *kind* variable consists of two letters.
+
+   The first letter can be either of "'-'" (which means the command reads its
+   standard input), "'f'" (which means the commands reads a given file on the
+   command line) or "'.'" (which means the commands reads no input, and hence must
+   be first.)
+
+   Similarly, the second letter can be either of "'-'" (which means  the command
+   writes to standard output), "'f'" (which means the  command writes a file on the
+   command line) or "'.'" (which means the command does not write anything, and
+   hence must be last.)
+
+*pipes.Template.prepend:Template.prepend(cmd, kind)*
+
+   Add a new action at the beginning. See |:pipes.Template.append:append()| for explanations of the
+   arguments.
+
+*pipes.Template.open:Template.open(file, mode)*
+
+   Return a file-like object, open to *file*, but read from or written to by the
+   pipeline.  Note that only one of "'r'", "'w'" may be given.
+
+*pipes.Template.copy:Template.copy(infile, outfile)*
+
+   Copy *infile* to *outfile* through the pipe.
+
+
+

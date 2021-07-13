@@ -1,0 +1,45 @@
+%hyperhelp title="Generator Objects" date="2021-07-11"
+*|generator-objects:⚓|*
+
+Generator objects are what Python uses to implement generator iterators. They
+are normally created by iterating over a function that yields values, rather
+than explicitly calling |:c.PyGen_New:PyGen_New()| or |:c.PyGen_NewWithQualName:PyGen_NewWithQualName()|.
+
+*c.PyGenObject:type PyGenObject
+*
+
+   The C structure used for generator objects.
+
+*c.PyGen_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyGen_Type
+*
+
+   The type object corresponding to generator objects.
+
+*c.PyGen_Check:int PyGen_Check(PyObject *ob)
+*
+
+   Return true if *ob* is a generator object; *ob* must not be "NULL".
+
+*c.PyGen_CheckExact:int PyGen_CheckExact(PyObject *ob)
+*
+
+   Return true if *ob*’s type is |:c.PyGen_Type:PyGen_Type|; *ob* must not be "NULL".
+
+*c.PyGen_New:|:c-api/structures.txt/c.PyObject:PyObject| *PyGen_New(PyFrameObject *frame)
+*
+    *Return value: New reference.*
+
+   Create and return a new generator object based on the *frame* object. A
+   reference to *frame* is stolen by this function. The argument must not be "NULL"
+   .
+
+*c.PyGen_NewWithQualName:|:c-api/structures.txt/c.PyObject:PyObject| *PyGen_NewWithQualName(PyFrameObject *frame, PyObject *name, PyObject *qualname)
+*
+    *Return value: New reference.*
+
+   Create and return a new generator object based on the *frame* object, with "
+   __name__" and "__qualname__" set to *name* and *qualname*. A reference to *frame
+   * is stolen by this function.  The *frame* argument must not be "NULL".
+
+
+

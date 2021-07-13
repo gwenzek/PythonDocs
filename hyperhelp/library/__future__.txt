@@ -1,0 +1,111 @@
+%hyperhelp title="__future__" date="2021-07-11"
+*|module-__future__:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/__future__.py:Lib/__future__.py|
+
+======================================================================
+
+|:module-__future__:__future__| is a real module, and serves three purposes:
+
+* To avoid confusing existing tools that analyze import statements and expect to
+  find the modules they’re importing.
+
+* To ensure that |:reference/simple_stmts.txt/future:future statements| run under releases prior to 2.1 at least
+  yield runtime exceptions (the import of |:module-__future__:__future__| will fail, because there
+  was no module of that name prior to 2.1).
+
+* To document when incompatible changes were introduced, and when they will be —
+  or were — made mandatory.  This is a form of executable documentation, and can
+  be inspected programmatically via importing |:module-__future__:__future__| and examining its
+  contents.
+
+Each statement in "__future__.py" is of the form:
+
+```rst
+FeatureName = _Feature(OptionalRelease, MandatoryRelease,
+                       CompilerFlag)
+```
+
+where, normally, *OptionalRelease* is less than *MandatoryRelease*, and both are
+5-tuples of the same form as |:library/sys.txt/sys.version_info:sys.version_info|:
+
+```rst
+(PY_MAJOR_VERSION, # the 2 in 2.1.0a3; an int
+ PY_MINOR_VERSION, # the 1; an int
+ PY_MICRO_VERSION, # the 0; an int
+ PY_RELEASE_LEVEL, # "alpha", "beta", "candidate" or "final"; string
+ PY_RELEASE_SERIAL # the 3; an int
+)
+```
+
+*OptionalRelease* records the first release in which the feature was accepted.
+
+In the case of a *MandatoryRelease* that has not yet occurred, *MandatoryRelease
+* predicts the release in which the feature will become part of the language.
+
+Else *MandatoryRelease* records when the feature became part of the language; in
+releases at or after that, modules no longer need a future statement to use the
+feature in question, but may continue to use such imports.
+
+*MandatoryRelease* may also be "None", meaning that a planned feature got
+dropped.
+
+Instances of class "_Feature" have two corresponding methods, "
+getOptionalRelease()" and "getMandatoryRelease()".
+
+*CompilerFlag* is the (bitfield) flag that should be passed in the fourth
+argument to the built-in function |:library/functions.txt/compile:compile()| to enable the feature in
+dynamically compiled code.  This flag is stored in the "compiler_flag" attribute
+on "_Feature" instances.
+
+No feature description will ever be deleted from |:module-__future__:__future__|. Since its
+introduction in Python 2.1 the following features have found their way into the
+language using this mechanism:
+
++--------------------+---------------+----------------+-----------------------------------------------+
+| feature            | optional in   | mandatory in   | effect                                        |
+|====================|===============|================|===============================================|
+| nested_scopes      | 2.1.0b1       | 2.2            | *|index-0:⚓|*                                |
+|                    |               |                | |:www.python.org/dev/peps/pep-0227:PEP 227|:  |
+|                    |               |                | *Statically Nested Scopes*                    |
++--------------------+---------------+----------------+-----------------------------------------------+
+| generators         | 2.2.0a1       | 2.3            | *|index-1:⚓|*                                |
+|                    |               |                | |:www.python.org/dev/peps/pep-0255:PEP 255|:  |
+|                    |               |                | *Simple Generators*                           |
++--------------------+---------------+----------------+-----------------------------------------------+
+| division           | 2.2.0a2       | 3.0            | *|index-2:⚓|*                                |
+|                    |               |                | |:www.python.org/dev/peps/pep-0238:PEP 238|:  |
+|                    |               |                | *Changing the Division Operator*              |
++--------------------+---------------+----------------+-----------------------------------------------+
+| absolute_import    | 2.5.0a1       | 3.0            | *|index-3:⚓|*                                |
+|                    |               |                | |:www.python.org/dev/peps/pep-0328:PEP 328|:  |
+|                    |               |                | *Imports: Multi-Line and Absolute/Relative*   |
++--------------------+---------------+----------------+-----------------------------------------------+
+| with_statement     | 2.5.0a1       | 2.6            | *|index-4:⚓|*                                |
+|                    |               |                | |:www.python.org/dev/peps/pep-0343:PEP 343|:  |
+|                    |               |                | *The “with” Statement*                        |
++--------------------+---------------+----------------+-----------------------------------------------+
+| print_function     | 2.6.0a2       | 3.0            | *|index-5:⚓|*                                |
+|                    |               |                | |:www.python.org/dev/peps/pep-3105:PEP 3105|: |
+|                    |               |                | *Make print a function*                       |
++--------------------+---------------+----------------+-----------------------------------------------+
+| unicode_literals   | 2.6.0a2       | 3.0            | *|index-6:⚓|*                                |
+|                    |               |                | |:www.python.org/dev/peps/pep-3112:PEP 3112|: |
+|                    |               |                | *Bytes literals in Python 3000*               |
++--------------------+---------------+----------------+-----------------------------------------------+
+| generator_stop     | 3.5.0b1       | 3.7            | *|index-7:⚓|*                                |
+|                    |               |                | |:www.python.org/dev/peps/pep-0479:PEP 479|:  |
+|                    |               |                | *StopIteration handling inside generators*    |
++--------------------+---------------+----------------+-----------------------------------------------+
+| annotations        | 3.7.0b1       | 3.10           | *|index-8:⚓|*                                |
+|                    |               |                | |:www.python.org/dev/peps/pep-0563:PEP 563|:  |
+|                    |               |                | *Postponed evaluation of annotations*         |
++--------------------+---------------+----------------+-----------------------------------------------+
+
+See also:
+
+  |:reference/simple_stmts.txt/future:Future statements|
+     How the compiler treats future imports.
+
+
+

@@ -1,0 +1,176 @@
+%hyperhelp title="Concurrent Execution" date="2021-07-11"
+*|concurrent-execution:⚓|*
+
+The modules described in this chapter provide support for concurrent execution
+of code. The appropriate choice of tool will depend on the task to be executed
+(CPU bound vs IO bound) and preferred style of development (event driven
+cooperative multitasking vs preemptive multitasking). Here’s an overview:
+
+* |:library/threading.txt:threading — Thread-based parallelism|
+
+  * |:library/threading.txt/thread-local-data:Thread-Local Data|
+
+  * |:library/threading.txt/thread-objects:Thread Objects|
+
+  * |:library/threading.txt/lock-objects:Lock Objects|
+
+  * |:library/threading.txt/rlock-objects:RLock Objects|
+
+  * |:library/threading.txt/condition-objects:Condition Objects|
+
+  * |:library/threading.txt/semaphore-objects:Semaphore Objects|
+
+    * |:library/threading.txt/semaphore-example:Semaphore Example|
+
+  * |:library/threading.txt/event-objects:Event Objects|
+
+  * |:library/threading.txt/timer-objects:Timer Objects|
+
+  * |:library/threading.txt/barrier-objects:Barrier Objects|
+
+  * |:library/threading.txt/using-locks-conditions-and-semaphores-in-the-with-statement:Using locks, conditions, and semaphores in the with statement|
+
+* |:library/multiprocessing.txt:multiprocessing — Process-based parallelism|
+
+  * |:library/multiprocessing.txt/introduction:Introduction|
+
+    * |:library/multiprocessing.txt/the-process-class:The Process class|
+
+    * |:library/multiprocessing.txt/contexts-and-start-methods:Contexts and start methods|
+
+    * |:library/multiprocessing.txt/exchanging-objects-between-processes:Exchanging objects between processes|
+
+    * |:library/multiprocessing.txt/synchronization-between-processes:Synchronization between processes|
+
+    * |:library/multiprocessing.txt/sharing-state-between-processes:Sharing state between processes|
+
+    * |:library/multiprocessing.txt/using-a-pool-of-workers:Using a pool of workers|
+
+  * |:library/multiprocessing.txt/reference:Reference|
+
+    * |:library/multiprocessing.txt/process-and-exceptions:Process and exceptions|
+
+    * |:library/multiprocessing.txt/pipes-and-queues:Pipes and Queues|
+
+    * |:library/multiprocessing.txt/miscellaneous:Miscellaneous|
+
+    * |:library/multiprocessing.txt/connection-objects:Connection Objects|
+
+    * |:library/multiprocessing.txt/synchronization-primitives:Synchronization primitives|
+
+    * |:library/multiprocessing.txt/shared-ctypes-objects:Shared ctypes Objects|
+
+      * |:library/multiprocessing.txt/module-multiprocessing.sharedctypes:The multiprocessing.sharedctypes module|
+
+    * |:library/multiprocessing.txt/managers:Managers|
+
+      * |:library/multiprocessing.txt/customized-managers:Customized managers|
+
+      * |:library/multiprocessing.txt/using-a-remote-manager:Using a remote manager|
+
+    * |:library/multiprocessing.txt/proxy-objects:Proxy Objects|
+
+      * |:library/multiprocessing.txt/cleanup:Cleanup|
+
+    * |:library/multiprocessing.txt/module-multiprocessing.pool:Process Pools|
+
+    * |:library/multiprocessing.txt/module-multiprocessing.connection:Listeners and Clients|
+
+      * |:library/multiprocessing.txt/address-formats:Address Formats|
+
+    * |:library/multiprocessing.txt/authentication-keys:Authentication keys|
+
+    * |:library/multiprocessing.txt/logging:Logging|
+
+    * |:library/multiprocessing.txt/module-multiprocessing.dummy:The multiprocessing.dummy module|
+
+  * |:library/multiprocessing.txt/programming-guidelines:Programming guidelines|
+
+    * |:library/multiprocessing.txt/all-start-methods:All start methods|
+
+    * |:library/multiprocessing.txt/the-spawn-and-forkserver-start-methods:The spawn and forkserver start methods|
+
+  * |:library/multiprocessing.txt/examples:Examples|
+
+* |:library/multiprocessing.shared_memory.txt:multiprocessing.shared_memory —  Provides shared memory for direct access across processes|
+
+* |:library/concurrent.txt:The concurrent package|
+
+* |:library/concurrent.futures.txt:concurrent.futures — Launching parallel tasks|
+
+  * |:library/concurrent.futures.txt/executor-objects:Executor Objects|
+
+  * |:library/concurrent.futures.txt/threadpoolexecutor:ThreadPoolExecutor|
+
+    * |:library/concurrent.futures.txt/threadpoolexecutor-example:ThreadPoolExecutor Example|
+
+  * |:library/concurrent.futures.txt/processpoolexecutor:ProcessPoolExecutor|
+
+    * |:library/concurrent.futures.txt/processpoolexecutor-example:ProcessPoolExecutor Example|
+
+  * |:library/concurrent.futures.txt/future-objects:Future Objects|
+
+  * |:library/concurrent.futures.txt/module-functions:Module Functions|
+
+  * |:library/concurrent.futures.txt/exception-classes:Exception classes|
+
+* |:library/subprocess.txt:subprocess — Subprocess management|
+
+  * |:library/subprocess.txt/using-the-subprocess-module:Using the subprocess Module|
+
+    * |:library/subprocess.txt/frequently-used-arguments:Frequently Used Arguments|
+
+    * |:library/subprocess.txt/popen-constructor:Popen Constructor|
+
+    * |:library/subprocess.txt/exceptions:Exceptions|
+
+  * |:library/subprocess.txt/security-considerations:Security Considerations|
+
+  * |:library/subprocess.txt/popen-objects:Popen Objects|
+
+  * |:library/subprocess.txt/windows-popen-helpers:Windows Popen Helpers|
+
+    * |:library/subprocess.txt/windows-constants:Windows Constants|
+
+  * |:library/subprocess.txt/older-high-level-api:Older high-level API|
+
+  * |:library/subprocess.txt/replacing-older-functions-with-the-subprocess-module:Replacing Older Functions with the subprocess Module|
+
+    * |:library/subprocess.txt/replacing-bin-sh-shell-command-substitution:Replacing /bin/sh shell command substitution|
+
+    * |:library/subprocess.txt/replacing-shell-pipeline:Replacing shell pipeline|
+
+    * |:library/subprocess.txt/replacing-os-system:Replacing os.system()|
+
+    * |:library/subprocess.txt/replacing-the-os-spawn-family:Replacing the os.spawn family|
+
+    * |:library/subprocess.txt/replacing-os-popen-os-popen2-os-popen3:Replacing os.popen(), os.popen2(), os.popen3()|
+
+    * |:library/subprocess.txt/replacing-functions-from-the-popen2-module:Replacing functions from the popen2 module|
+
+  * |:library/subprocess.txt/legacy-shell-invocation-functions:Legacy Shell Invocation Functions|
+
+  * |:library/subprocess.txt/notes:Notes|
+
+    * |:library/subprocess.txt/converting-an-argument-sequence-to-a-string-on-windows:Converting an argument sequence to a string on Windows|
+
+* |:library/sched.txt:sched — Event scheduler|
+
+  * |:library/sched.txt/scheduler-objects:Scheduler Objects|
+
+* |:library/queue.txt:queue — A synchronized queue class|
+
+  * |:library/queue.txt/queue-objects:Queue Objects|
+
+  * |:library/queue.txt/simplequeue-objects:SimpleQueue Objects|
+
+The following are support modules for some of the above services:
+
+* |:library/_thread.txt:_thread — Low-level threading API|
+
+* |:library/_dummy_thread.txt:_dummy_thread — Drop-in replacement for the _thread module|
+
+* |:library/dummy_threading.txt:dummy_threading — Drop-in replacement for the threading module|
+
+
+

@@ -1,0 +1,308 @@
+%hyperhelp title="Internet Protocols and Support" date="2021-07-11"
+*|internet-protocols-and-support:⚓|*
+
+*|index-0:⚓|* *|index-1:⚓|*
+
+The modules described in this chapter implement Internet protocols and  support
+for related technology.  They are all implemented in Python. Most of these
+modules require the presence of the system-dependent module |:library/socket.txt/module-socket:socket|, which is
+currently supported on most popular platforms.  Here is an overview:
+
+* |:library/webbrowser.txt:webbrowser — Convenient Web-browser controller|
+
+  * |:library/webbrowser.txt/browser-controller-objects:Browser Controller Objects|
+
+* |:library/cgi.txt:cgi — Common Gateway Interface support|
+
+  * |:library/cgi.txt/introduction:Introduction|
+
+  * |:library/cgi.txt/using-the-cgi-module:Using the cgi module|
+
+  * |:library/cgi.txt/higher-level-interface:Higher Level Interface|
+
+  * |:library/cgi.txt/functions:Functions|
+
+  * |:library/cgi.txt/caring-about-security:Caring about security|
+
+  * |:library/cgi.txt/installing-your-cgi-script-on-a-unix-system:Installing your CGI script on a Unix system|
+
+  * |:library/cgi.txt/testing-your-cgi-script:Testing your CGI script|
+
+  * |:library/cgi.txt/debugging-cgi-scripts:Debugging CGI scripts|
+
+  * |:library/cgi.txt/common-problems-and-solutions:Common problems and solutions|
+
+* |:library/cgitb.txt:cgitb — Traceback manager for CGI scripts|
+
+* |:library/wsgiref.txt:wsgiref — WSGI Utilities and Reference Implementation|
+
+  * |:library/wsgiref.txt/module-wsgiref.util:wsgiref.util – WSGI environment utilities|
+
+  * |:library/wsgiref.txt/module-wsgiref.headers:wsgiref.headers – WSGI response header tools|
+
+  * |:library/wsgiref.txt/module-wsgiref.simple_server:wsgiref.simple_server – a simple WSGI HTTP server|
+
+  * |:library/wsgiref.txt/module-wsgiref.validate:wsgiref.validate — WSGI conformance checker|
+
+  * |:library/wsgiref.txt/module-wsgiref.handlers:wsgiref.handlers – server/gateway base classes|
+
+  * |:library/wsgiref.txt/examples:Examples|
+
+* |:library/urllib.txt:urllib — URL handling modules|
+
+* |:library/urllib.request.txt:urllib.request — Extensible library for opening URLs|
+
+  * |:library/urllib.request.txt/request-objects:Request Objects|
+
+  * |:library/urllib.request.txt/openerdirector-objects:OpenerDirector Objects|
+
+  * |:library/urllib.request.txt/basehandler-objects:BaseHandler Objects|
+
+  * |:library/urllib.request.txt/httpredirecthandler-objects:HTTPRedirectHandler Objects|
+
+  * |:library/urllib.request.txt/httpcookieprocessor-objects:HTTPCookieProcessor Objects|
+
+  * |:library/urllib.request.txt/proxyhandler-objects:ProxyHandler Objects|
+
+  * |:library/urllib.request.txt/httppasswordmgr-objects:HTTPPasswordMgr Objects|
+
+  * |:library/urllib.request.txt/httppasswordmgrwithpriorauth-objects:HTTPPasswordMgrWithPriorAuth Objects|
+
+  * |:library/urllib.request.txt/abstractbasicauthhandler-objects:AbstractBasicAuthHandler Objects|
+
+  * |:library/urllib.request.txt/httpbasicauthhandler-objects:HTTPBasicAuthHandler Objects|
+
+  * |:library/urllib.request.txt/proxybasicauthhandler-objects:ProxyBasicAuthHandler Objects|
+
+  * |:library/urllib.request.txt/abstractdigestauthhandler-objects:AbstractDigestAuthHandler Objects|
+
+  * |:library/urllib.request.txt/httpdigestauthhandler-objects:HTTPDigestAuthHandler Objects|
+
+  * |:library/urllib.request.txt/proxydigestauthhandler-objects:ProxyDigestAuthHandler Objects|
+
+  * |:library/urllib.request.txt/httphandler-objects:HTTPHandler Objects|
+
+  * |:library/urllib.request.txt/httpshandler-objects:HTTPSHandler Objects|
+
+  * |:library/urllib.request.txt/filehandler-objects:FileHandler Objects|
+
+  * |:library/urllib.request.txt/datahandler-objects:DataHandler Objects|
+
+  * |:library/urllib.request.txt/ftphandler-objects:FTPHandler Objects|
+
+  * |:library/urllib.request.txt/cacheftphandler-objects:CacheFTPHandler Objects|
+
+  * |:library/urllib.request.txt/unknownhandler-objects:UnknownHandler Objects|
+
+  * |:library/urllib.request.txt/httperrorprocessor-objects:HTTPErrorProcessor Objects|
+
+  * |:library/urllib.request.txt/examples:Examples|
+
+  * |:library/urllib.request.txt/legacy-interface:Legacy interface|
+
+  * |:library/urllib.request.txt/urllib-request-restrictions:urllib.request Restrictions|
+
+* |:library/urllib.request.txt/module-urllib.response:urllib.response — Response classes used by urllib|
+
+* |:library/urllib.parse.txt:urllib.parse — Parse URLs into components|
+
+  * |:library/urllib.parse.txt/url-parsing:URL Parsing|
+
+  * |:library/urllib.parse.txt/parsing-ascii-encoded-bytes:Parsing ASCII Encoded Bytes|
+
+  * |:library/urllib.parse.txt/structured-parse-results:Structured Parse Results|
+
+  * |:library/urllib.parse.txt/url-quoting:URL Quoting|
+
+* |:library/urllib.error.txt:urllib.error — Exception classes raised by urllib.request|
+
+* |:library/urllib.robotparser.txt:urllib.robotparser —  Parser for robots.txt|
+
+* |:library/http.txt:http — HTTP modules|
+
+  * |:library/http.txt/http-status-codes:HTTP status codes|
+
+* |:library/http.client.txt:http.client — HTTP protocol client|
+
+  * |:library/http.client.txt/httpconnection-objects:HTTPConnection Objects|
+
+  * |:library/http.client.txt/httpresponse-objects:HTTPResponse Objects|
+
+  * |:library/http.client.txt/examples:Examples|
+
+  * |:library/http.client.txt/httpmessage-objects:HTTPMessage Objects|
+
+* |:library/ftplib.txt:ftplib — FTP protocol client|
+
+  * |:library/ftplib.txt/ftp-objects:FTP Objects|
+
+  * |:library/ftplib.txt/ftp-tls-objects:FTP_TLS Objects|
+
+* |:library/poplib.txt:poplib — POP3 protocol client|
+
+  * |:library/poplib.txt/pop3-objects:POP3 Objects|
+
+  * |:library/poplib.txt/pop3-example:POP3 Example|
+
+* |:library/imaplib.txt:imaplib — IMAP4 protocol client|
+
+  * |:library/imaplib.txt/imap4-objects:IMAP4 Objects|
+
+  * |:library/imaplib.txt/imap4-example:IMAP4 Example|
+
+* |:library/nntplib.txt:nntplib — NNTP protocol client|
+
+  * |:library/nntplib.txt/nntp-objects:NNTP Objects|
+
+    * |:library/nntplib.txt/attributes:Attributes|
+
+    * |:library/nntplib.txt/methods:Methods|
+
+  * |:library/nntplib.txt/utility-functions:Utility functions|
+
+* |:library/smtplib.txt:smtplib — SMTP protocol client|
+
+  * |:library/smtplib.txt/smtp-objects:SMTP Objects|
+
+  * |:library/smtplib.txt/smtp-example:SMTP Example|
+
+* |:library/smtpd.txt:smtpd — SMTP Server|
+
+  * |:library/smtpd.txt/smtpserver-objects:SMTPServer Objects|
+
+  * |:library/smtpd.txt/debuggingserver-objects:DebuggingServer Objects|
+
+  * |:library/smtpd.txt/pureproxy-objects:PureProxy Objects|
+
+  * |:library/smtpd.txt/mailmanproxy-objects:MailmanProxy Objects|
+
+  * |:library/smtpd.txt/smtpchannel-objects:SMTPChannel Objects|
+
+* |:library/telnetlib.txt:telnetlib — Telnet client|
+
+  * |:library/telnetlib.txt/telnet-objects:Telnet Objects|
+
+  * |:library/telnetlib.txt/telnet-example:Telnet Example|
+
+* |:library/uuid.txt:uuid — UUID objects according to RFC 4122|
+
+  * |:library/uuid.txt/example:Example|
+
+* |:library/socketserver.txt:socketserver — A framework for network servers|
+
+  * |:library/socketserver.txt/server-creation-notes:Server Creation Notes|
+
+  * |:library/socketserver.txt/server-objects:Server Objects|
+
+  * |:library/socketserver.txt/request-handler-objects:Request Handler Objects|
+
+  * |:library/socketserver.txt/examples:Examples|
+
+    * |:library/socketserver.txt/socketserver-tcpserver-example:socketserver.TCPServer Example|
+
+    * |:library/socketserver.txt/socketserver-udpserver-example:socketserver.UDPServer Example|
+
+    * |:library/socketserver.txt/asynchronous-mixins:Asynchronous Mixins|
+
+* |:library/http.server.txt:http.server — HTTP servers|
+
+* |:library/http.cookies.txt:http.cookies — HTTP state management|
+
+  * |:library/http.cookies.txt/cookie-objects:Cookie Objects|
+
+  * |:library/http.cookies.txt/morsel-objects:Morsel Objects|
+
+  * |:library/http.cookies.txt/example:Example|
+
+* |:library/http.cookiejar.txt:http.cookiejar — Cookie handling for HTTP clients|
+
+  * |:library/http.cookiejar.txt/cookiejar-and-filecookiejar-objects:CookieJar and FileCookieJar Objects|
+
+  * |:library/http.cookiejar.txt/filecookiejar-subclasses-and-co-operation-with-web-browsers:FileCookieJar subclasses and co-operation with web browsers|
+
+  * |:library/http.cookiejar.txt/cookiepolicy-objects:CookiePolicy Objects|
+
+  * |:library/http.cookiejar.txt/defaultcookiepolicy-objects:DefaultCookiePolicy Objects|
+
+  * |:library/http.cookiejar.txt/cookie-objects:Cookie Objects|
+
+  * |:library/http.cookiejar.txt/examples:Examples|
+
+* |:library/xmlrpc.txt:xmlrpc — XMLRPC server and client modules|
+
+* |:library/xmlrpc.client.txt:xmlrpc.client — XML-RPC client access|
+
+  * |:library/xmlrpc.client.txt/serverproxy-objects:ServerProxy Objects|
+
+  * |:library/xmlrpc.client.txt/datetime-objects:DateTime Objects|
+
+  * |:library/xmlrpc.client.txt/binary-objects:Binary Objects|
+
+  * |:library/xmlrpc.client.txt/fault-objects:Fault Objects|
+
+  * |:library/xmlrpc.client.txt/protocolerror-objects:ProtocolError Objects|
+
+  * |:library/xmlrpc.client.txt/multicall-objects:MultiCall Objects|
+
+  * |:library/xmlrpc.client.txt/convenience-functions:Convenience Functions|
+
+  * |:library/xmlrpc.client.txt/example-of-client-usage:Example of Client Usage|
+
+  * |:library/xmlrpc.client.txt/example-of-client-and-server-usage:Example of Client and Server Usage|
+
+* |:library/xmlrpc.server.txt:xmlrpc.server — Basic XML-RPC servers|
+
+  * |:library/xmlrpc.server.txt/simplexmlrpcserver-objects:SimpleXMLRPCServer Objects|
+
+    * |:library/xmlrpc.server.txt/simplexmlrpcserver-example:SimpleXMLRPCServer Example|
+
+  * |:library/xmlrpc.server.txt/cgixmlrpcrequesthandler:CGIXMLRPCRequestHandler|
+
+  * |:library/xmlrpc.server.txt/documenting-xmlrpc-server:Documenting XMLRPC server|
+
+  * |:library/xmlrpc.server.txt/docxmlrpcserver-objects:DocXMLRPCServer Objects|
+
+  * |:library/xmlrpc.server.txt/doccgixmlrpcrequesthandler:DocCGIXMLRPCRequestHandler|
+
+* |:library/ipaddress.txt:ipaddress — IPv4/IPv6 manipulation library|
+
+  * |:library/ipaddress.txt/convenience-factory-functions:Convenience factory functions|
+
+  * |:library/ipaddress.txt/ip-addresses:IP Addresses|
+
+    * |:library/ipaddress.txt/address-objects:Address objects|
+
+    * |:library/ipaddress.txt/conversion-to-strings-and-integers:Conversion to Strings and Integers|
+
+    * |:library/ipaddress.txt/operators:Operators|
+
+      * |:library/ipaddress.txt/comparison-operators:Comparison operators|
+
+      * |:library/ipaddress.txt/arithmetic-operators:Arithmetic operators|
+
+  * |:library/ipaddress.txt/ip-network-definitions:IP Network definitions|
+
+    * |:library/ipaddress.txt/prefix-net-mask-and-host-mask:Prefix, net mask and host mask|
+
+    * |:library/ipaddress.txt/network-objects:Network objects|
+
+    * |:library/ipaddress.txt/id1:Operators|
+
+      * |:library/ipaddress.txt/logical-operators:Logical operators|
+
+      * |:library/ipaddress.txt/iteration:Iteration|
+
+      * |:library/ipaddress.txt/networks-as-containers-of-addresses:Networks as containers of addresses|
+
+  * |:library/ipaddress.txt/interface-objects:Interface objects|
+
+    * |:library/ipaddress.txt/id2:Operators|
+
+      * |:library/ipaddress.txt/id3:Logical operators|
+
+  * |:library/ipaddress.txt/other-module-level-functions:Other Module Level Functions|
+
+  * |:library/ipaddress.txt/custom-exceptions:Custom Exceptions|
+
+
+

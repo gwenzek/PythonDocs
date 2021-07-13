@@ -1,0 +1,32 @@
+%hyperhelp title="Networking and Interprocess Communication" date="2021-07-11"
+*|networking-and-interprocess-communication:⚓|*
+
+The modules described in this chapter provide mechanisms for networking and
+inter-processes communication.
+
+Some modules only work for two processes that are on the same machine, e.g.
+|:library/signal.txt/module-signal:signal| and |:library/mmap.txt/module-mmap:mmap|.  Other modules support networking protocols that two or
+more processes can use to communicate across machines.
+
+The list of modules described in this chapter is:
+
+* |:library/asyncio.txt:asyncio — Asynchronous I/O|
+
+* |:library/socket.txt:socket — Low-level networking interface|
+
+* |:library/ssl.txt:ssl — TLS/SSL wrapper for socket objects|
+
+* |:library/select.txt:select — Waiting for I/O completion|
+
+* |:library/selectors.txt:selectors — High-level I/O multiplexing|
+
+* |:library/asyncore.txt:asyncore — Asynchronous socket handler|
+
+* |:library/asynchat.txt:asynchat — Asynchronous socket command/response handler|
+
+* |:library/signal.txt:signal — Set handlers for asynchronous events|
+
+* |:library/mmap.txt:mmap — Memory-mapped file support|
+
+
+

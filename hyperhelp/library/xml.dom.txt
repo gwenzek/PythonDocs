@@ -1,0 +1,855 @@
+%hyperhelp title="xml.dom" date="2021-07-11"
+*|module-xml.dom:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/xml/dom/__init__.py:Lib/xml/dom/__init__.py|
+
+======================================================================
+
+The Document Object Model, or “DOM,” is a cross-language API from the World Wide
+Web Consortium (W3C) for accessing and modifying XML documents.  A DOM
+implementation presents an XML document as a tree structure, or allows client
+code to build such a structure from scratch.  It then gives access to the
+structure through a set of objects which provided well-known interfaces.
+
+The DOM is extremely useful for random-access applications.  SAX only allows you
+a view of one bit of the document at a time.  If you are looking at one SAX
+element, you have no access to another.  If you are looking at a text node, you
+have no access to a containing element. When you write a SAX application, you
+need to keep track of your program’s position in the document somewhere in your
+own code.  SAX does not do it for you.  Also, if you need to look ahead in the
+XML document, you are just out of luck.
+
+Some applications are simply impossible in an event driven model with no access
+to a tree.  Of course you could build some sort of tree yourself in SAX events,
+but the DOM allows you to avoid writing that code.  The DOM is a standard tree
+representation for XML data.
+
+The Document Object Model is being defined by the W3C in stages, or “levels” in
+their terminology.  The Python mapping of the API is substantially based on the
+DOM Level 2 recommendation.
+
+DOM applications typically start by parsing some XML into a DOM.  How this is
+accomplished is not covered at all by DOM Level 1, and Level 2 provides only
+limited improvements: There is a "DOMImplementation" object class which provides
+access to "Document" creation methods, but no way to access an XML
+reader/parser/Document builder in an implementation-independent way. There is
+also no well-defined way to access these methods without an existing "Document"
+object.  In Python, each DOM implementation will provide a function
+|:xml.dom.getDOMImplementation:getDOMImplementation()|. DOM Level 3 adds a Load/Store specification, which
+defines an interface to the reader, but this is not yet available in the Python
+standard library.
+
+Once you have a DOM document object, you can access the parts of your XML
+document through its properties and methods.  These properties are defined in
+the DOM specification; this portion of the reference manual describes the
+interpretation of the specification in Python.
+
+The specification provided by the W3C defines the DOM API for Java, ECMAScript,
+and OMG IDL.  The Python mapping defined here is based in large part on the IDL
+version of the specification, but strict compliance is not required (though
+implementations are free to support the strict mapping from IDL).  See section
+|:dom-conformance:Conformance| for a detailed discussion of mapping requirements.
+
+See also:
+
+  |:www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113:Document Object Model (DOM) Level 2 Specification|*|document-object-model-dom-level-2-specification:⚓|*
+     The W3C recommendation upon which the Python DOM API is based.
+
+  |:www.w3.org/TR/REC-DOM-Level-1:Document Object Model (DOM) Level 1 Specification|*|document-object-model-dom-level-1-specification:⚓|*
+     The W3C recommendation for the DOM supported by |:library/xml.dom.minidom.txt/module-xml.dom.minidom:xml.dom.minidom|.
+
+  |:www.omg.org/cgi-bin/doc?formal/02-11-05.pdf:Python Language Mapping Specification|*|python-language-mapping-specification:⚓|*
+     This specifies the mapping from OMG IDL to Python.
+
+# module-contents:Module Contents
+
+The |:module-xml.dom:xml.dom| contains the following functions:
+
+*xml.dom.registerDOMImplementation:xml.dom.registerDOMImplementation(name, factory)*
+
+   Register the *factory* function with the name *name*.  The factory function
+   should return an object which implements the "DOMImplementation" interface.  The
+   factory function can return the same object every time, or a new one for each
+   call, as appropriate for the specific implementation (e.g. if that
+   implementation supports some customization).
+
+*xml.dom.getDOMImplementation:xml.dom.getDOMImplementation(name=None, features=())*
+
+   Return a suitable DOM implementation. The *name* is either well-known, the
+   module name of a DOM implementation, or "None". If it is not "None", imports the
+   corresponding module and returns a "DOMImplementation" object if the import
+   succeeds.  If no name is given, and if the environment variable *|index-0:⚓|* "
+   PYTHON_DOM" is set, this variable is used to find the implementation.
+
+   If name is not given, this examines the available implementations to find one
+   with the required feature set.  If no implementation can be found, raise an
+   |:library/exceptions.txt/ImportError:ImportError|.  The features list must be a sequence of "(feature, version)"
+   pairs which are passed to the "hasFeature()" method on available "
+   DOMImplementation" objects.
+
+Some convenience constants are also provided:
+
+*xml.dom.EMPTY_NAMESPACE:xml.dom.EMPTY_NAMESPACE*
+
+   The value used to indicate that no namespace is associated with a node in the
+   DOM.  This is typically found as the "namespaceURI" of a node, or used as the *
+   namespaceURI* parameter to a namespaces-specific method.
+
+*xml.dom.XML_NAMESPACE:xml.dom.XML_NAMESPACE*
+
+   The namespace URI associated with the reserved prefix "xml", as defined by
+   |:www.w3.org/TR/REC-xml-names:Namespaces in XML|*|namespaces-in-xml:⚓|*  (section 4).
+
+*xml.dom.XMLNS_NAMESPACE:xml.dom.XMLNS_NAMESPACE*
+
+   The namespace URI for namespace declarations, as defined by
+   |:www.w3.org/TR/DOM-Level-2-Core/core.html:Document Object
+Model (DOM) Level 2 Core Specification|*|document-object-model-
+   dom-level-2-core-specification:⚓|*  (section 1.1.8).
+
+*xml.dom.XHTML_NAMESPACE:xml.dom.XHTML_NAMESPACE*
+
+   The URI of the XHTML namespace as defined by
+   |:www.w3.org/TR/xhtml1:XHTML 1.0: The Extensible
+HyperText Markup Language|*|xhtml-1-0-the-extensible-
+   hypertext-markup-language:⚓|*  (section 3.1.1).
+
+In addition, |:module-xml.dom:xml.dom| contains a base "Node" class and the DOM exception
+classes.  The "Node" class provided by this module does not implement any of the
+methods or attributes defined by the DOM specification; concrete DOM
+implementations must provide those.  The "Node" class provided as part of this
+module does provide the constants used for the "nodeType" attribute on concrete
+"Node" objects; they are located within the class rather than at the module
+level to conform with the DOM specifications.
+
+*|dom-objects:⚓|* # objects-in-the-dom:Objects in the DOM
+
+The definitive documentation for the DOM is the DOM specification from the W3C.
+
+Note that DOM attributes may also be manipulated as nodes instead of as simple
+strings.  It is fairly rare that you must do this, however, so this usage is not
+yet documented.
+
++----------------------------------+-------------------------------------+-----------------------------------+
+| Interface                        | Section                             | Purpose                           |
+|==================================|=====================================|===================================|
+| "DOMImplementation"              | |:dom-implementation-               | Interface to the underlying       |
+|                                  | objects:DOMImplementation Objects|  | implementation.                   |
++----------------------------------+-------------------------------------+-----------------------------------+
+| "Node"                           | |:dom-node-objects:Node Objects|    | Base interface for most objects   |
+|                                  |                                     | in a document.                    |
++----------------------------------+-------------------------------------+-----------------------------------+
+| "NodeList"                       | |:dom-nodelist-objects:NodeList     | Interface for a sequence of       |
+|                                  | Objects|                            | nodes.                            |
++----------------------------------+-------------------------------------+-----------------------------------+
+| "DocumentType"                   | |:dom-documenttype-                 | Information about the             |
+|                                  | objects:DocumentType Objects|       | declarations needed to process a  |
+|                                  |                                     | document.                         |
++----------------------------------+-------------------------------------+-----------------------------------+
+| "Document"                       | |:dom-document-objects:Document     | Object which represents an entire |
+|                                  | Objects|                            | document.                         |
++----------------------------------+-------------------------------------+-----------------------------------+
+| "Element"                        | |:dom-element-objects:Element       | Element nodes in the document     |
+|                                  | Objects|                            | hierarchy.                        |
++----------------------------------+-------------------------------------+-----------------------------------+
+| "Attr"                           | |:dom-attr-objects:Attr Objects|    | Attribute value nodes on element  |
+|                                  |                                     | nodes.                            |
++----------------------------------+-------------------------------------+-----------------------------------+
+| "Comment"                        | |:dom-comment-objects:Comment       | Representation of comments in the |
+|                                  | Objects|                            | source document.                  |
++----------------------------------+-------------------------------------+-----------------------------------+
+| "Text"                           | |:dom-text-objects:Text and         | Nodes containing textual content  |
+|                                  | CDATASection Objects|               | from the document.                |
++----------------------------------+-------------------------------------+-----------------------------------+
+| "ProcessingInstruction"          | |:dom-pi-                           | Processing instruction            |
+|                                  | objects:ProcessingInstruction       | representation.                   |
+|                                  | Objects|                            |                                   |
++----------------------------------+-------------------------------------+-----------------------------------+
+
+An additional section describes the exceptions defined for working with the DOM
+in Python.
+
+## domimplementation-objects:DOMImplementation Objects
+
+The "DOMImplementation" interface provides a way for applications to determine
+the availability of particular features in the DOM they are using. DOM Level 2
+added the ability to create new "Document" and "DocumentType" objects using the
+"DOMImplementation" as well.
+
+*xml.dom.DOMImplementation.hasFeature:DOMImplementation.hasFeature(feature, version)*
+
+   Return "True" if the feature identified by the pair of strings *feature* and *
+   version* is implemented.
+
+*xml.dom.DOMImplementation.createDocument:DOMImplementation.createDocument(namespaceUri, qualifiedName, doctype)*
+
+   Return a new "Document" object (the root of the DOM), with a child "Element"
+   object having the given *namespaceUri* and *qualifiedName*. The *doctype* must
+   be a "DocumentType" object created by |:xml.dom.DOMImplementation.createDocumentType:createDocumentType()|, or "None". In the
+   Python DOM API, the first two arguments can also be "None" in order to indicate
+   that no "Element" child is to be created.
+
+*xml.dom.DOMImplementation.createDocumentType:DOMImplementation.createDocumentType(qualifiedName, publicId, systemId)*
+
+   Return a new "DocumentType" object that encapsulates the given *qualifiedName*,
+   *publicId*, and *systemId* strings, representing the information contained in an
+   XML document type declaration.
+
+*|dom-node-objects:⚓|* ## node-objects:Node Objects
+
+All of the components of an XML document are subclasses of "Node".
+
+*xml.dom.Node.nodeType:Node.nodeType*
+
+   An integer representing the node type.  Symbolic constants for the types are on
+   the "Node" object: "ELEMENT_NODE", "ATTRIBUTE_NODE", "TEXT_NODE", "
+   CDATA_SECTION_NODE", "ENTITY_NODE", "PROCESSING_INSTRUCTION_NODE", "COMMENT_NODE
+   ", "DOCUMENT_NODE", "DOCUMENT_TYPE_NODE", "NOTATION_NODE". This is a read-only
+   attribute.
+
+*xml.dom.Node.parentNode:Node.parentNode*
+
+   The parent of the current node, or "None" for the document node. The value is
+   always a "Node" object or "None".  For "Element" nodes, this will be the parent
+   element, except for the root element, in which case it will be the "Document"
+   object. For "Attr" nodes, this is always "None". This is a read-only attribute.
+
+*xml.dom.Node.attributes:Node.attributes*
+
+   A "NamedNodeMap" of attribute objects.  Only elements have actual values for
+   this; others provide "None" for this attribute. This is a read-only attribute.
+
+*xml.dom.Node.previousSibling:Node.previousSibling*
+
+   The node that immediately precedes this one with the same parent.  For instance
+   the element with an end-tag that comes just before the *self* element’s start-
+   tag.  Of course, XML documents are made up of more than just elements so the
+   previous sibling could be text, a comment, or something else. If this node is
+   the first child of the parent, this attribute will be "None". This is a read-
+   only attribute.
+
+*xml.dom.Node.nextSibling:Node.nextSibling*
+
+   The node that immediately follows this one with the same parent.  See also
+   |:xml.dom.Node.previousSibling:previousSibling|.  If this is the last child of the parent, this attribute will
+   be "None". This is a read-only attribute.
+
+*xml.dom.Node.childNodes:Node.childNodes*
+
+   A list of nodes contained within this node. This is a read-only attribute.
+
+*xml.dom.Node.firstChild:Node.firstChild*
+
+   The first child of the node, if there are any, or "None". This is a read-only
+   attribute.
+
+*xml.dom.Node.lastChild:Node.lastChild*
+
+   The last child of the node, if there are any, or "None". This is a read-only
+   attribute.
+
+*xml.dom.Node.localName:Node.localName*
+
+   The part of the "tagName" following the colon if there is one, else the entire "
+   tagName".  The value is a string.
+
+*xml.dom.Node.prefix:Node.prefix*
+
+   The part of the "tagName" preceding the colon if there is one, else the empty
+   string.  The value is a string, or "None".
+
+*xml.dom.Node.namespaceURI:Node.namespaceURI*
+
+   The namespace associated with the element name.  This will be a string or "None"
+   .  This is a read-only attribute.
+
+*xml.dom.Node.nodeName:Node.nodeName*
+
+   This has a different meaning for each node type; see the DOM specification for
+   details.  You can always get the information you would get here from another
+   property such as the "tagName" property for elements or the "name" property for
+   attributes. For all node types, the value of this attribute will be either a
+   string or "None".  This is a read-only attribute.
+
+*xml.dom.Node.nodeValue:Node.nodeValue*
+
+   This has a different meaning for each node type; see the DOM specification for
+   details.  The situation is similar to that with |:xml.dom.Node.nodeName:nodeName|.  The value is a
+   string or "None".
+
+*xml.dom.Node.hasAttributes:Node.hasAttributes()*
+
+   Return "True" if the node has any attributes.
+
+*xml.dom.Node.hasChildNodes:Node.hasChildNodes()*
+
+   Return "True" if the node has any child nodes.
+
+*xml.dom.Node.isSameNode:Node.isSameNode(other)*
+
+   Return "True" if *other* refers to the same node as this node. This is
+   especially useful for DOM implementations which use any sort of proxy
+   architecture (because more than one object can refer to the same node).
+
+   Note:
+
+     This is based on a proposed DOM Level 3 API which is still in the “working
+     draft” stage, but this particular interface appears uncontroversial.  Changes
+     from the W3C will not necessarily affect this method in the Python DOM interface
+     (though any new W3C API for this would also be supported).
+
+*xml.dom.Node.appendChild:Node.appendChild(newChild)*
+
+   Add a new child node to this node at the end of the list of children, returning
+   *newChild*. If the node was already in the tree, it is removed first.
+
+*xml.dom.Node.insertBefore:Node.insertBefore(newChild, refChild)*
+
+   Insert a new child node before an existing child.  It must be the case that *
+   refChild* is a child of this node; if not, |:library/exceptions.txt/ValueError:ValueError| is raised. *newChild* is
+   returned. If *refChild* is "None", it inserts *newChild* at the end of the
+   children’s list.
+
+*xml.dom.Node.removeChild:Node.removeChild(oldChild)*
+
+   Remove a child node.  *oldChild* must be a child of this node; if not,
+   |:library/exceptions.txt/ValueError:ValueError| is raised.  *oldChild* is returned on success.  If *oldChild* will
+   not be used further, its "unlink()" method should be called.
+
+*xml.dom.Node.replaceChild:Node.replaceChild(newChild, oldChild)*
+
+   Replace an existing node with a new node. It must be the case that  *oldChild*
+   is a child of this node; if not, |:library/exceptions.txt/ValueError:ValueError| is raised.
+
+*xml.dom.Node.normalize:Node.normalize()*
+
+   Join adjacent text nodes so that all stretches of text are stored as single "
+   Text" instances.  This simplifies processing text from a DOM tree for many
+   applications.
+
+*xml.dom.Node.cloneNode:Node.cloneNode(deep)*
+
+   Clone this node.  Setting *deep* means to clone all child nodes as well.  This
+   returns the clone.
+
+*|dom-nodelist-objects:⚓|* ## nodelist-objects:NodeList Objects
+
+A "NodeList" represents a sequence of nodes.  These objects are used in two ways
+in the DOM Core recommendation:  an "Element" object provides one as its list of
+child nodes, and the "getElementsByTagName()" and "getElementsByTagNameNS()"
+methods of "Node" return objects with this interface to represent query results.
+
+The DOM Level 2 recommendation defines one method and one attribute for these
+objects:
+
+*xml.dom.NodeList.item:NodeList.item(i)*
+
+   Return the *i*’th item from the sequence, if there is one, or "None".  The index
+   *i* is not allowed to be less than zero or greater than or equal to the length
+   of the sequence.
+
+*xml.dom.NodeList.length:NodeList.length*
+
+   The number of nodes in the sequence.
+
+In addition, the Python DOM interface requires that some additional support is
+provided to allow "NodeList" objects to be used as Python sequences.  All "
+NodeList" implementations must include support for |:reference/datamodel.txt/object.__len__:__len__()| and
+|:reference/datamodel.txt/object.__getitem__:__getitem__()|; this allows iteration over the "NodeList" in |:reference/compound_stmts.txt/for:for| statements
+and proper support for the |:library/functions.txt/len:len()| built-in function.
+
+If a DOM implementation supports modification of the document, the "NodeList"
+implementation must also support the |:reference/datamodel.txt/object.__setitem__:__setitem__()| and |:reference/datamodel.txt/object.__delitem__:__delitem__()|
+methods.
+
+*|dom-documenttype-objects:⚓|* ## documenttype-objects:DocumentType Objects
+
+Information about the notations and entities declared by a document (including
+the external subset if the parser uses it and can provide the information) is
+available from a "DocumentType" object.  The "DocumentType" for a document is
+available from the "Document" object’s "doctype" attribute; if there is no "
+DOCTYPE" declaration for the document, the document’s "doctype" attribute will
+be set to "None" instead of an instance of this interface.
+
+"DocumentType" is a specialization of "Node", and adds the following attributes:
+
+*xml.dom.DocumentType.publicId:DocumentType.publicId*
+
+   The public identifier for the external subset of the document type definition.
+   This will be a string or "None".
+
+*xml.dom.DocumentType.systemId:DocumentType.systemId*
+
+   The system identifier for the external subset of the document type definition.
+   This will be a URI as a string, or "None".
+
+*xml.dom.DocumentType.internalSubset:DocumentType.internalSubset*
+
+   A string giving the complete internal subset from the document. This does not
+   include the brackets which enclose the subset.  If the document has no internal
+   subset, this should be "None".
+
+*xml.dom.DocumentType.name:DocumentType.name*
+
+   The name of the root element as given in the "DOCTYPE" declaration, if present.
+
+*xml.dom.DocumentType.entities:DocumentType.entities*
+
+   This is a "NamedNodeMap" giving the definitions of external entities. For entity
+   names defined more than once, only the first definition is provided (others are
+   ignored as required by the XML recommendation).  This may be "None" if the
+   information is not provided by the parser, or if no entities are defined.
+
+*xml.dom.DocumentType.notations:DocumentType.notations*
+
+   This is a "NamedNodeMap" giving the definitions of notations. For notation names
+   defined more than once, only the first definition is provided (others are
+   ignored as required by the XML recommendation).  This may be "None" if the
+   information is not provided by the parser, or if no notations are defined.
+
+*|dom-document-objects:⚓|* ## document-objects:Document Objects
+
+A "Document" represents an entire XML document, including its constituent
+elements, attributes, processing instructions, comments etc.  Remember that it
+inherits properties from "Node".
+
+*xml.dom.Document.documentElement:Document.documentElement*
+
+   The one and only root element of the document.
+
+*xml.dom.Document.createElement:Document.createElement(tagName)*
+
+   Create and return a new element node.  The element is not inserted into the
+   document when it is created.  You need to explicitly insert it with one of the
+   other methods such as "insertBefore()" or "appendChild()".
+
+*xml.dom.Document.createElementNS:Document.createElementNS(namespaceURI, tagName)*
+
+   Create and return a new element with a namespace.  The *tagName* may have a
+   prefix.  The element is not inserted into the document when it is created.  You
+   need to explicitly insert it with one of the other methods such as "
+   insertBefore()" or "appendChild()".
+
+*xml.dom.Document.createTextNode:Document.createTextNode(data)*
+
+   Create and return a text node containing the data passed as a parameter.  As
+   with the other creation methods, this one does not insert the node into the
+   tree.
+
+*xml.dom.Document.createComment:Document.createComment(data)*
+
+   Create and return a comment node containing the data passed as a parameter.  As
+   with the other creation methods, this one does not insert the node into the
+   tree.
+
+*xml.dom.Document.createProcessingInstruction:Document.createProcessingInstruction(target, data)*
+
+   Create and return a processing instruction node containing the *target* and *
+   data* passed as parameters.  As with the other creation methods, this one does
+   not insert the node into the tree.
+
+*xml.dom.Document.createAttribute:Document.createAttribute(name)*
+
+   Create and return an attribute node.  This method does not associate the
+   attribute node with any particular element.  You must use "setAttributeNode()"
+   on the appropriate "Element" object to use the newly created attribute instance.
+
+*xml.dom.Document.createAttributeNS:Document.createAttributeNS(namespaceURI, qualifiedName)*
+
+   Create and return an attribute node with a namespace.  The *tagName* may have a
+   prefix.  This method does not associate the attribute node with any particular
+   element.  You must use "setAttributeNode()" on the appropriate "Element" object
+   to use the newly created attribute instance.
+
+*xml.dom.Document.getElementsByTagName:Document.getElementsByTagName(tagName)*
+
+   Search for all descendants (direct children, children’s children, etc.) with a
+   particular element type name.
+
+*xml.dom.Document.getElementsByTagNameNS:Document.getElementsByTagNameNS(namespaceURI, localName)*
+
+   Search for all descendants (direct children, children’s children, etc.) with a
+   particular namespace URI and localname.  The localname is the part of the
+   namespace after the prefix.
+
+*|dom-element-objects:⚓|* ## element-objects:Element Objects
+
+"Element" is a subclass of "Node", so inherits all the attributes of that class.
+
+*xml.dom.Element.tagName:Element.tagName*
+
+   The element type name.  In a namespace-using document it may have colons in it.
+   The value is a string.
+
+*xml.dom.Element.getElementsByTagName:Element.getElementsByTagName(tagName)*
+
+   Same as equivalent method in the "Document" class.
+
+*xml.dom.Element.getElementsByTagNameNS:Element.getElementsByTagNameNS(namespaceURI, localName)*
+
+   Same as equivalent method in the "Document" class.
+
+*xml.dom.Element.hasAttribute:Element.hasAttribute(name)*
+
+   Return "True" if the element has an attribute named by *name*.
+
+*xml.dom.Element.hasAttributeNS:Element.hasAttributeNS(namespaceURI, localName)*
+
+   Return "True" if the element has an attribute named by *namespaceURI* and *
+   localName*.
+
+*xml.dom.Element.getAttribute:Element.getAttribute(name)*
+
+   Return the value of the attribute named by *name* as a string. If no such
+   attribute exists, an empty string is returned, as if the attribute had no value.
+
+*xml.dom.Element.getAttributeNode:Element.getAttributeNode(attrname)*
+
+   Return the "Attr" node for the attribute named by *attrname*.
+
+*xml.dom.Element.getAttributeNS:Element.getAttributeNS(namespaceURI, localName)*
+
+   Return the value of the attribute named by *namespaceURI* and *localName* as a
+   string. If no such attribute exists, an empty string is returned, as if the
+   attribute had no value.
+
+*xml.dom.Element.getAttributeNodeNS:Element.getAttributeNodeNS(namespaceURI, localName)*
+
+   Return an attribute value as a node, given a *namespaceURI* and *localName*.
+
+*xml.dom.Element.removeAttribute:Element.removeAttribute(name)*
+
+   Remove an attribute by name.  If there is no matching attribute, a |:xml.dom.NotFoundErr:NotFoundErr|
+   is raised.
+
+*xml.dom.Element.removeAttributeNode:Element.removeAttributeNode(oldAttr)*
+
+   Remove and return *oldAttr* from the attribute list, if present. If *oldAttr* is
+   not present, |:xml.dom.NotFoundErr:NotFoundErr| is raised.
+
+*xml.dom.Element.removeAttributeNS:Element.removeAttributeNS(namespaceURI, localName)*
+
+   Remove an attribute by name.  Note that it uses a localName, not a qname.  No
+   exception is raised if there is no matching attribute.
+
+*xml.dom.Element.setAttribute:Element.setAttribute(name, value)*
+
+   Set an attribute value from a string.
+
+*xml.dom.Element.setAttributeNode:Element.setAttributeNode(newAttr)*
+
+   Add a new attribute node to the element, replacing an existing attribute if
+   necessary if the "name" attribute matches.  If a replacement occurs, the old
+   attribute node will be returned.  If *newAttr* is already in use,
+   |:xml.dom.InuseAttributeErr:InuseAttributeErr| will be raised.
+
+*xml.dom.Element.setAttributeNodeNS:Element.setAttributeNodeNS(newAttr)*
+
+   Add a new attribute node to the element, replacing an existing attribute if
+   necessary if the "namespaceURI" and "localName" attributes match. If a
+   replacement occurs, the old attribute node will be returned.  If *newAttr* is
+   already in use, |:xml.dom.InuseAttributeErr:InuseAttributeErr| will be raised.
+
+*xml.dom.Element.setAttributeNS:Element.setAttributeNS(namespaceURI, qname, value)*
+
+   Set an attribute value from a string, given a *namespaceURI* and a *qname*. Note
+   that a qname is the whole attribute name.  This is different than above.
+
+*|dom-attr-objects:⚓|* ## attr-objects:Attr Objects
+
+"Attr" inherits from "Node", so inherits all its attributes.
+
+*xml.dom.Attr.name:Attr.name*
+
+   The attribute name. In a namespace-using document it may include a colon.
+
+*xml.dom.Attr.localName:Attr.localName*
+
+   The part of the name following the colon if there is one, else the entire name.
+   This is a read-only attribute.
+
+*xml.dom.Attr.prefix:Attr.prefix*
+
+   The part of the name preceding the colon if there is one, else the empty string.
+
+*xml.dom.Attr.value:Attr.value*
+
+   The text value of the attribute.  This is a synonym for the "nodeValue"
+   attribute.
+
+*|dom-attributelist-objects:⚓|* ## namednodemap-objects:NamedNodeMap Objects
+
+"NamedNodeMap" does *not* inherit from "Node".
+
+*xml.dom.NamedNodeMap.length:NamedNodeMap.length*
+
+   The length of the attribute list.
+
+*xml.dom.NamedNodeMap.item:NamedNodeMap.item(index)*
+
+   Return an attribute with a particular index.  The order you get the attributes
+   in is arbitrary but will be consistent for the life of a DOM.  Each item is an
+   attribute node.  Get its value with the "value" attribute.
+
+There are also experimental methods that give this class more mapping behavior.
+You can use them or you can use the standardized "getAttribute*()" family of
+methods on the "Element" objects.
+
+*|dom-comment-objects:⚓|* ## comment-objects:Comment Objects
+
+"Comment" represents a comment in the XML document.  It is a subclass of "Node",
+but cannot have child nodes.
+
+*xml.dom.Comment.data:Comment.data*
+
+   The content of the comment as a string.  The attribute contains all characters
+   between the leading "<!-""-" and trailing "-""->", but does not include them.
+
+*|dom-text-objects:⚓|* ## text-and-cdatasection-objects:Text and CDATASection
+Objects
+
+The "Text" interface represents text in the XML document.  If the parser and DOM
+implementation support the DOM’s XML extension, portions of the text enclosed in
+CDATA marked sections are stored in "CDATASection" objects. These two interfaces
+are identical, but provide different values for the "nodeType" attribute.
+
+These interfaces extend the "Node" interface.  They cannot have child nodes.
+
+*xml.dom.Text.data:Text.data*
+
+   The content of the text node as a string.
+
+Note:
+
+  The use of a "CDATASection" node does not indicate that the node represents a
+  complete CDATA marked section, only that the content of the node was part of a
+  CDATA section.  A single CDATA section may be represented by more than one node
+  in the document tree.  There is no way to determine whether two adjacent "
+  CDATASection" nodes represent different CDATA marked sections.
+
+*|dom-pi-objects:⚓|* ## processinginstruction-objects:ProcessingInstruction
+Objects
+
+Represents a processing instruction in the XML document; this inherits from the
+"Node" interface and cannot have child nodes.
+
+*xml.dom.ProcessingInstruction.target:ProcessingInstruction.target*
+
+   The content of the processing instruction up to the first whitespace character.
+   This is a read-only attribute.
+
+*xml.dom.ProcessingInstruction.data:ProcessingInstruction.data*
+
+   The content of the processing instruction following the first whitespace
+   character.
+
+*|dom-exceptions:⚓|* ## exceptions:Exceptions
+
+The DOM Level 2 recommendation defines a single exception, |:xml.dom.DOMException:DOMException|, and a
+number of constants that allow applications to determine what sort of error
+occurred. |:xml.dom.DOMException:DOMException| instances carry a |:library/code.txt/module-code:code| attribute that provides the
+appropriate value for the specific exception.
+
+The Python DOM interface provides the constants, but also expands the set of
+exceptions so that a specific exception exists for each of the exception codes
+defined by the DOM.  The implementations must raise the appropriate specific
+exception, each of which carries the appropriate value for the |:library/code.txt/module-code:code| attribute.
+
+*xml.dom.DOMException:exception xml.dom.DOMException*
+
+   Base exception class used for all specific DOM exceptions.  This exception class
+   cannot be directly instantiated.
+
+*xml.dom.DomstringSizeErr:exception xml.dom.DomstringSizeErr*
+
+   Raised when a specified range of text does not fit into a string. This is not
+   known to be used in the Python DOM implementations, but may be received from DOM
+   implementations not written in Python.
+
+*xml.dom.HierarchyRequestErr:exception xml.dom.HierarchyRequestErr*
+
+   Raised when an attempt is made to insert a node where the node type is not
+   allowed.
+
+*xml.dom.IndexSizeErr:exception xml.dom.IndexSizeErr*
+
+   Raised when an index or size parameter to a method is negative or exceeds the
+   allowed values.
+
+*xml.dom.InuseAttributeErr:exception xml.dom.InuseAttributeErr*
+
+   Raised when an attempt is made to insert an "Attr" node that is already present
+   elsewhere in the document.
+
+*xml.dom.InvalidAccessErr:exception xml.dom.InvalidAccessErr*
+
+   Raised if a parameter or an operation is not supported on the underlying object.
+
+*xml.dom.InvalidCharacterErr:exception xml.dom.InvalidCharacterErr*
+
+   This exception is raised when a string parameter contains a character that is
+   not permitted in the context it’s being used in by the XML 1.0 recommendation.
+   For example, attempting to create an "Element" node with a space in the element
+   type name will cause this error to be raised.
+
+*xml.dom.InvalidModificationErr:exception xml.dom.InvalidModificationErr*
+
+   Raised when an attempt is made to modify the type of a node.
+
+*xml.dom.InvalidStateErr:exception xml.dom.InvalidStateErr*
+
+   Raised when an attempt is made to use an object that is not defined or is no
+   longer usable.
+
+*xml.dom.NamespaceErr:exception xml.dom.NamespaceErr*
+
+   If an attempt is made to change any object in a way that is not permitted with
+   regard to the |:www.w3.org/TR/REC-xml-names:Namespaces in XML|*|id1:⚓|*  recommendation, this exception is
+   raised.
+
+*xml.dom.NotFoundErr:exception xml.dom.NotFoundErr*
+
+   Exception when a node does not exist in the referenced context.  For example, "
+   NamedNodeMap.removeNamedItem()" will raise this if the node passed in does not
+   exist in the map.
+
+*xml.dom.NotSupportedErr:exception xml.dom.NotSupportedErr*
+
+   Raised when the implementation does not support the requested type of object or
+   operation.
+
+*xml.dom.NoDataAllowedErr:exception xml.dom.NoDataAllowedErr*
+
+   This is raised if data is specified for a node which does not support data.
+
+*xml.dom.NoModificationAllowedErr:exception xml.dom.NoModificationAllowedErr*
+
+   Raised on attempts to modify an object where modifications are not allowed (such
+   as for read-only nodes).
+
+*xml.dom.SyntaxErr:exception xml.dom.SyntaxErr*
+
+   Raised when an invalid or illegal string is specified.
+
+*xml.dom.WrongDocumentErr:exception xml.dom.WrongDocumentErr*
+
+   Raised when a node is inserted in a different document than it currently belongs
+   to, and the implementation does not support migrating the node from one document
+   to the other.
+
+The exception codes defined in the DOM recommendation map to the exceptions
+described above according to this table:
+
++----------------------------------------+-----------------------------------+
+| Constant                               | Exception                         |
+|========================================|===================================|
+| "DOMSTRING_SIZE_ERR"                   | |:xml.dom.DomstringSizeErr:Domst  |
+|                                        | ringSizeErr|                      |
++----------------------------------------+-----------------------------------+
+| "HIERARCHY_REQUEST_ERR"                | |:xml.dom.HierarchyRequestErr:Hi  |
+|                                        | erarchyRequestErr|                |
++----------------------------------------+-----------------------------------+
+| "INDEX_SIZE_ERR"                       | |:xml.dom.IndexSizeErr:IndexSize  |
+|                                        | Err|                              |
++----------------------------------------+-----------------------------------+
+| "INUSE_ATTRIBUTE_ERR"                  | |:xml.dom.InuseAttributeErr:Inus  |
+|                                        | eAttributeErr|                    |
++----------------------------------------+-----------------------------------+
+| "INVALID_ACCESS_ERR"                   | |:xml.dom.InvalidAccessErr:Inval  |
+|                                        | idAccessErr|                      |
++----------------------------------------+-----------------------------------+
+| "INVALID_CHARACTER_ERR"                | |:xml.dom.InvalidCharacterErr:In  |
+|                                        | validCharacterErr|                |
++----------------------------------------+-----------------------------------+
+| "INVALID_MODIFICATION_ERR"             | |:xml.dom.InvalidModificationErr  |
+|                                        | :InvalidModificationErr|          |
++----------------------------------------+-----------------------------------+
+| "INVALID_STATE_ERR"                    | |:xml.dom.InvalidStateErr:Invali  |
+|                                        | dStateErr|                        |
++----------------------------------------+-----------------------------------+
+| "NAMESPACE_ERR"                        | |:xml.dom.NamespaceErr:Namespace  |
+|                                        | Err|                              |
++----------------------------------------+-----------------------------------+
+| "NOT_FOUND_ERR"                        | |:xml.dom.NotFoundErr:NotFoundEr  |
+|                                        | r|                                |
++----------------------------------------+-----------------------------------+
+| "NOT_SUPPORTED_ERR"                    | |:xml.dom.NotSupportedErr:NotSup  |
+|                                        | portedErr|                        |
++----------------------------------------+-----------------------------------+
+| "NO_DATA_ALLOWED_ERR"                  | |:xml.dom.NoDataAllowedErr:NoDat  |
+|                                        | aAllowedErr|                      |
++----------------------------------------+-----------------------------------+
+| "NO_MODIFICATION_ALLOWED_ERR"          | |:xml.dom.NoModificationAllowedE  |
+|                                        | rr:NoModificationAllowedErr|      |
++----------------------------------------+-----------------------------------+
+| "SYNTAX_ERR"                           | |:xml.dom.SyntaxErr:SyntaxErr|    |
++----------------------------------------+-----------------------------------+
+| "WRONG_DOCUMENT_ERR"                   | |:xml.dom.WrongDocumentErr:Wrong  |
+|                                        | DocumentErr|                      |
++----------------------------------------+-----------------------------------+
+
+*|dom-conformance:⚓|* # conformance:Conformance
+
+This section describes the conformance requirements and relationships between
+the Python DOM API, the W3C DOM recommendations, and the OMG IDL mapping for
+Python.
+
+## type-mapping:Type Mapping
+
+The IDL types used in the DOM specification are mapped to Python types according
+to the following table.
+
++--------------------+---------------------------------------------+
+| IDL Type           | Python Type                                 |
+|====================|=============================================|
+| "boolean"          | "bool" or "int"                             |
++--------------------+---------------------------------------------+
+| "int"              | "int"                                       |
++--------------------+---------------------------------------------+
+| "long int"         | "int"                                       |
++--------------------+---------------------------------------------+
+| "unsigned int"     | "int"                                       |
++--------------------+---------------------------------------------+
+| "DOMString"        | "str" or "bytes"                            |
++--------------------+---------------------------------------------+
+| "null"             | "None"                                      |
++--------------------+---------------------------------------------+
+
+*|dom-accessor-methods:⚓|* ## accessor-methods:Accessor Methods
+
+The mapping from OMG IDL to Python defines accessor functions for IDL "attribute
+" declarations in much the way the Java mapping does. Mapping the IDL
+declarations
+
+```rst
+readonly attribute string someValue;
+         attribute string anotherValue;
+```
+
+yields three accessor functions:  a “get” method for "someValue" ("
+_get_someValue()"), and “get” and “set” methods for "anotherValue" ("
+_get_anotherValue()" and "_set_anotherValue()").  The mapping, in particular,
+does not require that the IDL attributes are accessible as normal Python
+attributes:  "object.someValue" is *not* required to work, and may raise an
+|:library/exceptions.txt/AttributeError:AttributeError|.
+
+The Python DOM API, however, *does* require that normal attribute access work.
+This means that the typical surrogates generated by Python IDL compilers are not
+likely to work, and wrapper objects may be needed on the client if the DOM
+objects are accessed via CORBA. While this does require some additional
+consideration for CORBA DOM clients, the implementers with experience using DOM
+over CORBA from Python do not consider this a problem.  Attributes that are
+declared "readonly" may not restrict write access in all DOM implementations.
+
+In the Python DOM API, accessor functions are not required.  If provided, they
+should take the form defined by the Python IDL mapping, but these methods are
+considered unnecessary since the attributes are accessible directly from Python.
+“Set” accessors should never be provided for "readonly" attributes.
+
+The IDL definitions do not fully embody the requirements of the W3C DOM API,
+such as the notion of certain objects, such as the return value of "
+getElementsByTagName()", being “live”.  The Python DOM API does not require
+implementations to enforce such requirements.
+
+
+

@@ -1,0 +1,48 @@
+%hyperhelp title="Object Implementation Support" date="2021-07-11"
+*|object-implementation-support:⚓|*
+
+This chapter describes the functions, types, and macros used when defining new
+object types.
+
+* |:c-api/allocation.txt:Allocating Objects on the Heap|
+
+* |:c-api/structures.txt:Common Object Structures|
+
+* |:c-api/typeobj.txt:Type Objects|
+
+  * |:c-api/typeobj.txt/quick-reference:Quick Reference|
+
+    * |:c-api/typeobj.txt/tp-slots:“tp slots”|
+
+    * |:c-api/typeobj.txt/sub-slots:sub-slots|
+
+    * |:c-api/typeobj.txt/slot-typedefs:slot typedefs|
+
+  * |:c-api/typeobj.txt/pytypeobject-definition:PyTypeObject Definition|
+
+  * |:c-api/typeobj.txt/pyobject-slots:PyObject Slots|
+
+  * |:c-api/typeobj.txt/pyvarobject-slots:PyVarObject Slots|
+
+  * |:c-api/typeobj.txt/pytypeobject-slots:PyTypeObject Slots|
+
+  * |:c-api/typeobj.txt/heap-types:Heap Types|
+
+* |:c-api/typeobj.txt/number-object-structures:Number Object Structures|
+
+* |:c-api/typeobj.txt/mapping-object-structures:Mapping Object Structures|
+
+* |:c-api/typeobj.txt/sequence-object-structures:Sequence Object Structures|
+
+* |:c-api/typeobj.txt/buffer-object-structures:Buffer Object Structures|
+
+* |:c-api/typeobj.txt/async-object-structures:Async Object Structures|
+
+* |:c-api/typeobj.txt/slot-type-typedefs:Slot Type typedefs|
+
+* |:c-api/typeobj.txt/examples:Examples|
+
+* |:c-api/gcsupport.txt:Supporting Cyclic Garbage Collection|
+
+
+

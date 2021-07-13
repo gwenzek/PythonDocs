@@ -1,0 +1,2075 @@
+%hyperhelp title="What’s New In Python 3.7" date="2021-07-11"
+*|what-s-new-in-python-3-7:⚓|*
+
+Editor:
+   Elvis Pranskevichus <elvis@magic.io>
+
+This article explains the new features in Python 3.7, compared to 3.6. Python
+3.7 was released on June 27, 2018. For full details, see the |:whatsnew/changelog.txt/changelog:changelog|.
+
+# summary-release-highlights:Summary – Release Highlights
+
+New syntax features:
+
+* |:whatsnew37-pep563:PEP 563|, postponed evaluation of type annotations.
+
+Backwards incompatible syntax changes:
+
+* |:reference/compound_stmts.txt/async:async| and |:reference/expressions.txt/await:await| are now reserved keywords.
+
+New library modules:
+
+* |:library/contextvars.txt/module-contextvars:contextvars|: |:whatsnew37-pep567:PEP 567 – Context Variables|
+
+* |:library/dataclasses.txt/module-dataclasses:dataclasses|: |:whatsnew37-pep557:PEP 557 – Data Classes|
+
+* |:whatsnew37-importlib-resources:importlib.resources|
+
+New built-in features:
+
+* |:whatsnew37-pep553:PEP 553|, the new |:library/functions.txt/breakpoint:breakpoint()| function.
+
+Python data model improvements:
+
+* |:whatsnew37-pep562:PEP 562|, customization of access to module attributes.
+
+* |:whatsnew37-pep560:PEP 560|, core support for typing module and generic types.
+
+* the insertion-order preservation nature of |:library/stdtypes.txt/typesmapping:dict| objects |:mail.python.org/pipermail/python-dev/2017-December/151283.html:has been declared| to
+  be an official part of the Python language spec.
+
+*|has-been-declared:⚓|*
+
+Significant improvements in the standard library:
+
+* The |:library/asyncio.txt/module-asyncio:asyncio| module has received new features, significant
+  |:whatsnew37-asyncio:usability and performance improvements|.
+
+* The |:library/time.txt/module-time:time| module gained support for |:whatsnew37-pep564:functions with nanosecond resolution|.
+
+CPython implementation improvements:
+
+* Avoiding the use of ASCII as a default text encoding:
+
+  * |:whatsnew37-pep538:PEP 538|, legacy C locale coercion
+
+  * |:whatsnew37-pep540:PEP 540|, forced UTF-8 runtime mode
+
+* |:whatsnew37-pep552:PEP 552|, deterministic .pycs
+
+* |:whatsnew37-devmode:the new development runtime mode|
+
+* |:whatsnew37-pep565:PEP 565|, improved |:library/exceptions.txt/DeprecationWarning:DeprecationWarning| handling
+
+C API improvements:
+
+* |:whatsnew37-pep539:PEP 539|, new C API for thread-local storage
+
+Documentation improvements:
+
+* |:whatsnew37-pep545:PEP 545|, Python documentation translations
+
+* New documentation translations: |:docs.python.org/ja:Japanese|*|japanese:⚓|* , |:docs.python.org/fr:French|*|french:⚓|*
+  , and |:docs.python.org/ko:Korean|*|korean:⚓|* .
+
+This release features notable performance improvements in many areas. The
+|:whatsnew37-perf:Optimizations| section lists them in detail.
+
+For a list of changes that may affect compatibility with previous Python
+releases please refer to the |:porting-to-python-37:Porting to Python 3.7| section.
+
+# new-features:New Features## pep-563-postponed-evaluation-of-annotations:PEP
+563: Postponed Evaluation of Annotations
+
+The advent of type hints in Python uncovered two glaring usability issues with
+the functionality of annotations added in *|index-0:⚓|* |:www.python.org/dev/peps/pep-3107:PEP 3107| and refined
+further in *|index-1:⚓|* |:www.python.org/dev/peps/pep-0526:PEP 526|:
+
+* annotations could only use names which were already available in the current
+  scope, in other words they didn’t support forward references of any kind; and
+
+* annotating source code had adverse effects on startup time of Python programs.
+
+Both of these issues are fixed by postponing the evaluation of annotations.
+Instead of compiling code which executes expressions in annotations at their
+definition time, the compiler stores the annotation in a string form equivalent
+to the AST of the expression in question. If needed, annotations can be resolved
+at runtime using |:library/typing.txt/typing.get_type_hints:typing.get_type_hints()|.  In the common case where this is
+not required, the annotations are cheaper to store (since short strings are
+interned by the interpreter) and make startup time faster.
+
+Usability-wise, annotations now support forward references, making the following
+syntax valid:
+
+```rst
+class C:
+    @classmethod
+    def from_string(cls, source: str) -> C:
+        ...
+
+    def validate_b(self, obj: B) -> bool:
+        ...
+
+class B:
+    ...
+```
+
+Since this change breaks compatibility, the new behavior needs to be enabled on
+a per-module basis in Python 3.7 using a |:library/__future__.txt/module-__future__:__future__| import:
+
+```rst
+from __future__ import annotations
+```
+
+It will become the default in Python 3.10.
+
+See also:
+
+  *|index-2:⚓|*
+  |:www.python.org/dev/peps/pep-0563:PEP 563| – Postponed evaluation of annotations
+     PEP written and implemented by Łukasz Langa.
+
+*|whatsnew37-pep538:⚓|* ## pep-538-legacy-c-locale-coercion:PEP 538: Legacy C
+Locale Coercion
+
+An ongoing challenge within the Python 3 series has been determining a sensible
+default strategy for handling the “7-bit ASCII” text encoding assumption
+currently implied by the use of the default C or POSIX locale on non-Windows
+platforms.
+
+*|index-3:⚓|* |:www.python.org/dev/peps/pep-0538:PEP 538| updates the default interpreter command line interface
+to automatically coerce that locale to an available UTF-8 based locale as
+described in the documentation of the new *|index-4:⚓|* |:using/cmdline.txt/envvar-PYTHONCOERCECLOCALE:PYTHONCOERCECLOCALE|
+environment variable. Automatically setting "LC_CTYPE" this way means that both
+the core interpreter and locale-aware C extensions (such as |:library/readline.txt/module-readline:readline|) will
+assume the use of UTF-8 as the default text encoding, rather than ASCII.
+
+The platform support definition in *|index-5:⚓|* |:www.python.org/dev/peps/pep-0011:PEP 11| has also been updated
+to limit full text handling support to suitably configured non-ASCII based
+locales.
+
+As part of this change, the default error handler for |:library/sys.txt/sys.stdin:stdin| and |:library/sys.txt/sys.stdout:stdout| is
+now "surrogateescape" (rather than "strict") when using any of the defined
+coercion target locales (currently "C.UTF-8", "C.utf8", and "UTF-8").  The
+default error handler for |:library/sys.txt/sys.stderr:stderr| continues to be "backslashreplace",
+regardless of locale.
+
+Locale coercion is silent by default, but to assist in debugging potentially
+locale related integration problems, explicit warnings (emitted directly on
+|:library/sys.txt/sys.stderr:stderr|) can be requested by setting "PYTHONCOERCECLOCALE=warn". This setting
+will also cause the Python runtime to emit a warning if the legacy C locale
+remains active when the core interpreter is initialized.
+
+While *|index-6:⚓|* |:www.python.org/dev/peps/pep-0538:PEP 538|’s locale coercion has the benefit of also
+affecting extension modules (such as GNU "readline"), as well as child processes
+(including those running non-Python applications and older versions of Python),
+it has the downside of requiring that a suitable target locale be present on the
+running system. To better handle the case where no suitable target locale is
+available (as occurs on RHEL/CentOS 7, for example), Python 3.7 also implements
+|:whatsnew37-pep540:PEP 540: Forced UTF-8 Runtime Mode|.
+
+See also:
+
+  *|index-7:⚓|*
+  |:www.python.org/dev/peps/pep-0538:PEP 538| – Coercing the legacy C locale to a UTF-8 based locale
+     PEP written and implemented by Nick Coghlan.
+
+*|whatsnew37-pep540:⚓|* ## pep-540-forced-utf-8-runtime-mode:PEP 540: Forced
+UTF-8 Runtime Mode
+
+The new |:using/cmdline.txt/cmdoption-X:-X| "utf8" command line option and *|index-8:⚓|* |:using/cmdline.txt/envvar-PYTHONUTF8:PYTHONUTF8|
+environment variable can be used to enable the CPython *UTF-8 mode*.
+
+When in UTF-8 mode, CPython ignores the locale settings, and uses the UTF-8
+encoding by default.  The error handlers for |:library/sys.txt/sys.stdin:sys.stdin| and |:library/sys.txt/sys.stdout:sys.stdout|
+streams are set to "surrogateescape".
+
+The forced UTF-8 mode can be used to change the text handling behavior in an
+embedded Python interpreter without changing the locale settings of an embedding
+application.
+
+While *|index-9:⚓|* |:www.python.org/dev/peps/pep-0540:PEP 540|’s UTF-8 mode has the benefit of working regardless
+of which locales are available on the running system, it has the downside of
+having no effect on extension modules (such as GNU "readline"), child processes
+running non-Python applications, and child processes running older versions of
+Python. To reduce the risk of corrupting text data when communicating with such
+components, Python 3.7 also implements |:whatsnew37-pep540:PEP 540: Forced UTF-8 Runtime Mode|).
+
+The UTF-8 mode is enabled by default when the locale is "C" or "POSIX", and the
+*|index-10:⚓|* |:www.python.org/dev/peps/pep-0538:PEP 538| locale coercion feature fails to change it to a UTF-8
+based alternative (whether that failure is due to "PYTHONCOERCECLOCALE=0" being
+set, "LC_ALL" being set, or the lack of a suitable target locale).
+
+See also:
+
+  *|index-11:⚓|*
+  |:www.python.org/dev/peps/pep-0540:PEP 540| – Add a new UTF-8 mode
+     PEP written and implemented by Victor Stinner
+
+*|whatsnew37-pep553:⚓|* ## pep-553-built-in-breakpoint:PEP 553: Built-in "
+breakpoint()"
+
+Python 3.7 includes the new built-in |:library/functions.txt/breakpoint:breakpoint()| function as an easy and
+consistent way to enter the Python debugger.
+
+Built-in "breakpoint()" calls |:library/sys.txt/sys.breakpointhook:sys.breakpointhook()|.  By default, the latter
+imports |:library/pdb.txt/module-pdb:pdb| and then calls "pdb.set_trace()", but by binding "
+sys.breakpointhook()" to the function of your choosing, "breakpoint()" can enter
+any debugger. Additionally, the environment variable *|index-12:⚓|*
+|:using/cmdline.txt/envvar-PYTHONBREAKPOINT:PYTHONBREAKPOINT| can be set to the callable of your debugger of choice.  Set "
+PYTHONBREAKPOINT=0" to completely disable built-in "breakpoint()".
+
+See also:
+
+  *|index-13:⚓|*
+  |:www.python.org/dev/peps/pep-0553:PEP 553| – Built-in breakpoint()
+     PEP written and implemented by Barry Warsaw
+
+*|whatsnew37-pep539:⚓|* ## pep-539-new-c-api-for-thread-local-storage:PEP 539:
+New C API for Thread-Local Storage
+
+While Python provides a C API for thread-local storage support; the existing
+|:c-api/init.txt/thread-local-storage-api:Thread Local Storage (TLS) API| has used *int* to represent TLS keys across all
+platforms.  This has not generally been a problem for officially-support
+platforms, but that is neither POSIX-compliant, nor portable in any practical
+sense.
+
+*|index-14:⚓|* |:www.python.org/dev/peps/pep-0539:PEP 539| changes this by providing a new
+|:c-api/init.txt/thread-specific-storage-api:Thread Specific Storage (TSS)
+API| to CPython which supersedes use of the
+existing TLS API within the CPython interpreter, while deprecating the existing
+API.  The TSS API uses a new type |:c-api/init.txt/c.Py_tss_t:Py_tss_t| instead of *int* to represent TSS
+keys–an opaque type the definition of which may depend on the underlying TLS
+implementation.  Therefore, this will allow to build CPython on platforms where
+the native TLS key is defined in a way that cannot be safely cast to *int*.
+
+Note that on platforms where the native TLS key is defined in a way that cannot
+be safely cast to *int*, all functions of the existing TLS API will be no-op and
+immediately return failure. This indicates clearly that the old API is not
+supported on platforms where it cannot be used reliably, and that no effort will
+be made to add such support.
+
+See also:
+
+  *|index-15:⚓|*
+  |:www.python.org/dev/peps/pep-0539:PEP 539| – A New C-API for Thread-Local Storage in CPython
+     PEP written by Erik M. Bray; implementation by Masayuki Yamamoto.
+
+*|whatsnew37-pep562:⚓|* ## pep-562-customization-of-access-to-module-attributes:
+PEP 562: Customization of Access to Module Attributes
+
+Python 3.7 allows defining "__getattr__()" on modules and will call it whenever
+a module attribute is otherwise not found.  Defining "__dir__()" on modules is
+now also allowed.
+
+A typical example of where this may be useful is module attribute deprecation
+and lazy loading.
+
+See also:
+
+  *|index-16:⚓|*
+  |:www.python.org/dev/peps/pep-0562:PEP 562| – Module "__getattr__" and "__dir__"
+     PEP written and implemented by Ivan Levkivskyi
+
+*|whatsnew37-pep564:⚓|* ## pep-564-new-time-functions-with-nanosecond-
+resolution:PEP 564: New Time Functions With Nanosecond Resolution
+
+The resolution of clocks in modern systems can exceed the limited precision of a
+floating point number returned by the |:library/time.txt/time.time:time.time()| function and its variants.
+To avoid loss of precision, *|index-17:⚓|* |:www.python.org/dev/peps/pep-0564:PEP 564| adds six new “nanosecond”
+variants of the existing timer functions to the |:library/time.txt/module-time:time| module:
+
+* |:library/time.txt/time.clock_gettime_ns:time.clock_gettime_ns()|
+
+* |:library/time.txt/time.clock_settime_ns:time.clock_settime_ns()|
+
+* |:library/time.txt/time.monotonic_ns:time.monotonic_ns()|
+
+* |:library/time.txt/time.perf_counter_ns:time.perf_counter_ns()|
+
+* |:library/time.txt/time.process_time_ns:time.process_time_ns()|
+
+* |:library/time.txt/time.time_ns:time.time_ns()|
+
+The new functions return the number of nanoseconds as an integer value.
+
+|:www.python.org/dev/peps/pep-0564/#annex-clocks-resolution-in-python:Measurements|*|measurements:⚓|*  show that on Linux and Windows the resolution
+of |:library/time.txt/time.time_ns:time.time_ns()| is approximately 3 times better than that of |:library/time.txt/time.time:time.time()|.
+
+See also:
+
+  *|index-18:⚓|*
+  |:www.python.org/dev/peps/pep-0564:PEP 564| – Add new time functions with nanosecond resolution
+     PEP written and implemented by Victor Stinner
+
+*|whatsnew37-pep565:⚓|* ## pep-565-show-deprecationwarning-in-main:PEP 565: Show
+DeprecationWarning in "__main__"
+
+The default handling of |:library/exceptions.txt/DeprecationWarning:DeprecationWarning| has been changed such that these
+warnings are once more shown by default, but only when the code triggering them
+is running directly in the |:library/__main__.txt/module-__main__:__main__| module.  As a result, developers of single
+file scripts and those using Python interactively should once again start seeing
+deprecation warnings for the APIs they use, but deprecation warnings triggered
+by imported application, library and framework modules will continue to be
+hidden by default.
+
+As a result of this change, the standard library now allows developers to choose
+between three different deprecation warning behaviours:
+
+* |:library/exceptions.txt/FutureWarning:FutureWarning|: always displayed by default, recommended for warnings intended
+  to be seen by application end users (e.g. for deprecated application
+  configuration settings).
+
+* |:library/exceptions.txt/DeprecationWarning:DeprecationWarning|: displayed by default only in |:library/__main__.txt/module-__main__:__main__| and when running
+  tests, recommended for warnings intended to be seen by other Python developers
+  where a version upgrade may result in changed behaviour or an error.
+
+* |:library/exceptions.txt/PendingDeprecationWarning:PendingDeprecationWarning|: displayed by default only when running tests,
+  intended for cases where a future version upgrade will change the warning
+  category to |:library/exceptions.txt/DeprecationWarning:DeprecationWarning| or |:library/exceptions.txt/FutureWarning:FutureWarning|.
+
+Previously both |:library/exceptions.txt/DeprecationWarning:DeprecationWarning| and |:library/exceptions.txt/PendingDeprecationWarning:PendingDeprecationWarning| were only
+visible when running tests, which meant that developers primarily writing single
+file scripts or using Python interactively could be surprised by breaking
+changes in the APIs they used.
+
+See also:
+
+  *|index-19:⚓|*
+  |:www.python.org/dev/peps/pep-0565:PEP 565| – Show DeprecationWarning in "__main__"
+     PEP written and implemented by Nick Coghlan
+
+*|whatsnew37-pep560:⚓|* ## pep-560-core-support-for-typing-module-and-generic-
+types:PEP 560: Core Support for "typing" module and Generic Types
+
+Initially *|index-20:⚓|* |:www.python.org/dev/peps/pep-0484:PEP 484| was designed in such way that it would not
+introduce *any* changes to the core CPython interpreter. Now type hints and the
+|:library/typing.txt/module-typing:typing| module are extensively used by the community, so this restriction is
+removed. The PEP introduces two special methods "__class_getitem__()" and "
+__mro_entries__", these methods are now used by most classes and special
+constructs in |:library/typing.txt/module-typing:typing|. As a result, the speed of various operations with types
+increased up to 7 times, the generic types can be used without metaclass
+conflicts, and several long standing bugs in |:library/typing.txt/module-typing:typing| module are fixed.
+
+See also:
+
+  *|index-21:⚓|*
+  |:www.python.org/dev/peps/pep-0560:PEP 560| – Core support for typing module and generic types
+     PEP written and implemented by Ivan Levkivskyi
+
+*|whatsnew37-pep552:⚓|* ## pep-552-hash-based-pyc-files:PEP 552: Hash-based .pyc
+Files
+
+Python has traditionally checked the up-to-dateness of bytecode cache files
+(i.e., ".pyc" files) by comparing the source metadata (last-modified timestamp
+and size) with source metadata saved in the cache file header when it was
+generated. While effective, this invalidation method has its drawbacks.  When
+filesystem timestamps are too coarse, Python can miss source updates, leading to
+user confusion. Additionally, having a timestamp in the cache file is
+problematic for |:reproducible-builds.org:build reproducibility|*|build-reproducibility:⚓|*  and content-
+based build systems.
+
+*|index-22:⚓|* |:www.python.org/dev/peps/pep-0552:PEP 552| extends the pyc format to allow the hash of the source
+file to be used for invalidation instead of the source timestamp. Such ".pyc"
+files are called “hash-based”. By default, Python still uses timestamp-based
+invalidation and does not generate hash-based ".pyc" files at runtime. Hash-
+based ".pyc" files may be generated with |:library/py_compile.txt/module-py_compile:py_compile| or |:library/compileall.txt/module-compileall:compileall|.
+
+Hash-based ".pyc" files come in two variants: checked and unchecked. Python
+validates checked hash-based ".pyc" files against the corresponding source files
+at runtime but doesn’t do so for unchecked hash-based pycs. Unchecked hash-based
+".pyc" files are a useful performance optimization for environments where a
+system external to Python (e.g., the build system) is responsible for keeping "
+.pyc" files up-to-date.
+
+See |:reference/import.txt/pyc-invalidation:Cached bytecode invalidation| for more information.
+
+See also:
+
+  *|index-23:⚓|*
+  |:www.python.org/dev/peps/pep-0552:PEP 552| – Deterministic pycs
+     PEP written and implemented by Benjamin Peterson
+
+*|whatsnew37-pep545:⚓|* ## pep-545-python-documentation-translations:PEP 545:
+Python Documentation Translations
+
+*|index-24:⚓|* |:www.python.org/dev/peps/pep-0545:PEP 545| describes the process of creating and maintaining
+Python documentation translations.
+
+Three new translations have been added:
+
+* Japanese: |:docs.python.org/ja:https://docs.python.org/ja/|
+
+* French: |:docs.python.org/fr:https://docs.python.org/fr/|
+
+* Korean: |:docs.python.org/ko:https://docs.python.org/ko/|
+
+See also:
+
+  *|index-25:⚓|*
+  |:www.python.org/dev/peps/pep-0545:PEP 545| – Python Documentation Translations
+     PEP written and implemented by Julien Palard, Inada Naoki, and Victor Stinner.
+
+*|whatsnew37-devmode:⚓|* ## development-runtime-mode-x-dev:Development Runtime
+Mode: -X dev
+
+The new |:using/cmdline.txt/cmdoption-X:-X| "dev" command line option or the new *|index-26:⚓|* |:using/cmdline.txt/envvar-PYTHONDEVMODE:PYTHONDEVMODE|
+environment variable can be used to enable CPython’s *development mode*.  When
+in development mode, CPython performs additional runtime checks that are too
+expensive to be enabled by default. See |:using/cmdline.txt/cmdoption-X:-X| "dev" documentation for the full
+description of the effects of this mode.
+
+# other-language-changes:Other Language Changes
+
+* An |:reference/expressions.txt/await:await| expression and comprehensions containing an |:reference/compound_stmts.txt/async-for:async for| clause were
+  illegal in the expressions in |:reference/lexical_analysis.txt/f-strings:formatted string literals| due to a problem with
+  the implementation.  In Python 3.7 this restriction was lifted.
+
+* More than 255 arguments can now be passed to a function, and a function can now
+  have more than 255 parameters. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue12844:bpo-12844|
+  and |:bugs.python.org/issue18896:bpo-18896|.)
+
+* |:library/stdtypes.txt/bytes.fromhex:bytes.fromhex()| and |:library/stdtypes.txt/bytearray.fromhex:bytearray.fromhex()| now ignore all ASCII whitespace, not
+  only spaces. (Contributed by Robert Xiao in |:bugs.python.org/issue28927:bpo-28927|.)
+
+* |:library/stdtypes.txt/str:str|, |:library/stdtypes.txt/bytes:bytes|, and |:library/stdtypes.txt/bytearray:bytearray| gained support for the new |:library/stdtypes.txt/str.isascii:isascii()| method,
+  which can be used to test if a string or bytes contain only the ASCII
+  characters. (Contributed by INADA Naoki in |:bugs.python.org/issue32677:bpo-32677|.)
+
+* |:library/exceptions.txt/ImportError:ImportError| now displays module name and module "__file__" path when "from ...
+  import ..." fails. (Contributed by Matthias Bussonnier in |:bugs.python.org/issue29546:bpo-29546|.)
+
+* Circular imports involving absolute imports with binding a submodule to a name
+  are now supported. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue30024:bpo-30024|.)
+
+* "object.__format__(x, '')" is now equivalent to "str(x)" rather than "
+  format(str(self), '')". (Contributed by Serhiy Storchaka in |:bugs.python.org/issue28974:bpo-28974|.)
+
+* In order to better support dynamic creation of stack traces,
+  |:library/types.txt/types.TracebackType:types.TracebackType| can now be instantiated from Python code, and the "tb_next
+  " attribute on |:reference/datamodel.txt/traceback-objects:tracebacks| is now writable. (Contributed by Nathaniel J. Smith
+  in |:bugs.python.org/issue30579:bpo-30579|.)
+
+* When using the |:using/cmdline.txt/cmdoption-m:-m| switch, "sys.path[0]" is now eagerly expanded to the full
+  starting directory path, rather than being left as the empty directory (which
+  allows imports from the *current* working directory at the time when an import
+  occurs) (Contributed by Nick Coghlan in |:bugs.python.org/issue33053:bpo-33053|.)
+
+* The new |:using/cmdline.txt/cmdoption-X:-X| "importtime" option or the *|index-27:⚓|* |:using/cmdline.txt/envvar-PYTHONPROFILEIMPORTTIME:PYTHONPROFILEIMPORTTIME|
+  environment variable can be used to show the timing of each module import.
+  (Contributed by Victor Stinner in |:bugs.python.org/issue31415:bpo-31415|.)
+
+# new-modules:New Modules## contextvars:contextvars
+
+The new |:library/contextvars.txt/module-contextvars:contextvars| module and a set of |:c-api/contextvars.txt/contextvarsobjects:new C APIs| introduce support for *
+context variables*.  Context variables are conceptually similar to thread-local
+variables.  Unlike TLS, context variables support asynchronous code correctly.
+
+The |:library/asyncio.txt/module-asyncio:asyncio| and |:library/decimal.txt/module-decimal:decimal| modules have been updated to use and support context
+variables out of the box.  Particularly the active decimal context is now stored
+in a context variable, which allows decimal operations to work with the correct
+context in asynchronous code.
+
+See also:
+
+  *|index-28:⚓|*
+  |:www.python.org/dev/peps/pep-0567:PEP 567| – Context Variables
+     PEP written and implemented by Yury Selivanov
+
+*|whatsnew37-pep557:⚓|* ## dataclasses:dataclasses
+
+The new |:library/dataclasses.txt/dataclasses.dataclass:dataclass()| decorator provides a way to declare *data classes*.  A
+data class describes its attributes using class variable annotations.  Its
+constructor and other magic methods, such as |:reference/datamodel.txt/object.__repr__:__repr__()|, |:reference/datamodel.txt/object.__eq__:__eq__()|, and
+|:reference/datamodel.txt/object.__hash__:__hash__()| are generated automatically.
+
+Example:
+
+```rst
+@dataclass
+class Point:
+    x: float
+    y: float
+    z: float = 0.0
+
+p = Point(1.5, 2.5)
+print(p)   # produces "Point(x=1.5, y=2.5, z=0.0)"
+```
+
+See also:
+
+  *|index-29:⚓|*
+  |:www.python.org/dev/peps/pep-0557:PEP 557| – Data Classes
+     PEP written and implemented by Eric V. Smith
+
+*|whatsnew37-importlib-resources:⚓|* ## importlib-resources:importlib.resources
+
+The new |:library/importlib.txt/module-importlib.resources:importlib.resources| module provides several new APIs and one new ABC
+for access to, opening, and reading *resources* inside packages. Resources are
+roughly similar to files inside packages, but they needn’t be actual files on
+the physical file system.  Module loaders can provide a "get_resource_reader()"
+function which returns a |:library/importlib.txt/importlib.abc.ResourceReader:importlib.abc.ResourceReader| instance to support this
+new API.  Built-in file path loaders and zip file loaders both support this.
+
+Contributed by Barry Warsaw and Brett Cannon in |:bugs.python.org/issue32248:bpo-32248|.
+
+See also:
+
+  |:importlib-resources.readthedocs.io/en/latest:importlib_resources|*|id1:⚓|*  – a PyPI backport for earlier Python versions.
+
+# improved-modules:Improved Modules## argparse:argparse
+
+The new |:library/argparse.txt/argparse.ArgumentParser.parse_intermixed_args:ArgumentParser.parse_intermixed_args()| method allows intermixing
+options and positional arguments. (Contributed by paul.j3 in |:bugs.python.org/issue14191:bpo-14191|.)
+
+*|whatsnew37-asyncio:⚓|* ## asyncio:asyncio
+
+The |:library/asyncio.txt/module-asyncio:asyncio| module has received many new features, usability and
+|:whatsnew37-asyncio-perf:performance improvements|.  Notable changes include:
+
+* The new |:glossary.txt/term-provisional-API:provisional| |:library/asyncio-task.txt/asyncio.run:asyncio.run()| function can be used to run a coroutine
+  from synchronous code by automatically creating and destroying the event loop.
+  (Contributed by Yury Selivanov in |:bugs.python.org/issue32314:bpo-32314|.)
+
+* asyncio gained support for |:library/contextvars.txt/module-contextvars:contextvars|. |:library/asyncio-eventloop.txt/asyncio.loop.call_soon:loop.call_soon()|,
+  |:library/asyncio-eventloop.txt/asyncio.loop.call_soon_threadsafe:loop.call_soon_threadsafe()|, |:library/asyncio-eventloop.txt/asyncio.loop.call_later:loop.call_later()|, |:library/asyncio-eventloop.txt/asyncio.loop.call_at:loop.call_at()|, and
+  |:library/asyncio-future.txt/asyncio.Future.add_done_callback:Future.add_done_callback()| have a new optional keyword-only *context*
+  parameter. |:library/asyncio-task.txt/asyncio.Task:Tasks| now track their context automatically. See *|index-30:⚓|*
+  |:www.python.org/dev/peps/pep-0567:PEP 567| for more details. (Contributed by Yury Selivanov in |:bugs.python.org/issue32436:bpo-32436|.)
+
+* The new |:library/asyncio-task.txt/asyncio.create_task:asyncio.create_task()| function has been added as a shortcut to "
+  asyncio.get_event_loop().create_task()". (Contributed by Andrew Svetlov in
+  |:bugs.python.org/issue32311:bpo-32311|.)
+
+* The new |:library/asyncio-eventloop.txt/asyncio.loop.start_tls:loop.start_tls()| method can be used to upgrade an existing connection
+  to TLS. (Contributed by Yury Selivanov in |:bugs.python.org/issue23749:bpo-23749|.)
+
+* The new |:library/asyncio-eventloop.txt/asyncio.loop.sock_recv_into:loop.sock_recv_into()| method allows reading data from a socket
+  directly into a provided buffer making it possible to reduce data copies.
+  (Contributed by Antoine Pitrou in |:bugs.python.org/issue31819:bpo-31819|.)
+
+* The new |:library/asyncio-task.txt/asyncio.current_task:asyncio.current_task()| function returns the currently running |:library/asyncio-task.txt/asyncio.Task:Task|
+  instance, and the new |:library/asyncio-task.txt/asyncio.all_tasks:asyncio.all_tasks()| function returns a set of all
+  existing "Task" instances in a given loop. The |:library/asyncio-task.txt/asyncio.Task.current_task:Task.current_task()| and
+  |:library/asyncio-task.txt/asyncio.Task.all_tasks:Task.all_tasks()| methods have been deprecated. (Contributed by Andrew Svetlov
+  in |:bugs.python.org/issue32250:bpo-32250|.)
+
+* The new *provisional* |:library/asyncio-protocol.txt/asyncio.BufferedProtocol:BufferedProtocol| class allows implementing streaming
+  protocols with manual control over the receive buffer. (Contributed by Yury
+  Selivanov in |:bugs.python.org/issue32251:bpo-32251|.)
+
+* The new |:library/asyncio-eventloop.txt/asyncio.get_running_loop:asyncio.get_running_loop()| function returns the currently running
+  loop, and raises a |:library/exceptions.txt/RuntimeError:RuntimeError| if no loop is running. This is in contrast
+  with |:library/asyncio-eventloop.txt/asyncio.get_event_loop:asyncio.get_event_loop()|, which will *create* a new event loop if none is
+  running. (Contributed by Yury Selivanov in |:bugs.python.org/issue32269:bpo-32269|.)
+
+* The new |:library/asyncio-stream.txt/asyncio.StreamWriter.wait_closed:StreamWriter.wait_closed()| coroutine method allows waiting until the
+  stream writer is closed.  The new |:library/asyncio-stream.txt/asyncio.StreamWriter.is_closing:StreamWriter.is_closing()| method can be used
+  to determine if the writer is closing. (Contributed by Andrew Svetlov in
+  |:bugs.python.org/issue32391:bpo-32391|.)
+
+* The new |:library/asyncio-eventloop.txt/asyncio.loop.sock_sendfile:loop.sock_sendfile()| coroutine method allows sending files using
+  |:library/os.txt/os.sendfile:os.sendfile| when possible. (Contributed by Andrew Svetlov in |:bugs.python.org/issue32410:bpo-32410|.)
+
+* The new |:library/asyncio-future.txt/asyncio.Future.get_loop:Future.get_loop()| and "Task.get_loop()" methods return the instance of
+  the loop on which a task or a future were created. |:library/asyncio-eventloop.txt/asyncio.Server.get_loop:Server.get_loop()| allows
+  doing the same for |:library/asyncio-eventloop.txt/asyncio.Server:asyncio.Server| objects. (Contributed by Yury Selivanov in
+  |:bugs.python.org/issue32415:bpo-32415| and Srinivas Reddy Thatiparthy in |:bugs.python.org/issue32418:bpo-32418|.)
+
+* It is now possible to control how instances of |:library/asyncio-eventloop.txt/asyncio.Server:asyncio.Server| begin serving.
+  Previously, the server would start serving immediately when created. The new *
+  start_serving* keyword argument to |:library/asyncio-eventloop.txt/asyncio.loop.create_server:loop.create_server()| and
+  |:library/asyncio-eventloop.txt/asyncio.loop.create_unix_server:loop.create_unix_server()|, as well as |:library/asyncio-eventloop.txt/asyncio.Server.start_serving:Server.start_serving()|, and
+  |:library/asyncio-eventloop.txt/asyncio.Server.serve_forever:Server.serve_forever()| can be used to decouple server instantiation and
+  serving.  The new |:library/asyncio-eventloop.txt/asyncio.Server.is_serving:Server.is_serving()| method returns "True" if the server is
+  serving.  |:library/asyncio-eventloop.txt/asyncio.Server:Server| objects are now asynchronous context managers:
+
+```rst
+srv = await loop.create_server(...)
+
+async with srv:
+    # some code
+
+# At this point, srv is closed and no longer accepts new connections.
+```
+
+  (Contributed by Yury Selivanov in |:bugs.python.org/issue32662:bpo-32662|.)
+
+* Callback objects returned by |:library/asyncio-eventloop.txt/asyncio.loop.call_later:loop.call_later()| gained the new |:library/asyncio-eventloop.txt/asyncio.TimerHandle.when:when()| method
+  which returns an absolute scheduled callback timestamp. (Contributed by Andrew
+  Svetlov in |:bugs.python.org/issue32741:bpo-32741|.)
+
+* The |:library/asyncio-eventloop.txt/asyncio.loop.create_datagram_endpoint:loop.create_datagram_endpoint() | method gained support for Unix sockets.
+  (Contributed by Quentin Dawans in |:bugs.python.org/issue31245:bpo-31245|.)
+
+* The |:library/asyncio-stream.txt/asyncio.open_connection:asyncio.open_connection()|, |:library/asyncio-stream.txt/asyncio.start_server:asyncio.start_server()| functions,
+  |:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()|, |:library/asyncio-eventloop.txt/asyncio.loop.create_server:loop.create_server()|,
+  |:library/asyncio-eventloop.txt/asyncio.loop.connect_accepted_socket:loop.create_accepted_socket()| methods and their corresponding UNIX socket
+  variants now accept the *ssl_handshake_timeout* keyword argument. (Contributed
+  by Neil Aspinall in |:bugs.python.org/issue29970:bpo-29970|.)
+
+* The new |:library/asyncio-eventloop.txt/asyncio.Handle.cancelled:Handle.cancelled()| method returns "True" if the callback was
+  cancelled. (Contributed by Marat Sharafutdinov in |:bugs.python.org/issue31943:bpo-31943|.)
+
+* The asyncio source has been converted to use the |:reference/compound_stmts.txt/async:async|/|:reference/expressions.txt/await:await| syntax.
+  (Contributed by Andrew Svetlov in |:bugs.python.org/issue32193:bpo-32193|.)
+
+* The new |:library/asyncio-protocol.txt/asyncio.ReadTransport.is_reading:ReadTransport.is_reading()| method can be used to determine the reading
+  state of the transport. Additionally, calls to |:library/asyncio-protocol.txt/asyncio.ReadTransport.resume_reading:ReadTransport.resume_reading()|
+  and |:library/asyncio-protocol.txt/asyncio.ReadTransport.pause_reading:ReadTransport.pause_reading()| are now idempotent. (Contributed by Yury
+  Selivanov in |:bugs.python.org/issue32356:bpo-32356|.)
+
+* Loop methods which accept socket paths now support passing |:glossary.txt/term-path-like-object:path-like objects|.
+  (Contributed by Yury Selivanov in |:bugs.python.org/issue32066:bpo-32066|.)
+
+* In |:library/asyncio.txt/module-asyncio:asyncio| TCP sockets on Linux are now created with "TCP_NODELAY" flag set by
+  default. (Contributed by Yury Selivanov and Victor Stinner in |:bugs.python.org/issue27456:bpo-27456|.)
+
+* Exceptions occurring in cancelled tasks are no longer logged. (Contributed by
+  Yury Selivanov in |:bugs.python.org/issue30508:bpo-30508|.)
+
+* New "WindowsSelectorEventLoopPolicy" and "WindowsProactorEventLoopPolicy"
+  classes. (Contributed by Yury Selivanov in |:bugs.python.org/issue33792:bpo-33792|.)
+
+Several "asyncio" APIs have been |:whatsnew37-asyncio-deprecated:deprecated|.
+
+## binascii:binascii
+
+The |:library/binascii.txt/binascii.b2a_uu:b2a_uu()| function now accepts an optional *backtick* keyword argument.
+When it’s true, zeros are represented by "'`'" instead of spaces.  (Contributed
+by Xiang Zhang in |:bugs.python.org/issue30103:bpo-30103|.)
+
+## calendar:calendar
+
+The |:library/calendar.txt/calendar.HTMLCalendar:HTMLCalendar| class has new class attributes which ease the customization
+of CSS classes in the produced HTML calendar. (Contributed by Oz Tiram in
+|:bugs.python.org/issue30095:bpo-30095|.)
+
+## collections:collections
+
+"collections.namedtuple()" now supports default values. (Contributed by Raymond
+Hettinger in |:bugs.python.org/issue32320:bpo-32320|.)
+
+## compileall:compileall
+
+|:library/compileall.txt/compileall.compile_dir:compileall.compile_dir()| learned the new *invalidation_mode* parameter, which
+can be used to enable |:whatsnew37-pep552:hash-based .pyc invalidation|.  The invalidation mode can
+also be specified on the command line using the new "--invalidation-mode"
+argument. (Contributed by Benjamin Peterson in |:bugs.python.org/issue31650:bpo-31650|.)
+
+## concurrent-futures:concurrent.futures
+
+|:library/concurrent.futures.txt/concurrent.futures.ProcessPoolExecutor:ProcessPoolExecutor| and |:library/concurrent.futures.txt/concurrent.futures.ThreadPoolExecutor:ThreadPoolExecutor| now support the new *initializer*
+and *initargs* constructor arguments. (Contributed by Antoine Pitrou in
+|:bugs.python.org/issue21423:bpo-21423|.)
+
+The |:library/concurrent.futures.txt/concurrent.futures.ProcessPoolExecutor:ProcessPoolExecutor| can now take the multiprocessing context via the new *
+mp_context* argument. (Contributed by Thomas Moreau in |:bugs.python.org/issue31540:bpo-31540|.)
+
+## contextlib:contextlib
+
+The new |:library/contextlib.txt/contextlib.nullcontext:nullcontext()| is a simpler and faster no-op context manager than
+|:library/contextlib.txt/contextlib.ExitStack:ExitStack|. (Contributed by Jesse-Bakker in |:bugs.python.org/issue10049:bpo-10049|.)
+
+The new |:library/contextlib.txt/contextlib.asynccontextmanager:asynccontextmanager()|, |:library/contextlib.txt/contextlib.AbstractAsyncContextManager:AbstractAsyncContextManager|, and
+|:library/contextlib.txt/contextlib.AsyncExitStack:AsyncExitStack| have been added to complement their synchronous counterparts.
+(Contributed by Jelle Zijlstra in |:bugs.python.org/issue29679:bpo-29679| and |:bugs.python.org/issue30241:bpo-30241|, and by Alexander
+Mohr and Ilya Kulakov in |:bugs.python.org/issue29302:bpo-29302|.)
+
+## cprofile:cProfile
+
+The |:library/profile.txt/module-cProfile:cProfile| command line now accepts "-m module_name" as an alternative to
+script path.  (Contributed by Sanyam Khurana in |:bugs.python.org/issue21862:bpo-21862|.)
+
+## crypt:crypt
+
+The |:library/crypt.txt/module-crypt:crypt| module now supports the Blowfish hashing method. (Contributed by
+Serhiy Storchaka in |:bugs.python.org/issue31664:bpo-31664|.)
+
+The |:library/crypt.txt/crypt.mksalt:mksalt()| function now allows specifying the number of rounds for hashing.
+(Contributed by Serhiy Storchaka in |:bugs.python.org/issue31702:bpo-31702|.)
+
+## datetime:datetime
+
+The new |:library/datetime.txt/datetime.datetime.fromisoformat:datetime.fromisoformat()| method constructs a |:library/datetime.txt/datetime.datetime:datetime| object from a
+string in one of the formats output by |:library/datetime.txt/datetime.datetime.isoformat:datetime.isoformat()|. (Contributed by
+Paul Ganssle in |:bugs.python.org/issue15873:bpo-15873|.)
+
+The |:library/datetime.txt/datetime.tzinfo:tzinfo| class now supports sub-minute offsets. (Contributed by Alexander
+Belopolsky in |:bugs.python.org/issue5288:bpo-5288|.)
+
+## dbm:dbm
+
+|:library/dbm.txt/module-dbm.dumb:dbm.dumb| now supports reading read-only files and no longer writes the index
+file when it is not changed.
+
+## decimal:decimal
+
+The |:library/decimal.txt/module-decimal:decimal| module now uses |:whatsnew37-pep567:context variables| to store the decimal context.
+(Contributed by Yury Selivanov in |:bugs.python.org/issue32630:bpo-32630|.)
+
+## dis:dis
+
+The |:library/dis.txt/dis.dis:dis()| function is now able to disassemble nested code objects (the code of
+comprehensions, generator expressions and nested functions, and the code used
+for building nested classes).  The maximum depth of disassembly recursion is
+controlled by the new *depth* parameter. (Contributed by Serhiy Storchaka in
+|:bugs.python.org/issue11822:bpo-11822|.)
+
+## distutils:distutils
+
+"README.rst" is now included in the list of distutils standard READMEs and
+therefore included in source distributions. (Contributed by Ryan Gonzalez in
+|:bugs.python.org/issue11913:bpo-11913|.)
+
+## enum:enum
+
+The |:library/enum.txt/enum.Enum:Enum| learned the new "_ignore_" class property, which allows listing the
+names of properties which should not become enum members. (Contributed by Ethan
+Furman in |:bugs.python.org/issue31801:bpo-31801|.)
+
+In Python 3.8, attempting to check for non-Enum objects in "Enum" classes will
+raise a |:library/exceptions.txt/TypeError:TypeError| (e.g. "1 in Color"); similarly, attempting to check for non-
+Flag objects in a "Flag" member will raise |:library/exceptions.txt/TypeError:TypeError| (e.g. "1 in Perm.RW");
+currently, both operations return |:library/constants.txt/False:False| instead and are deprecated.
+(Contributed by Ethan Furman in |:bugs.python.org/issue33217:bpo-33217|.)
+
+## functools:functools
+
+|:library/functools.txt/functools.singledispatch:functools.singledispatch()| now supports registering implementations using type
+annotations. (Contributed by Łukasz Langa in |:bugs.python.org/issue32227:bpo-32227|.)
+
+## gc:gc
+
+The new |:library/gc.txt/gc.freeze:gc.freeze()| function allows freezing all objects tracked by the
+garbage collector and excluding them from future collections. This can be used
+before a POSIX "fork()" call to make the GC copy-on-write friendly or to speed
+up collection.  The new |:library/gc.txt/gc.unfreeze:gc.unfreeze()| functions reverses this operation.
+Additionally, |:library/gc.txt/gc.get_freeze_count:gc.get_freeze_count()| can be used to obtain the number of frozen
+objects. (Contributed by Li Zekun in |:bugs.python.org/issue31558:bpo-31558|.)
+
+## hmac:hmac
+
+The |:library/hmac.txt/module-hmac:hmac| module now has an optimized one-shot |:library/hmac.txt/hmac.digest:digest()| function, which is up
+to three times faster than "HMAC()". (Contributed by Christian Heimes in
+|:bugs.python.org/issue32433:bpo-32433|.)
+
+## http-client:http.client
+
+|:library/http.client.txt/http.client.HTTPConnection:HTTPConnection| and |:library/http.client.txt/http.client.HTTPSConnection:HTTPSConnection| now support the new *blocksize* argument
+for improved upload throughput. (Contributed by Nir Soffer in |:bugs.python.org/issue31945:bpo-31945|.)
+
+## http-server:http.server
+
+|:library/http.server.txt/http.server.SimpleHTTPRequestHandler:SimpleHTTPRequestHandler| now supports the HTTP "If-Modified-Since" header.
+The server returns the 304 response status if the target file was not modified
+after the time specified in the header. (Contributed by Pierre Quentel in
+|:bugs.python.org/issue29654:bpo-29654|.)
+
+|:library/http.server.txt/http.server.SimpleHTTPRequestHandler:SimpleHTTPRequestHandler| accepts the new *directory* argument, in addition to
+the new "--directory" command line argument. With this parameter, the server
+serves the specified directory, by default it uses the current working
+directory. (Contributed by Stéphane Wirtel and Julien Palard in |:bugs.python.org/issue28707:bpo-28707|.)
+
+The new |:library/http.server.txt/http.server.ThreadingHTTPServer:ThreadingHTTPServer| class uses threads to handle requests using "
+ThreadingMixin". It is used when "http.server" is run with "-m". (Contributed by
+Julien Palard in |:bugs.python.org/issue31639:bpo-31639|.)
+
+## idlelib-and-idle:idlelib and IDLE
+
+Multiple fixes for autocompletion. (Contributed by Louie Lu in |:bugs.python.org/issue15786:bpo-15786|.)
+
+Module Browser (on the File menu, formerly called Class Browser), now displays
+nested functions and classes in addition to top-level functions and classes.
+(Contributed by Guilherme Polo, Cheryl Sabella, and Terry Jan Reedy in
+|:bugs.python.org/issue1612262:bpo-1612262|.)
+
+The Settings dialog (Options, Configure IDLE) has been partly rewritten to
+improve both appearance and function. (Contributed by Cheryl Sabella and Terry
+Jan Reedy in multiple issues.)
+
+The font sample now includes a selection of non-Latin characters so that users
+can better see the effect of selecting a particular font. (Contributed by Terry
+Jan Reedy in |:bugs.python.org/issue13802:bpo-13802|.) The sample can be edited to include other characters.
+(Contributed by Serhiy Storchaka in |:bugs.python.org/issue31860:bpo-31860|.)
+
+The IDLE features formerly implemented as extensions have been reimplemented as
+normal features.  Their settings have been moved from the Extensions tab to
+other dialog tabs. (Contributed by Charles Wohlganger and Terry Jan Reedy in
+|:bugs.python.org/issue27099:bpo-27099|.)
+
+Editor code context option revised.  Box displays all context lines up to
+maxlines.  Clicking on a context line jumps the editor to that line.  Context
+colors for custom themes is added to Highlights tab of Settings dialog.
+(Contributed by Cheryl Sabella and Terry Jan Reedy in |:bugs.python.org/issue33642:bpo-33642|, |:bugs.python.org/issue33768:bpo-33768|,
+and |:bugs.python.org/issue33679:bpo-33679|.)
+
+On Windows, a new API call tells Windows that tk scales for DPI. On Windows 8.1+
+or 10, with DPI compatibility properties of the Python binary unchanged, and a
+monitor resolution greater than 96 DPI, this should make text and lines sharper.
+It should otherwise have no effect. (Contributed by Terry Jan Reedy in
+|:bugs.python.org/issue33656:bpo-33656|.)
+
+New in 3.7.1:
+
+Output over N lines (50 by default) is squeezed down to a button. N can be
+changed in the PyShell section of the General page of the Settings dialog.
+Fewer, but possibly extra long, lines can be squeezed by right clicking on the
+output.  Squeezed output can be expanded in place by double-clicking the button
+or into the clipboard or a separate window by right-clicking the button.
+(Contributed by Tal Einat in |:bugs.python.org/issue1529353:bpo-1529353|.)
+
+The changes above have been backported to 3.6 maintenance releases.
+
+NEW in 3.7.4:
+
+Add “Run Customized” to the Run menu to run a module with customized settings.
+Any command line arguments entered are added to sys.argv. They re-appear in the
+box for the next customized run.  One can also suppress the normal Shell main
+module restart.  (Contributed by Cheryl Sabella, Terry Jan Reedy, and others in
+|:bugs.python.org/issue5680:bpo-5680| and |:bugs.python.org/issue37627:bpo-37627|.)
+
+New in 3.7.5:
+
+Add optional line numbers for IDLE editor windows. Windows open without line
+numbers unless set otherwise in the General tab of the configuration dialog.
+Line numbers for an existing window are shown and hidden in the Options menu.
+(Contributed by Tal Einat and Saimadhav Heblikar in |:bugs.python.org/issue17535:bpo-17535|.)
+
+## importlib:importlib
+
+The |:library/importlib.txt/importlib.abc.ResourceReader:importlib.abc.ResourceReader| ABC was introduced to support the loading of
+resources from packages.  See also |:whatsnew37-importlib-resources:importlib.resources|. (Contributed by Barry
+Warsaw, Brett Cannon in |:bugs.python.org/issue32248:bpo-32248|.)
+
+|:library/importlib.txt/importlib.reload:importlib.reload()| now raises |:library/exceptions.txt/ModuleNotFoundError:ModuleNotFoundError| if the module lacks a
+spec. (Contributed by Garvit Khatri in |:bugs.python.org/issue29851:bpo-29851|.)
+
+"importlib.find_spec()" now raises |:library/exceptions.txt/ModuleNotFoundError:ModuleNotFoundError| instead of
+|:library/exceptions.txt/AttributeError:AttributeError| if the specified parent module is not a package (i.e. lacks a "
+__path__" attribute). (Contributed by Milan Oberkirch in |:bugs.python.org/issue30436:bpo-30436|.)
+
+The new "importlib.source_hash()" can be used to compute the hash of the passed
+source.  A |:whatsnew37-pep552:hash-based .pyc file| embeds the value returned by this function.
+
+## io:io
+
+The new |:library/io.txt/io.TextIOWrapper.reconfigure:TextIOWrapper.reconfigure()| method can be used to reconfigure the text
+stream with the new settings. (Contributed by Antoine Pitrou in |:bugs.python.org/issue30526:bpo-30526| and
+INADA Naoki in |:bugs.python.org/issue15216:bpo-15216|.)
+
+## ipaddress:ipaddress
+
+The new "subnet_of()" and "supernet_of()" methods of |:library/ipaddress.txt/ipaddress.IPv6Network:ipaddress.IPv6Network| and
+|:library/ipaddress.txt/ipaddress.IPv4Network:ipaddress.IPv4Network| can be used for network containment tests. (Contributed
+by Michel Albert and Cheryl Sabella in |:bugs.python.org/issue20825:bpo-20825|.)
+
+## itertools:itertools
+
+|:library/itertools.txt/itertools.islice:itertools.islice()| now accepts |:reference/datamodel.txt/object.__index__:integer-like objects| as start, stop, and
+slice arguments. (Contributed by Will Roberts in |:bugs.python.org/issue30537:bpo-30537|.)
+
+## locale:locale
+
+The new *monetary* argument to |:library/locale.txt/locale.format_string:locale.format_string()| can be used to make the
+conversion use monetary thousands separators and grouping strings.  (Contributed
+by Garvit in |:bugs.python.org/issue10379:bpo-10379|.)
+
+The |:library/locale.txt/locale.getpreferredencoding:locale.getpreferredencoding()| function now always returns "'UTF-8'" on
+Android or when in the |:whatsnew37-pep540:forced UTF-8 mode|.
+
+## logging:logging
+
+|:library/logging.txt/logging.Logger:Logger| instances can now be pickled. (Contributed by Vinay Sajip in
+|:bugs.python.org/issue30520:bpo-30520|.)
+
+The new |:library/logging.handlers.txt/logging.StreamHandler.setStream:StreamHandler.setStream()| method can be used to replace the logger
+stream after handler creation. (Contributed by Vinay Sajip in |:bugs.python.org/issue30522:bpo-30522|.)
+
+It is now possible to specify keyword arguments to handler constructors in
+configuration passed to |:library/logging.config.txt/logging.config.fileConfig:logging.config.fileConfig()|. (Contributed by Preston
+Landers in |:bugs.python.org/issue31080:bpo-31080|.)
+
+## math:math
+
+The new |:library/math.txt/math.remainder:math.remainder()| function implements the IEEE 754-style remainder
+operation.  (Contributed by Mark Dickinson in |:bugs.python.org/issue29962:bpo-29962|.)
+
+## mimetypes:mimetypes
+
+The MIME type of .bmp has been changed from "'image/x-ms-bmp'" to "'image/bmp'".
+(Contributed by Nitish Chandra in |:bugs.python.org/issue22589:bpo-22589|.)
+
+## msilib:msilib
+
+The new |:library/msilib.txt/msilib.Database.Close:Database.Close()| method can be used to close the MSI database.
+(Contributed by Berker Peksag in |:bugs.python.org/issue20486:bpo-20486|.)
+
+## multiprocessing:multiprocessing
+
+The new |:library/multiprocessing.txt/multiprocessing.Process.close:Process.close()| method explicitly closes the process object and
+releases all resources associated with it.  |:library/exceptions.txt/ValueError:ValueError| is raised if the
+underlying process is still running. (Contributed by Antoine Pitrou in
+|:bugs.python.org/issue30596:bpo-30596|.)
+
+The new |:library/multiprocessing.txt/multiprocessing.Process.kill:Process.kill()| method can be used to terminate the process using the "
+SIGKILL" signal on Unix. (Contributed by Vitor Pereira in |:bugs.python.org/issue30794:bpo-30794|.)
+
+Non-daemonic threads created by |:library/multiprocessing.txt/multiprocessing.Process:Process| are now joined on process exit.
+(Contributed by Antoine Pitrou in |:bugs.python.org/issue18966:bpo-18966|.)
+
+## os:os
+
+|:library/os.txt/os.fwalk:os.fwalk()| now accepts the *path* argument as |:library/stdtypes.txt/bytes:bytes|. (Contributed by Serhiy
+Storchaka in |:bugs.python.org/issue28682:bpo-28682|.)
+
+|:library/os.txt/os.scandir:os.scandir()| gained support for |:library/os.txt/path-fd:file descriptors|. (Contributed by Serhiy
+Storchaka in |:bugs.python.org/issue25996:bpo-25996|.)
+
+The new |:library/os.txt/os.register_at_fork:register_at_fork()| function allows registering Python callbacks to be
+executed at process fork. (Contributed by Antoine Pitrou in |:bugs.python.org/issue16500:bpo-16500|.)
+
+Added |:library/os.txt/os.preadv:os.preadv()| (combine the functionality of |:library/os.txt/os.readv:os.readv()| and |:library/os.txt/os.pread:os.pread()|)
+and |:library/os.txt/os.pwritev:os.pwritev()| functions (combine the functionality of |:library/os.txt/os.writev:os.writev()| and
+|:library/os.txt/os.pwrite:os.pwrite()|). (Contributed by Pablo Galindo in |:bugs.python.org/issue31368:bpo-31368|.)
+
+The mode argument of |:library/os.txt/os.makedirs:os.makedirs()| no longer affects the file permission bits
+of newly-created intermediate-level directories. (Contributed by Serhiy
+Storchaka in |:bugs.python.org/issue19930:bpo-19930|.)
+
+|:library/os.txt/os.dup2:os.dup2()| now returns the new file descriptor.  Previously, "None" was always
+returned. (Contributed by Benjamin Peterson in |:bugs.python.org/issue32441:bpo-32441|.)
+
+The structure returned by |:library/os.txt/os.stat:os.stat()| now contains the |:library/os.txt/os.stat_result.st_fstype:st_fstype| attribute on
+Solaris and its derivatives. (Contributed by Jesús Cea Avión in |:bugs.python.org/issue32659:bpo-32659|.)
+
+## pathlib:pathlib
+
+The new |:library/pathlib.txt/pathlib.Path.is_mount:Path.is_mount()| method is now available on POSIX systems and can be
+used to determine whether a path is a mount point. (Contributed by Cooper Ry
+Lees in |:bugs.python.org/issue30897:bpo-30897|.)
+
+## pdb:pdb
+
+|:library/pdb.txt/pdb.set_trace:pdb.set_trace()| now takes an optional *header* keyword-only argument.  If
+given, it is printed to the console just before debugging begins.  (Contributed
+by Barry Warsaw in |:bugs.python.org/issue31389:bpo-31389|.)
+
+|:library/pdb.txt/module-pdb:pdb| command line now accepts "-m module_name" as an alternative to script
+file.  (Contributed by Mario Corchero in |:bugs.python.org/issue32206:bpo-32206|.)
+
+## py-compile:py_compile
+
+|:library/py_compile.txt/py_compile.compile:py_compile.compile()| – and by extension, |:library/compileall.txt/module-compileall:compileall| – now respects the
+*|index-31:⚓|* "SOURCE_DATE_EPOCH" environment variable by unconditionally
+creating ".pyc" files for hash-based validation. This allows for guaranteeing
+|:reproducible-builds.org:reproducible builds|*|reproducible-builds:⚓|*  of ".pyc" files when they are
+created eagerly. (Contributed by Bernhard M. Wiedemann in |:bugs.python.org/issue29708:bpo-29708|.)
+
+## pydoc:pydoc
+
+The pydoc server can now bind to an arbitrary hostname specified by the new "-n"
+command-line argument. (Contributed by Feanil Patel in |:bugs.python.org/issue31128:bpo-31128|.)
+
+## queue:queue
+
+The new |:library/queue.txt/queue.SimpleQueue:SimpleQueue| class is an unbounded FIFO queue. (Contributed by Antoine
+Pitrou in |:bugs.python.org/issue14976:bpo-14976|.)
+
+## re:re
+
+The flags |:library/re.txt/re.ASCII:re.ASCII|, |:library/re.txt/re.LOCALE:re.LOCALE| and "re.UNICODE" can be set within the scope
+of a group. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue31690:bpo-31690|.)
+
+|:library/re.txt/re.split:re.split()| now supports splitting on a pattern like "r'\b'", "'^$'" or "(?=-)"
+that matches an empty string. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue25054:bpo-25054|.)
+
+Regular expressions compiled with the |:library/re.txt/re.LOCALE:re.LOCALE| flag no longer depend on the
+locale at compile time.  Locale settings are applied only when the compiled
+regular expression is used. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue30215:bpo-30215|.)
+
+|:library/exceptions.txt/FutureWarning:FutureWarning| is now emitted if a regular expression contains character set
+constructs that will change semantically in the future, such as nested sets and
+set operations. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue30349:bpo-30349|.)
+
+Compiled regular expression and match objects can now be copied using
+|:library/copy.txt/copy.copy:copy.copy()| and |:library/copy.txt/copy.deepcopy:copy.deepcopy()|. (Contributed by Serhiy Storchaka in
+|:bugs.python.org/issue10076:bpo-10076|.)
+
+## signal:signal
+
+The new *warn_on_full_buffer* argument to the |:library/signal.txt/signal.set_wakeup_fd:signal.set_wakeup_fd()| function
+makes it possible to specify whether Python prints a warning on stderr when the
+wakeup buffer overflows. (Contributed by Nathaniel J. Smith in |:bugs.python.org/issue30050:bpo-30050|.)
+
+## socket:socket
+
+The new |:library/socket.txt/socket.socket.getblocking:socket.getblocking()| method returns "True" if the socket is in
+blocking mode and "False" otherwise. (Contributed by Yury Selivanov in
+|:bugs.python.org/issue32373:bpo-32373|.)
+
+The new |:library/socket.txt/socket.close:socket.close()| function closes the passed socket file descriptor. This
+function should be used instead of |:library/os.txt/os.close:os.close()| for better compatibility across
+platforms. (Contributed by Christian Heimes in |:bugs.python.org/issue32454:bpo-32454|.)
+
+The |:library/socket.txt/module-socket:socket| module now exposes the "socket.TCP_CONGESTION" (Linux 2.6.13), "
+socket.TCP_USER_TIMEOUT" (Linux 2.6.37), and "socket.TCP_NOTSENT_LOWAT" (Linux
+3.12) constants. (Contributed by Omar Sandoval in |:bugs.python.org/issue26273:bpo-26273| and Nathaniel J.
+Smith in |:bugs.python.org/issue29728:bpo-29728|.)
+
+Support for |:library/socket.txt/socket.AF_VSOCK:socket.AF_VSOCK| sockets has been added to allow communication
+between virtual machines and their hosts. (Contributed by Cathy Avery in
+|:bugs.python.org/issue27584:bpo-27584|.)
+
+Sockets now auto-detect family, type and protocol from file descriptor by
+default. (Contributed by Christian Heimes in |:bugs.python.org/issue28134:bpo-28134|.)
+
+## socketserver:socketserver
+
+"socketserver.ThreadingMixIn.server_close()" now waits until all non-daemon
+threads complete. "socketserver.ForkingMixIn.server_close()" now waits until all
+child processes complete.
+
+Add a new "socketserver.ForkingMixIn.block_on_close" class attribute to
+|:library/socketserver.txt/socketserver.ForkingMixIn:socketserver.ForkingMixIn| and |:library/socketserver.txt/socketserver.ThreadingMixIn:socketserver.ThreadingMixIn| classes. Set the
+class attribute to "False" to get the pre-3.7 behaviour.
+
+## sqlite3:sqlite3
+
+|:library/sqlite3.txt/sqlite3.Connection:sqlite3.Connection| now exposes the |:library/sqlite3.txt/sqlite3.Connection.backup:backup()| method when the underlying
+SQLite library is at version 3.6.11 or higher. (Contributed by Lele Gaifax in
+|:bugs.python.org/issue27645:bpo-27645|.)
+
+The *database* argument of |:library/sqlite3.txt/sqlite3.connect:sqlite3.connect()| now accepts any
+|:glossary.txt/term-path-like-object:path-like object|, instead of just a string. (Contributed by Anders Lorentsen
+in |:bugs.python.org/issue31843:bpo-31843|.)
+
+## ssl:ssl
+
+The |:library/ssl.txt/module-ssl:ssl| module now uses OpenSSL’s builtin API instead of |:library/ssl.txt/ssl.match_hostname:match_hostname()| to
+check a host name or an IP address.  Values are validated during TLS handshake.
+Any certificate validation error including failing the host name check now
+raises |:library/ssl.txt/ssl.SSLCertVerificationError:SSLCertVerificationError| and aborts the handshake with a proper TLS
+Alert message.  The new exception contains additional information. Host name
+validation can be customized with |:library/ssl.txt/ssl.SSLContext.hostname_checks_common_name:SSLContext.hostname_checks_common_name|.
+(Contributed by Christian Heimes in |:bugs.python.org/issue31399:bpo-31399|.)
+
+Note:
+
+  The improved host name check requires a *libssl* implementation compatible with
+  OpenSSL 1.0.2 or 1.1.  Consequently, OpenSSL 0.9.8 and 1.0.1 are no longer
+  supported (see |:platform-support-removals:Platform Support Removals| for more details). The ssl module is
+  mostly compatible with LibreSSL 2.7.2 and newer.
+
+The "ssl" module no longer sends IP addresses in SNI TLS extension. (Contributed
+by Christian Heimes in |:bugs.python.org/issue32185:bpo-32185|.)
+
+|:library/ssl.txt/ssl.match_hostname:match_hostname()| no longer supports partial wildcards like "www*.example.org".
+(Contributed by Mandeep Singh in |:bugs.python.org/issue23033:bpo-23033| and Christian Heimes in |:bugs.python.org/issue31399:bpo-31399|
+.)
+
+The default cipher suite selection of the "ssl" module now uses a blacklist
+approach rather than a hard-coded whitelist.  Python no longer re-enables
+ciphers that have been blocked by OpenSSL security updates.  Default cipher
+suite selection can be configured at compile time. (Contributed by Christian
+Heimes in |:bugs.python.org/issue31429:bpo-31429|.)
+
+Validation of server certificates containing internationalized domain names
+(IDNs) is now supported.  As part of this change, the
+|:library/ssl.txt/ssl.SSLSocket.server_hostname:SSLSocket.server_hostname| attribute now stores the expected hostname in
+A-label form (""xn--pythn-mua.org""), rather than the U-label form ("
+"pythön.org"").  (Contributed by Nathaniel J. Smith and Christian Heimes in
+|:bugs.python.org/issue28414:bpo-28414|.)
+
+The "ssl" module has preliminary and experimental support for TLS 1.3 and
+OpenSSL 1.1.1.  At the time of Python 3.7.0 release, OpenSSL 1.1.1 is still
+under development and TLS 1.3 hasn’t been finalized yet.  The TLS 1.3 handshake
+and protocol behaves slightly differently than TLS 1.2 and earlier, see
+|:library/ssl.txt/ssl-tlsv1-3:TLS 1.3|. (Contributed by Christian Heimes in |:bugs.python.org/issue32947:bpo-32947|, |:bugs.python.org/issue20995:bpo-20995|,
+|:bugs.python.org/issue29136:bpo-29136|, |:bugs.python.org/issue30622:bpo-30622| and |:bugs.python.org/issue33618:bpo-33618|)
+
+|:library/ssl.txt/ssl.SSLSocket:SSLSocket| and |:library/ssl.txt/ssl.SSLObject:SSLObject| no longer have a public constructor.  Direct
+instantiation was never a documented and supported feature.  Instances must be
+created with |:library/ssl.txt/ssl.SSLContext:SSLContext| methods |:library/ssl.txt/ssl.SSLContext.wrap_socket:wrap_socket()| and |:library/ssl.txt/ssl.SSLContext.wrap_bio:wrap_bio()|. (Contributed
+by Christian Heimes in |:bugs.python.org/issue32951:bpo-32951|)
+
+OpenSSL 1.1 APIs for setting the minimum and maximum TLS protocol version are
+available as |:library/ssl.txt/ssl.SSLContext.minimum_version:SSLContext.minimum_version| and |:library/ssl.txt/ssl.SSLContext.maximum_version:SSLContext.maximum_version|.
+Supported protocols are indicated by several new flags, such as |:library/ssl.txt/ssl.HAS_TLSv1_1:HAS_TLSv1_1|.
+(Contributed by Christian Heimes in |:bugs.python.org/issue32609:bpo-32609|.)
+
+## string:string
+
+|:library/string.txt/string.Template:string.Template| now lets you to optionally modify the regular expression
+pattern for braced placeholders and non-braced placeholders separately.
+(Contributed by Barry Warsaw in |:bugs.python.org/issue1198569:bpo-1198569|.)
+
+## subprocess:subprocess
+
+The |:library/subprocess.txt/subprocess.run:subprocess.run()| function accepts the new *capture_output* keyword
+argument.  When true, stdout and stderr will be captured. This is equivalent to
+passing |:library/subprocess.txt/subprocess.PIPE:subprocess.PIPE| as *stdout* and *stderr* arguments. (Contributed by Bo
+Bayles in |:bugs.python.org/issue32102:bpo-32102|.)
+
+The "subprocess.run" function and the |:library/subprocess.txt/subprocess.Popen:subprocess.Popen| constructor now accept
+the *text* keyword argument as an alias to *universal_newlines*. (Contributed by
+Andrew Clegg in |:bugs.python.org/issue31756:bpo-31756|.)
+
+On Windows the default for *close_fds* was changed from "False" to "True" when
+redirecting the standard handles.  It’s now possible to set *close_fds* to true
+when redirecting the standard handles.  See |:library/subprocess.txt/subprocess.Popen:subprocess.Popen|.  This means that
+*close_fds* now defaults to "True" on all supported platforms. (Contributed by
+Segev Finer in |:bugs.python.org/issue19764:bpo-19764|.)
+
+The subprocess module is now more graceful when handling |:library/exceptions.txt/KeyboardInterrupt:KeyboardInterrupt|
+during |:library/subprocess.txt/subprocess.call:subprocess.call()|, |:library/subprocess.txt/subprocess.run:subprocess.run()|, or in a |:library/subprocess.txt/subprocess.Popen:Popen| context manager.
+It now waits a short amount of time for the child to exit, before continuing the
+handling of the "KeyboardInterrupt" exception. (Contributed by Gregory P. Smith
+in |:bugs.python.org/issue25942:bpo-25942|.)
+
+## sys:sys
+
+The new |:library/sys.txt/sys.breakpointhook:sys.breakpointhook()| hook function is called by the built-in
+|:library/functions.txt/breakpoint:breakpoint()|. (Contributed by Barry Warsaw in |:bugs.python.org/issue31353:bpo-31353|.)
+
+On Android, the new |:library/sys.txt/sys.getandroidapilevel:sys.getandroidapilevel()| returns the build-time Android
+API version. (Contributed by Victor Stinner in |:bugs.python.org/issue28740:bpo-28740|.)
+
+The new |:library/sys.txt/sys.get_coroutine_origin_tracking_depth:sys.get_coroutine_origin_tracking_depth()| function returns the current
+coroutine origin tracking depth, as set by the new
+|:library/sys.txt/sys.set_coroutine_origin_tracking_depth:sys.set_coroutine_origin_tracking_depth()|.  |:library/asyncio.txt/module-asyncio:asyncio| has been converted to
+use this new API instead of the deprecated "sys.set_coroutine_wrapper()".
+(Contributed by Nathaniel J. Smith in |:bugs.python.org/issue32591:bpo-32591|.)
+
+## time:time
+
+*|index-32:⚓|* |:www.python.org/dev/peps/pep-0564:PEP 564| adds six new functions with nanosecond resolution to
+the |:library/time.txt/module-time:time| module:
+
+* |:library/time.txt/time.clock_gettime_ns:time.clock_gettime_ns()|
+
+* |:library/time.txt/time.clock_settime_ns:time.clock_settime_ns()|
+
+* |:library/time.txt/time.monotonic_ns:time.monotonic_ns()|
+
+* |:library/time.txt/time.perf_counter_ns:time.perf_counter_ns()|
+
+* |:library/time.txt/time.process_time_ns:time.process_time_ns()|
+
+* |:library/time.txt/time.time_ns:time.time_ns()|
+
+New clock identifiers have been added:
+
+* |:library/time.txt/time.CLOCK_BOOTTIME:time.CLOCK_BOOTTIME| (Linux): Identical to |:library/time.txt/time.CLOCK_MONOTONIC:time.CLOCK_MONOTONIC|, except it
+  also includes any time that the system is suspended.
+
+* |:library/time.txt/time.CLOCK_PROF:time.CLOCK_PROF| (FreeBSD, NetBSD and OpenBSD): High-resolution per-process CPU
+  timer.
+
+* |:library/time.txt/time.CLOCK_UPTIME:time.CLOCK_UPTIME| (FreeBSD, OpenBSD): Time whose absolute value is the time
+  the system has been running and not suspended, providing accurate uptime
+  measurement.
+
+The new |:library/time.txt/time.thread_time:time.thread_time()| and |:library/time.txt/time.thread_time_ns:time.thread_time_ns()| functions can be used
+to get per-thread CPU time measurements. (Contributed by Antoine Pitrou in
+|:bugs.python.org/issue32025:bpo-32025|.)
+
+The new |:library/time.txt/time.pthread_getcpuclockid:time.pthread_getcpuclockid()| function returns the clock ID of the
+thread-specific CPU-time clock.
+
+## tkinter:tkinter
+
+The new |:library/tkinter.ttk.txt/tkinter.ttk.Spinbox:tkinter.ttk.Spinbox| class is now available. (Contributed by Alan Moore
+in |:bugs.python.org/issue32585:bpo-32585|.)
+
+## tracemalloc:tracemalloc
+
+|:library/tracemalloc.txt/tracemalloc.Traceback:tracemalloc.Traceback| behaves more like regular tracebacks, sorting the frames
+from oldest to most recent. |:library/tracemalloc.txt/tracemalloc.Traceback.format:Traceback.format()| now accepts negative *limit*,
+truncating the result to the "abs(limit)" oldest frames.  To get the old
+behaviour, use the new *most_recent_first* argument to "Traceback.format()".
+(Contributed by Jesse Bakker in |:bugs.python.org/issue32121:bpo-32121|.)
+
+## types:types
+
+The new |:library/types.txt/types.WrapperDescriptorType:WrapperDescriptorType|, |:library/types.txt/types.MethodWrapperType:MethodWrapperType|, |:library/types.txt/types.MethodDescriptorType:MethodDescriptorType|,
+and |:library/types.txt/types.ClassMethodDescriptorType:ClassMethodDescriptorType| classes are now available. (Contributed by
+Manuel Krebber and Guido van Rossum in |:bugs.python.org/issue29377:bpo-29377|, and Serhiy Storchaka in
+|:bugs.python.org/issue32265:bpo-32265|.)
+
+The new |:library/types.txt/types.resolve_bases:types.resolve_bases()| function resolves MRO entries dynamically as
+specified by *|index-33:⚓|* |:www.python.org/dev/peps/pep-0560:PEP 560|. (Contributed by Ivan Levkivskyi in
+|:bugs.python.org/issue32717:bpo-32717|.)
+
+## unicodedata:unicodedata
+
+The internal |:library/unicodedata.txt/module-unicodedata:unicodedata| database has been upgraded to use |:www.unicode.org/versions/Unicode11.0.0:Unicode 11|
+*|unicode-11:⚓|* . (Contributed by Benjamin Peterson.)
+
+## unittest:unittest
+
+The new "-k" command-line option allows filtering tests by a name substring or a
+Unix shell-like pattern. For example, "python -m unittest -k foo" runs "
+foo_tests.SomeTest.test_something", "bar_tests.SomeTest.test_foo", but not "
+bar_tests.FooTest.test_something". (Contributed by Jonas Haag in |:bugs.python.org/issue32071:bpo-32071|.)
+
+## unittest-mock:unittest.mock
+
+The |:library/unittest.mock.txt/unittest.mock.sentinel:sentinel| attributes now preserve their identity when they are |:library/copy.txt/module-copy:copied| or
+|:library/pickle.txt/module-pickle:pickled|. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue20804:bpo-20804|.)
+
+The new |:library/unittest.mock.txt/unittest.mock.seal:seal()| function allows sealing |:library/unittest.mock.txt/unittest.mock.Mock:Mock| instances, which will disallow
+further creation of attribute mocks.  The seal is applied recursively to all
+attributes that are themselves mocks. (Contributed by Mario Corchero in
+|:bugs.python.org/issue30541:bpo-30541|.)
+
+## urllib-parse:urllib.parse
+
+|:library/urllib.parse.txt/urllib.parse.quote:urllib.parse.quote()| has been updated from *|index-34:⚓|* |:tools.ietf.org/html/rfc2396.html:RFC 2396| to
+*|index-35:⚓|* |:tools.ietf.org/html/rfc3986.html:RFC 3986|, adding "~" to the set of characters that are never
+quoted by default. (Contributed by Christian Theune and Ratnadeep Debnath in
+|:bugs.python.org/issue16285:bpo-16285|.)
+
+## uu:uu
+
+The |:library/uu.txt/uu.encode:uu.encode()| function now accepts an optional *backtick* keyword argument.
+When it’s true, zeros are represented by "'`'" instead of spaces.  (Contributed
+by Xiang Zhang in |:bugs.python.org/issue30103:bpo-30103|.)
+
+## uuid:uuid
+
+The new |:library/uuid.txt/uuid.UUID.is_safe:UUID.is_safe| attribute relays information from the platform about
+whether generated UUIDs are generated with a multiprocessing-safe method.
+(Contributed by Barry Warsaw in |:bugs.python.org/issue22807:bpo-22807|.)
+
+|:library/uuid.txt/uuid.getnode:uuid.getnode()| now prefers universally administered MAC addresses over locally
+administered MAC addresses. This makes a better guarantee for global uniqueness
+of UUIDs returned from |:library/uuid.txt/uuid.uuid1:uuid.uuid1()|.  If only locally administered MAC
+addresses are available, the first such one found is returned. (Contributed by
+Barry Warsaw in |:bugs.python.org/issue32107:bpo-32107|.)
+
+## warnings:warnings
+
+The initialization of the default warnings filters has changed as follows:
+
+* warnings enabled via command line options (including those for |:using/cmdline.txt/cmdoption-b:-b| and the new
+  CPython-specific |:using/cmdline.txt/cmdoption-X:-X| "dev" option) are always passed to the warnings machinery
+  via the |:library/sys.txt/sys.warnoptions:sys.warnoptions| attribute.
+
+* warnings filters enabled via the command line or the environment now have the
+  following order of precedence:
+
+     * the "BytesWarning" filter for |:using/cmdline.txt/cmdoption-b:-b| (or "-bb")
+
+     * any filters specified with the |:using/cmdline.txt/cmdoption-W:-W| option
+
+     * any filters specified with the *|index-36:⚓|* |:using/cmdline.txt/envvar-PYTHONWARNINGS:PYTHONWARNINGS| environment
+       variable
+
+     * any other CPython specific filters (e.g. the "default" filter added for the new
+       "-X dev" mode)
+
+     * any implicit filters defined directly by the warnings machinery
+
+* in CPython debug builds, all warnings are now displayed by default (the implicit
+  filter list is empty)
+
+(Contributed by Nick Coghlan and Victor Stinner in |:bugs.python.org/issue20361:bpo-20361|, |:bugs.python.org/issue32043:bpo-32043|, and
+|:bugs.python.org/issue32230:bpo-32230|.)
+
+Deprecation warnings are once again shown by default in single-file scripts and
+at the interactive prompt.  See |:whatsnew37-pep565:PEP 565: Show DeprecationWarning in __main__|
+for details. (Contributed by Nick Coghlan in |:bugs.python.org/issue31975:bpo-31975|.)
+
+## xml-etree:xml.etree
+
+|:library/xml.etree.elementtree.txt/elementtree-xpath:ElementPath| predicates in the "find()" methods can now compare text of the
+current node with "[. = "text"]", not only text in children.  Predicates also
+allow adding spaces for better readability.  (Contributed by Stefan Behnel in
+|:bugs.python.org/issue31648:bpo-31648|.)
+
+## xmlrpc-server:xmlrpc.server
+
+"SimpleXMLRPCDispatcher.register_function" can now be used as a decorator.
+(Contributed by Xiang Zhang in |:bugs.python.org/issue7769:bpo-7769|.)
+
+## zipapp:zipapp
+
+Function |:library/zipapp.txt/zipapp.create_archive:create_archive()| now accepts an optional *filter* argument to allow
+the user to select which files should be included in the archive.  (Contributed
+by Irmen de Jong in |:bugs.python.org/issue31072:bpo-31072|.)
+
+Function |:library/zipapp.txt/zipapp.create_archive:create_archive()| now accepts an optional *compressed* argument to
+generate a compressed archive.  A command line option "--compress" has also been
+added to support compression. (Contributed by Zhiming Wang in |:bugs.python.org/issue31638:bpo-31638|.)
+
+## zipfile:zipfile
+
+|:library/zipfile.txt/zipfile.ZipFile:ZipFile| now accepts the new *compresslevel* parameter to control the
+compression level. (Contributed by Bo Bayles in |:bugs.python.org/issue21417:bpo-21417|.)
+
+Subdirectories in archives created by "ZipFile" are now stored in alphabetical
+order. (Contributed by Bernhard M. Wiedemann in |:bugs.python.org/issue30693:bpo-30693|.)
+
+# c-api-changes:C API Changes
+
+A new API for thread-local storage has been implemented.  See
+|:whatsnew37-pep539:PEP 539: New C API for Thread-Local Storage| for an overview and
+|:c-api/init.txt/thread-specific-storage-api:Thread Specific Storage (TSS) API| for a complete reference. (Contributed by
+Masayuki Yamamoto in |:bugs.python.org/issue25658:bpo-25658|.)
+
+The new |:whatsnew37-pep567:context variables| functionality exposes a number of |:c-api/contextvars.txt/contextvarsobjects:new C APIs|.
+
+The new |:c-api/import.txt/c.PyImport_GetModule:PyImport_GetModule()| function returns the previously imported module
+with the given name. (Contributed by Eric Snow in |:bugs.python.org/issue28411:bpo-28411|.)
+
+The new "Py_RETURN_RICHCOMPARE" macro eases writing rich comparison functions.
+(Contributed by Petr Victorin in |:bugs.python.org/issue23699:bpo-23699|.)
+
+The new |:c-api/intro.txt/c.Py_UNREACHABLE:Py_UNREACHABLE| macro can be used to mark unreachable code paths.
+(Contributed by Barry Warsaw in |:bugs.python.org/issue31338:bpo-31338|.)
+
+The |:library/tracemalloc.txt/module-tracemalloc:tracemalloc| now exposes a C API through the new |:c-api/memory.txt/c.PyTraceMalloc_Track:PyTraceMalloc_Track()|
+and |:c-api/memory.txt/c.PyTraceMalloc_Untrack:PyTraceMalloc_Untrack()| functions. (Contributed by Victor Stinner in
+|:bugs.python.org/issue30054:bpo-30054|.)
+
+The new "import__find__load__start()" and "import__find__load__done()" static
+markers can be used to trace module imports. (Contributed by Christian Heimes in
+|:bugs.python.org/issue31574:bpo-31574|.)
+
+The fields "name" and "doc" of structures |:c-api/structures.txt/c.PyMemberDef:PyMemberDef|, |:c-api/structures.txt/c.PyGetSetDef:PyGetSetDef|,
+|:c-api/tuple.txt/c.PyStructSequence_Field:PyStructSequence_Field|, |:c-api/tuple.txt/c.PyStructSequence_Desc:PyStructSequence_Desc|, and "wrapperbase" are now of
+type "const char *" rather of "char *".  (Contributed by Serhiy Storchaka in
+|:bugs.python.org/issue28761:bpo-28761|.)
+
+The result of |:c-api/unicode.txt/c.PyUnicode_AsUTF8AndSize:PyUnicode_AsUTF8AndSize()| and |:c-api/unicode.txt/c.PyUnicode_AsUTF8:PyUnicode_AsUTF8()| is now of
+type "const char *" rather of "char *". (Contributed by Serhiy Storchaka in
+|:bugs.python.org/issue28769:bpo-28769|.)
+
+The result of |:c-api/mapping.txt/c.PyMapping_Keys:PyMapping_Keys()|, |:c-api/mapping.txt/c.PyMapping_Values:PyMapping_Values()| and |:c-api/mapping.txt/c.PyMapping_Items:PyMapping_Items()|
+is now always a list, rather than a list or a tuple. (Contributed by Oren Milman
+in |:bugs.python.org/issue28280:bpo-28280|.)
+
+Added functions |:c-api/slice.txt/c.PySlice_Unpack:PySlice_Unpack()| and |:c-api/slice.txt/c.PySlice_AdjustIndices:PySlice_AdjustIndices()|. (Contributed
+by Serhiy Storchaka in |:bugs.python.org/issue27867:bpo-27867|.)
+
+|:c-api/sys.txt/c.PyOS_AfterFork:PyOS_AfterFork()| is deprecated in favour of the new functions
+|:c-api/sys.txt/c.PyOS_BeforeFork:PyOS_BeforeFork()|, |:c-api/sys.txt/c.PyOS_AfterFork_Parent:PyOS_AfterFork_Parent()| and |:c-api/sys.txt/c.PyOS_AfterFork_Child:PyOS_AfterFork_Child()|.
+(Contributed by Antoine Pitrou in |:bugs.python.org/issue16500:bpo-16500|.)
+
+The "PyExc_RecursionErrorInst" singleton that was part of the public API has
+been removed as its members being never cleared may cause a segfault during
+finalization of the interpreter. Contributed by Xavier de Gaye in |:bugs.python.org/issue22898:bpo-22898|
+and |:bugs.python.org/issue30697:bpo-30697|.
+
+Added C API support for timezones with timezone constructors
+|:c-api/datetime.txt/c.PyTimeZone_FromOffset:PyTimeZone_FromOffset()| and |:c-api/datetime.txt/c.PyTimeZone_FromOffsetAndName:PyTimeZone_FromOffsetAndName()|, and access to
+the UTC singleton with |:c-api/datetime.txt/c.PyDateTime_TimeZone_UTC:PyDateTime_TimeZone_UTC|. Contributed by Paul Ganssle in
+|:bugs.python.org/issue10381:bpo-10381|.
+
+The type of results of "PyThread_start_new_thread()" and "
+PyThread_get_thread_ident()", and the *id* parameter of
+|:c-api/init.txt/c.PyThreadState_SetAsyncExc:PyThreadState_SetAsyncExc()| changed from *long* to *unsigned long*.
+(Contributed by Serhiy Storchaka in |:bugs.python.org/issue6532:bpo-6532|.)
+
+|:c-api/unicode.txt/c.PyUnicode_AsWideCharString:PyUnicode_AsWideCharString()| now raises a |:library/exceptions.txt/ValueError:ValueError| if the second argument
+is "NULL" and the *wchar_t** string contains null characters.  (Contributed by
+Serhiy Storchaka in |:bugs.python.org/issue30708:bpo-30708|.)
+
+Changes to the startup sequence and the management of dynamic memory allocators
+mean that the long documented requirement to call |:c-api/init.txt/c.Py_Initialize:Py_Initialize()| before
+calling most C API functions is now relied on more heavily, and failing to abide
+by it may lead to segfaults in embedding applications. See the
+|:porting-to-python-37:Porting to Python 3.7| section in this document and the
+|:c-api/init.txt/pre-init-safe:Before Python Initialization| section in the C API documentation for more
+details.
+
+The new |:c-api/init.txt/c.PyInterpreterState_GetID:PyInterpreterState_GetID()| returns the unique ID for a given
+interpreter. (Contributed by Eric Snow in |:bugs.python.org/issue29102:bpo-29102|.)
+
+|:c-api/sys.txt/c.Py_DecodeLocale:Py_DecodeLocale()|, |:c-api/sys.txt/c.Py_EncodeLocale:Py_EncodeLocale()| now use the UTF-8 encoding when the
+|:whatsnew37-pep540:UTF-8 mode| is enabled. (Contributed by Victor Stinner in |:bugs.python.org/issue29240:bpo-29240|.)
+
+|:c-api/unicode.txt/c.PyUnicode_DecodeLocaleAndSize:PyUnicode_DecodeLocaleAndSize()| and |:c-api/unicode.txt/c.PyUnicode_EncodeLocale:PyUnicode_EncodeLocale()| now use the
+current locale encoding for "surrogateescape" error handler. (Contributed by
+Victor Stinner in |:bugs.python.org/issue29240:bpo-29240|.)
+
+The *start* and *end* parameters of |:c-api/unicode.txt/c.PyUnicode_FindChar:PyUnicode_FindChar()| are now adjusted to
+behave like string slices. (Contributed by Xiang Zhang in |:bugs.python.org/issue28822:bpo-28822|.)
+
+# build-changes:Build Changes
+
+Support for building "--without-threads" has been removed.  The |:library/threading.txt/module-threading:threading|
+module is now always available. (Contributed by Antoine Pitrou in |:bugs.python.org/issue31370:bpo-31370|.).
+
+A full copy of libffi is no longer bundled for use when building the |:library/ctypes.txt/module-ctypes:_ctypes|
+module on non-OSX UNIX platforms.  An installed copy of libffi is now required
+when building "_ctypes" on such platforms. (Contributed by Zachary Ware in
+|:bugs.python.org/issue27979:bpo-27979|.)
+
+The Windows build process no longer depends on Subversion to pull in external
+sources, a Python script is used to download zipfiles from GitHub instead. If
+Python 3.6 is not found on the system (via "py -3.6"), NuGet is used to download
+a copy of 32-bit Python for this purpose.  (Contributed by Zachary Ware in
+|:bugs.python.org/issue30450:bpo-30450|.)
+
+The |:library/ssl.txt/module-ssl:ssl| module requires OpenSSL 1.0.2 or 1.1 compatible libssl. OpenSSL 1.0.1
+has reached end of lifetime on 2016-12-31 and is no longer supported. LibreSSL
+is temporarily not supported as well. LibreSSL releases up to version 2.6.4 are
+missing required OpenSSL 1.0.2 APIs.
+
+*|whatsnew37-perf:⚓|* # optimizations:Optimizations
+
+The overhead of calling many methods of various standard library classes
+implemented in C has been significantly reduced by porting more code to use the
+"METH_FASTCALL" convention. (Contributed by Victor Stinner in |:bugs.python.org/issue29300:bpo-29300|,
+|:bugs.python.org/issue29507:bpo-29507|, |:bugs.python.org/issue29452:bpo-29452|, and |:bugs.python.org/issue29286:bpo-29286|.)
+
+Various optimizations have reduced Python startup time by 10% on Linux and up to
+30% on macOS. (Contributed by Victor Stinner, INADA Naoki in |:bugs.python.org/issue29585:bpo-29585|, and
+Ivan Levkivskyi in |:bugs.python.org/issue31333:bpo-31333|.)
+
+Method calls are now up to 20% faster due to the bytecode changes which avoid
+creating bound method instances. (Contributed by Yury Selivanov and INADA Naoki
+in |:bugs.python.org/issue26110:bpo-26110|.)
+
+*|whatsnew37-asyncio-perf:⚓|*
+
+The |:library/asyncio.txt/module-asyncio:asyncio| module received a number of notable optimizations for commonly
+used functions:
+
+* The |:library/asyncio-eventloop.txt/asyncio.get_event_loop:asyncio.get_event_loop()| function has been reimplemented in C to make it
+  up to 15 times faster. (Contributed by Yury Selivanov in |:bugs.python.org/issue32296:bpo-32296|.)
+
+* |:library/asyncio-future.txt/asyncio.Future:asyncio.Future| callback management has been optimized. (Contributed by Yury
+  Selivanov in |:bugs.python.org/issue32348:bpo-32348|.)
+
+* |:library/asyncio-task.txt/asyncio.gather:asyncio.gather()| is now up to 15% faster. (Contributed by Yury Selivanov in
+  |:bugs.python.org/issue32355:bpo-32355|.)
+
+* |:library/asyncio-task.txt/asyncio.sleep:asyncio.sleep()| is now up to 2 times faster when the *delay* argument is zero
+  or negative. (Contributed by Andrew Svetlov in |:bugs.python.org/issue32351:bpo-32351|.)
+
+* The performance overhead of asyncio debug mode has been reduced. (Contributed by
+  Antoine Pitrou in |:bugs.python.org/issue31970:bpo-31970|.)
+
+As a result of |:whatsnew37-pep560:PEP 560 work|, the import time of |:library/typing.txt/module-typing:typing| has been reduced by a
+factor of 7, and many typing operations are now faster. (Contributed by Ivan
+Levkivskyi in |:bugs.python.org/issue32226:bpo-32226|.)
+
+|:library/functions.txt/sorted:sorted()| and |:library/stdtypes.txt/list.sort:list.sort()| have been optimized for common cases to be up to
+40-75% faster. (Contributed by Elliot Gorokhovsky in |:bugs.python.org/issue28685:bpo-28685|.)
+
+|:library/stdtypes.txt/dict.copy:dict.copy()| is now up to 5.5 times faster. (Contributed by Yury Selivanov in
+|:bugs.python.org/issue31179:bpo-31179|.)
+
+|:library/functions.txt/hasattr:hasattr()| and |:library/functions.txt/getattr:getattr()| are now about 4 times faster when *name* is not
+found and *obj* does not override |:reference/datamodel.txt/object.__getattr__:object.__getattr__()| or
+|:reference/datamodel.txt/object.__getattribute__:object.__getattribute__()|. (Contributed by INADA Naoki in |:bugs.python.org/issue32544:bpo-32544|.)
+
+Searching for certain Unicode characters (like Ukrainian capital “Є”) in a
+string was up to 25 times slower than searching for other characters. It is now
+only 3 times slower in the worst case. (Contributed by Serhiy Storchaka in
+|:bugs.python.org/issue24821:bpo-24821|.)
+
+The |:library/collections.txt/collections.namedtuple:collections.namedtuple()| factory has been reimplemented to make the
+creation of named tuples 4 to 6 times faster. (Contributed by Jelle Zijlstra
+with further improvements by INADA Naoki, Serhiy Storchaka, and Raymond
+Hettinger in |:bugs.python.org/issue28638:bpo-28638|.)
+
+"date.fromordinal()" and "date.fromtimestamp()" are now up to 30% faster in the
+common case. (Contributed by Paul Ganssle in |:bugs.python.org/issue32403:bpo-32403|.)
+
+The |:library/os.txt/os.fwalk:os.fwalk()| function is now up to 2 times faster thanks to the use of
+|:library/os.txt/os.scandir:os.scandir()|. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue25996:bpo-25996|.)
+
+The speed of the |:library/shutil.txt/shutil.rmtree:shutil.rmtree()| function has been improved by 20–40% thanks
+to the use of the |:library/os.txt/os.scandir:os.scandir()| function. (Contributed by Serhiy Storchaka in
+|:bugs.python.org/issue28564:bpo-28564|.)
+
+Optimized case-insensitive matching and searching of |:library/re.txt/module-re:regular
+expressions|.
+Searching some patterns can now be up to 20 times faster. (Contributed by Serhiy
+Storchaka in |:bugs.python.org/issue30285:bpo-30285|.)
+
+|:library/re.txt/re.compile:re.compile()| now converts "flags" parameter to int object if it is "RegexFlag"
+.  It is now as fast as Python 3.5, and faster than Python 3.6 by about 10%
+depending on the pattern. (Contributed by INADA Naoki in |:bugs.python.org/issue31671:bpo-31671|.)
+
+The |:library/selectors.txt/selectors.BaseSelector.modify:modify()| methods of classes |:library/selectors.txt/selectors.EpollSelector:selectors.EpollSelector|,
+|:library/selectors.txt/selectors.PollSelector:selectors.PollSelector| and |:library/selectors.txt/selectors.DevpollSelector:selectors.DevpollSelector| may be around 10%
+faster under heavy loads.  (Contributed by Giampaolo Rodola’ in |:bugs.python.org/issue30014:bpo-30014|)
+
+Constant folding has been moved from the peephole optimizer to the new AST
+optimizer, which is able perform optimizations more consistently. (Contributed
+by Eugene Toder and INADA Naoki in |:bugs.python.org/issue29469:bpo-29469| and |:bugs.python.org/issue11549:bpo-11549|.)
+
+Most functions and methods in |:library/abc.txt/module-abc:abc| have been rewritten in C. This makes
+creation of abstract base classes, and calling |:library/functions.txt/isinstance:isinstance()| and |:library/functions.txt/issubclass:issubclass()|
+on them 1.5x faster.  This also reduces Python start-up time by up to 10%.
+(Contributed by Ivan Levkivskyi and INADA Naoki in |:bugs.python.org/issue31333:bpo-31333|)
+
+Significant speed improvements to alternate constructors for |:library/datetime.txt/datetime.date:datetime.date| and
+|:library/datetime.txt/datetime.datetime:datetime.datetime| by using fast-path constructors when not constructing
+subclasses. (Contributed by Paul Ganssle in |:bugs.python.org/issue32403:bpo-32403|)
+
+The speed of comparison of |:library/array.txt/array.array:array.array| instances has been improved
+considerably in certain cases.  It is now from 10x to 70x faster when comparing
+arrays holding values of the same integer type. (Contributed by Adrian Wielgosik
+in |:bugs.python.org/issue24700:bpo-24700|.)
+
+The |:library/math.txt/math.erf:math.erf()| and |:library/math.txt/math.erfc:math.erfc()| functions now use the (faster) C library
+implementation on most platforms. (Contributed by Serhiy Storchaka in
+|:bugs.python.org/issue26121:bpo-26121|.)
+
+# other-cpython-implementation-changes:Other CPython Implementation Changes
+
+* Trace hooks may now opt out of receiving the "line" and opt into receiving the "
+  opcode" events from the interpreter by setting the corresponding new "
+  f_trace_lines" and "f_trace_opcodes" attributes on the frame being traced.
+  (Contributed by Nick Coghlan in |:bugs.python.org/issue31344:bpo-31344|.)
+
+* Fixed some consistency problems with namespace package module attributes.
+  Namespace module objects now have an "__file__" that is set to "None"
+  (previously unset), and their "__spec__.origin" is also set to "None"
+  (previously the string ""namespace"").  See |:bugs.python.org/issue32305:bpo-32305|.  Also, the namespace
+  module object’s "__spec__.loader" is set to the same value as "__loader__"
+  (previously, the former was set to "None").  See |:bugs.python.org/issue32303:bpo-32303|.
+
+* The |:library/functions.txt/locals:locals()| dictionary now displays in the lexical order that variables were
+  defined.  Previously, the order was undefined. (Contributed by Raymond Hettinger
+  in |:bugs.python.org/issue32690:bpo-32690|.)
+
+* The |:library/distutils.txt/module-distutils:distutils| "upload" command no longer tries to change CR end-of-line
+  characters to CRLF.  This fixes a corruption issue with sdists that ended with a
+  byte equivalent to CR. (Contributed by Bo Bayles in |:bugs.python.org/issue32304:bpo-32304|.)
+
+# deprecated-python-behavior:Deprecated Python Behavior
+
+Yield expressions (both "yield" and "yield from" clauses) are now deprecated in
+comprehensions and generator expressions (aside from the iterable expression in
+the leftmost "for" clause). This ensures that comprehensions always immediately
+return a container of the appropriate type (rather than potentially returning a
+|:glossary.txt/term-generator-iterator:generator iterator| object), while generator expressions won’t attempt to
+interleave their implicit output with the output from any explicit yield
+expressions.  In Python 3.7, such expressions emit |:library/exceptions.txt/DeprecationWarning:DeprecationWarning| when
+compiled, in Python 3.8 this will be a |:library/exceptions.txt/SyntaxError:SyntaxError|. (Contributed by Serhiy
+Storchaka in |:bugs.python.org/issue10544:bpo-10544|.)
+
+Returning a subclass of |:library/functions.txt/complex:complex| from |:reference/datamodel.txt/object.__complex__:object.__complex__()| is deprecated and
+will be an error in future Python versions.  This makes "__complex__()"
+consistent with |:reference/datamodel.txt/object.__int__:object.__int__()| and |:reference/datamodel.txt/object.__float__:object.__float__()|. (Contributed by
+Serhiy Storchaka in |:bugs.python.org/issue28894:bpo-28894|.)
+
+# deprecated-python-modules-functions-and-methods:Deprecated Python modules,
+functions and methods## aifc:aifc
+
+"aifc.openfp()" has been deprecated and will be removed in Python 3.9. Use
+|:library/aifc.txt/aifc.open:aifc.open()| instead. (Contributed by Brian Curtin in |:bugs.python.org/issue31985:bpo-31985|.)
+
+*|whatsnew37-asyncio-deprecated:⚓|* ## whatsnew37-asyncio-deprecated:asyncio
+
+Support for directly "await"-ing instances of |:library/asyncio-sync.txt/asyncio.Lock:asyncio.Lock| and other asyncio
+synchronization primitives has been deprecated.  An asynchronous context manager
+must be used in order to acquire and release the synchronization resource.
+(Contributed by Andrew Svetlov in |:bugs.python.org/issue32253:bpo-32253|.)
+
+The |:library/asyncio-task.txt/asyncio.Task.current_task:asyncio.Task.current_task()| and |:library/asyncio-task.txt/asyncio.Task.all_tasks:asyncio.Task.all_tasks()| methods have
+been deprecated. (Contributed by Andrew Svetlov in |:bugs.python.org/issue32250:bpo-32250|.)
+
+## id3:collections
+
+In Python 3.8, the abstract base classes in |:library/collections.abc.txt/module-collections.abc:collections.abc| will no longer be
+exposed in the regular |:library/collections.txt/module-collections:collections| module.  This will help create a clearer
+distinction between the concrete classes and the abstract base classes.
+(Contributed by Serhiy Storchaka in |:bugs.python.org/issue25988:bpo-25988|.)
+
+## id4:dbm
+
+|:library/dbm.txt/module-dbm.dumb:dbm.dumb| now supports reading read-only files and no longer writes the index
+file when it is not changed.  A deprecation warning is now emitted if the index
+file is missing and recreated in the "'r'" and "'w'" modes (this will be an
+error in future Python releases). (Contributed by Serhiy Storchaka in
+|:bugs.python.org/issue28847:bpo-28847|.)
+
+## id5:enum
+
+In Python 3.8, attempting to check for non-Enum objects in "Enum" classes will
+raise a |:library/exceptions.txt/TypeError:TypeError| (e.g. "1 in Color"); similarly, attempting to check for non-
+Flag objects in a "Flag" member will raise |:library/exceptions.txt/TypeError:TypeError| (e.g. "1 in Perm.RW");
+currently, both operations return |:library/constants.txt/False:False| instead. (Contributed by Ethan Furman
+in |:bugs.python.org/issue33217:bpo-33217|.)
+
+## gettext:gettext
+
+Using non-integer value for selecting a plural form in |:library/gettext.txt/module-gettext:gettext| is now
+deprecated.  It never correctly worked. (Contributed by Serhiy Storchaka in
+|:bugs.python.org/issue28692:bpo-28692|.)
+
+## id6:importlib
+
+Methods |:library/importlib.txt/importlib.abc.MetaPathFinder.find_module:MetaPathFinder.find_module()| (replaced by |:library/importlib.txt/importlib.abc.MetaPathFinder.find_spec:MetaPathFinder.find_spec()|
+) and |:library/importlib.txt/importlib.abc.PathEntryFinder.find_loader:PathEntryFinder.find_loader()| (replaced by |:library/importlib.txt/importlib.abc.PathEntryFinder.find_spec:PathEntryFinder.find_spec()|
+) both deprecated in Python 3.4 now emit |:library/exceptions.txt/DeprecationWarning:DeprecationWarning|. (Contributed by
+Matthias Bussonnier in |:bugs.python.org/issue29576:bpo-29576|)
+
+The |:library/importlib.txt/importlib.abc.ResourceLoader:importlib.abc.ResourceLoader| ABC has been deprecated in favour of
+|:library/importlib.txt/importlib.abc.ResourceReader:importlib.abc.ResourceReader|.
+
+## id7:locale
+
+|:library/locale.txt/locale.format:locale.format()| has been deprecated, use |:library/locale.txt/locale.format_string:locale.format_string()| instead.
+(Contributed by Garvit in |:bugs.python.org/issue10379:bpo-10379|.)
+
+## macpath:macpath
+
+The "macpath" is now deprecated and will be removed in Python 3.8. (Contributed
+by Chi Hsuan Yen in |:bugs.python.org/issue9850:bpo-9850|.)
+
+## threading:threading
+
+|:library/dummy_threading.txt/module-dummy_threading:dummy_threading| and |:library/_dummy_thread.txt/module-_dummy_thread:_dummy_thread| have been deprecated.  It is no longer
+possible to build Python with threading disabled. Use |:library/threading.txt/module-threading:threading| instead.
+(Contributed by Antoine Pitrou in |:bugs.python.org/issue31370:bpo-31370|.)
+
+## id8:socket
+
+The silent argument value truncation in |:library/socket.txt/socket.htons:socket.htons()| and |:library/socket.txt/socket.ntohs:socket.ntohs()|
+has been deprecated.  In future versions of Python, if the passed argument is
+larger than 16 bits, an exception will be raised. (Contributed by Oren Milman in
+|:bugs.python.org/issue28332:bpo-28332|.)
+
+## id9:ssl
+
+|:library/ssl.txt/ssl.wrap_socket:ssl.wrap_socket()| is deprecated.  Use |:library/ssl.txt/ssl.SSLContext.wrap_socket:ssl.SSLContext.wrap_socket()| instead.
+(Contributed by Christian Heimes in |:bugs.python.org/issue28124:bpo-28124|.)
+
+## sunau:sunau
+
+|:library/sunau.txt/sunau.openfp:sunau.openfp()| has been deprecated and will be removed in Python 3.9. Use
+|:library/sunau.txt/sunau.open:sunau.open()| instead. (Contributed by Brian Curtin in |:bugs.python.org/issue31985:bpo-31985|.)
+
+## id10:sys
+
+Deprecated "sys.set_coroutine_wrapper()" and "sys.get_coroutine_wrapper()".
+
+The undocumented "sys.callstats()" function has been deprecated and will be
+removed in a future Python version. (Contributed by Victor Stinner in
+|:bugs.python.org/issue28799:bpo-28799|.)
+
+## wave:wave
+
+|:library/wave.txt/wave.openfp:wave.openfp()| has been deprecated and will be removed in Python 3.9. Use
+|:library/wave.txt/wave.open:wave.open()| instead. (Contributed by Brian Curtin in |:bugs.python.org/issue31985:bpo-31985|.)
+
+# deprecated-functions-and-types-of-the-c-api:Deprecated functions and types of
+the C API
+
+Function |:c-api/slice.txt/c.PySlice_GetIndicesEx:PySlice_GetIndicesEx()| is deprecated and replaced with a macro if "
+Py_LIMITED_API" is not set or set to a value in the range between "0x03050400"
+and "0x03060000" (not inclusive), or is "0x03060100" or higher.  (Contributed by
+Serhiy Storchaka in |:bugs.python.org/issue27867:bpo-27867|.)
+
+|:c-api/sys.txt/c.PyOS_AfterFork:PyOS_AfterFork()| has been deprecated.  Use |:c-api/sys.txt/c.PyOS_BeforeFork:PyOS_BeforeFork()|,
+|:c-api/sys.txt/c.PyOS_AfterFork_Parent:PyOS_AfterFork_Parent()| or |:c-api/sys.txt/c.PyOS_AfterFork_Child:PyOS_AfterFork_Child()| instead. (Contributed by
+Antoine Pitrou in |:bugs.python.org/issue16500:bpo-16500|.)
+
+*|platform-support-removals:⚓|* # platform-support-removals:Platform Support
+Removals
+
+* FreeBSD 9 and older are no longer officially supported.
+
+* For full Unicode support, including within extension modules, *nix platforms are
+  now expected to provide at least one of "C.UTF-8" (full locale), "C.utf8" (full
+  locale) or "UTF-8" ("LC_CTYPE"-only locale) as an alternative to the legacy "
+  ASCII"-based "C" locale.
+
+* OpenSSL 0.9.8 and 1.0.1 are no longer supported, which means building CPython
+  3.7 with SSL/TLS support on older platforms still using these versions requires
+  custom build options that link to a more recent version of OpenSSL.
+
+  Notably, this issue affects the Debian 8 (aka “jessie”) and Ubuntu 14.04 (aka
+  “Trusty”) LTS Linux distributions, as they still use OpenSSL 1.0.1 by default.
+
+  Debian 9 (“stretch”) and Ubuntu 16.04 (“xenial”), as well as recent releases of
+  other LTS Linux releases (e.g. RHEL/CentOS 7.5, SLES 12-SP3), use OpenSSL 1.0.2
+  or later, and remain supported in the default build configuration.
+
+  CPython’s own |:github.com/python/cpython/tree/3.8/.travis.yml:CI configuration file| provides an example of using the SSL
+  |:github.com/python/cpython/tree/3.8/Tools/ssl/multissltests.py:compatibility testing infrastructure| in CPython’s test suite to build and link
+  against OpenSSL 1.1.0 rather than an outdated system provided OpenSSL.
+
+# api-and-feature-removals:API and Feature Removals
+
+The following features and APIs have been removed from Python 3.7:
+
+* The "os.stat_float_times()" function has been removed. It was introduced in
+  Python 2.3 for backward compatibility with Python 2.2, and was deprecated since
+  Python 3.1.
+
+* Unknown escapes consisting of "'\'" and an ASCII letter in replacement templates
+  for |:library/re.txt/re.sub:re.sub()| were deprecated in Python 3.5, and will now cause an error.
+
+* Removed support of the *exclude* argument in |:library/tarfile.txt/tarfile.TarFile.add:tarfile.TarFile.add()|. It was
+  deprecated in Python 2.7 and 3.2.  Use the *filter* argument instead.
+
+* The "splitunc()" function in the "ntpath" module was deprecated in Python 3.1,
+  and has now been removed.  Use the |:library/os.path.txt/os.path.splitdrive:splitdrive()| function instead.
+
+* |:library/collections.txt/collections.namedtuple:collections.namedtuple()| no longer supports the *verbose* parameter or "
+  _source" attribute which showed the generated source code for the named tuple
+  class.  This was part of an optimization designed to speed-up class creation.
+  (Contributed by Jelle Zijlstra with further improvements by INADA Naoki, Serhiy
+  Storchaka, and Raymond Hettinger in |:bugs.python.org/issue28638:bpo-28638|.)
+
+* Functions |:library/functions.txt/bool:bool()|, |:library/functions.txt/float:float()|, |:library/stdtypes.txt/list:list()| and |:library/stdtypes.txt/tuple:tuple()| no longer take keyword
+  arguments.  The first argument of |:library/functions.txt/int:int()| can now be passed only as positional
+  argument.
+
+* Removed previously deprecated in Python 2.4 classes "Plist", "Dict" and "
+  _InternalDict" in the |:library/plistlib.txt/module-plistlib:plistlib| module.  Dict values in the result of functions
+  |:library/plistlib.txt/plistlib.readPlist:readPlist()| and |:library/plistlib.txt/plistlib.readPlistFromBytes:readPlistFromBytes()| are now normal dicts.  You no longer
+  can use attribute access to access items of these dictionaries.
+
+* The "asyncio.windows_utils.socketpair()" function has been removed.  Use the
+  |:library/socket.txt/socket.socketpair:socket.socketpair()| function instead, it is available on all platforms since
+  Python 3.5. "asyncio.windows_utils.socketpair" was just an alias to "
+  socket.socketpair" on Python 3.5 and newer.
+
+* |:library/asyncio.txt/module-asyncio:asyncio| no longer exports the |:library/selectors.txt/module-selectors:selectors| and "_overlapped" modules as "
+  asyncio.selectors" and "asyncio._overlapped". Replace "from asyncio import
+  selectors" with "import selectors".
+
+* Direct instantiation of |:library/ssl.txt/ssl.SSLSocket:ssl.SSLSocket| and |:library/ssl.txt/ssl.SSLObject:ssl.SSLObject| objects is now
+  prohibited. The constructors were never documented, tested, or designed as
+  public constructors.  Users were supposed to use |:library/ssl.txt/ssl.wrap_socket:ssl.wrap_socket()| or
+  |:library/ssl.txt/ssl.SSLContext:ssl.SSLContext|. (Contributed by Christian Heimes in |:bugs.python.org/issue32951:bpo-32951|.)
+
+* The unused |:library/distutils.txt/module-distutils:distutils| "install_misc" command has been removed. (Contributed by
+  Eric N. Vander Weele in |:bugs.python.org/issue29218:bpo-29218|.)
+
+# module-removals:Module Removals
+
+The "fpectl" module has been removed.  It was never enabled by default, never
+worked correctly on x86-64, and it changed the Python ABI in ways that caused
+unexpected breakage of C extensions. (Contributed by Nathaniel J. Smith in
+|:bugs.python.org/issue29137:bpo-29137|.)
+
+# windows-only-changes:Windows-only Changes
+
+The python launcher, (py.exe), can accept 32 & 64 bit specifiers *without*
+having to specify a minor version as well. So "py -3-32" and "py -3-64" become
+valid as well as "py -3.7-32", also the -*m*-64 and -*m.n*-64 forms are now
+accepted to force 64 bit python even if 32 bit would have otherwise been used.
+If the specified version is not available py.exe will error exit. (Contributed
+by Steve Barnes in |:bugs.python.org/issue30291:bpo-30291|.)
+
+The launcher can be run as "py -0" to produce a list of the installed pythons, *
+with default marked with an asterisk*. Running "py -0p" will include the paths.
+If py is run with a version specifier that cannot be matched it will also print
+the *short form* list of available specifiers. (Contributed by Steve Barnes in
+|:bugs.python.org/issue30362:bpo-30362|.)
+
+*|porting-to-python-37:⚓|* # porting-to-python-3-7:Porting to Python 3.7
+
+This section lists previously described changes and other bugfixes that may
+require changes to your code.
+
+## changes-in-python-behavior:Changes in Python Behavior
+
+* |:reference/compound_stmts.txt/async:async| and |:reference/expressions.txt/await:await| names are now reserved keywords. Code using these names as
+  identifiers will now raise a |:library/exceptions.txt/SyntaxError:SyntaxError|. (Contributed by Jelle Zijlstra in
+  |:bugs.python.org/issue30406:bpo-30406|.)
+
+* *|index-37:⚓|* |:www.python.org/dev/peps/pep-0479:PEP 479| is enabled for all code in Python 3.7, meaning that
+  |:library/exceptions.txt/StopIteration:StopIteration| exceptions raised directly or indirectly in coroutines and
+  generators are transformed into |:library/exceptions.txt/RuntimeError:RuntimeError| exceptions. (Contributed by Yury
+  Selivanov in |:bugs.python.org/issue32670:bpo-32670|.)
+
+* |:reference/datamodel.txt/object.__aiter__:object.__aiter__()| methods can no longer be declared as asynchronous.
+  (Contributed by Yury Selivanov in |:bugs.python.org/issue31709:bpo-31709|.)
+
+* Due to an oversight, earlier Python versions erroneously accepted the following
+  syntax:
+
+```rst
+f(1 for x in [1],)
+
+class C(1 for x in [1]):
+    pass
+```
+
+  Python 3.7 now correctly raises a |:library/exceptions.txt/SyntaxError:SyntaxError|, as a generator expression
+  always needs to be directly inside a set of parentheses and cannot have a comma
+  on either side, and the duplication of the parentheses can be omitted only on
+  calls. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue32012:bpo-32012| and |:bugs.python.org/issue32023:bpo-32023|.)
+
+* When using the |:using/cmdline.txt/cmdoption-m:-m| switch, the initial working directory is now added to
+  |:library/sys.txt/sys.path:sys.path|, rather than an empty string (which dynamically denoted the current
+  working directory at the time of each import). Any programs that are checking
+  for the empty string, or otherwise relying on the previous behaviour, will need
+  to be updated accordingly (e.g. by also checking for "os.getcwd()" or "
+  os.path.dirname(__main__.__file__)", depending on why the code was checking for
+  the empty string in the first place).
+
+## changes-in-the-python-api:Changes in the Python API
+
+* "socketserver.ThreadingMixIn.server_close()" now waits until all non-daemon
+  threads complete.  Set the new "socketserver.ThreadingMixIn.block_on_close"
+  class attribute to "False" to get the pre-3.7 behaviour. (Contributed by Victor
+  Stinner in |:bugs.python.org/issue31233:bpo-31233| and |:bugs.python.org/issue33540:bpo-33540|.)
+
+* "socketserver.ForkingMixIn.server_close()" now waits until all child processes
+  complete. Set the new "socketserver.ForkingMixIn.block_on_close" class attribute
+  to "False" to get the pre-3.7 behaviour. (Contributed by Victor Stinner in
+  |:bugs.python.org/issue31151:bpo-31151| and |:bugs.python.org/issue33540:bpo-33540|.)
+
+* The |:library/locale.txt/locale.localeconv:locale.localeconv()| function now temporarily sets the "LC_CTYPE" locale to
+  the value of "LC_NUMERIC" in some cases. (Contributed by Victor Stinner in
+  |:bugs.python.org/issue31900:bpo-31900|.)
+
+* |:library/pkgutil.txt/pkgutil.walk_packages:pkgutil.walk_packages()| now raises a |:library/exceptions.txt/ValueError:ValueError| if *path* is a string.
+  Previously an empty list was returned. (Contributed by Sanyam Khurana in
+  |:bugs.python.org/issue24744:bpo-24744|.)
+
+* A format string argument for |:library/string.txt/string.Formatter.format:string.Formatter.format()| is now
+  |:glossary.txt/positional-only-parameter:positional-only|. Passing it as a keyword argument was deprecated in Python
+  3.5. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue29193:bpo-29193|.)
+
+* Attributes |:library/http.cookies.txt/http.cookies.Morsel.key:key|, |:library/http.cookies.txt/http.cookies.Morsel.value:value| and |:library/http.cookies.txt/http.cookies.Morsel.coded_value:coded_value| of class |:library/http.cookies.txt/http.cookies.Morsel:http.cookies.Morsel| are
+  now read-only. Assigning to them was deprecated in Python 3.5. Use the |:library/http.cookies.txt/http.cookies.Morsel.set:set()|
+  method for setting them. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue29192:bpo-29192|.)
+
+* The *mode* argument of |:library/os.txt/os.makedirs:os.makedirs()| no longer affects the file permission
+  bits of newly-created intermediate-level directories. To set their file
+  permission bits you can set the umask before invoking "makedirs()". (Contributed
+  by Serhiy Storchaka in |:bugs.python.org/issue19930:bpo-19930|.)
+
+* The |:library/struct.txt/struct.Struct.format:struct.Struct.format| type is now |:library/stdtypes.txt/str:str| instead of |:library/stdtypes.txt/bytes:bytes|. (Contributed by
+  Victor Stinner in |:bugs.python.org/issue21071:bpo-21071|.)
+
+* |:library/cgi.txt/cgi.parse_multipart:parse_multipart()| now accepts the *encoding* and *errors* arguments and
+  returns the same results as "FieldStorage": for non-file fields, the value
+  associated to a key is a list of strings, not bytes. (Contributed by Pierre
+  Quentel in |:bugs.python.org/issue29979:bpo-29979|.)
+
+* Due to internal changes in |:library/socket.txt/module-socket:socket|, calling |:library/socket.txt/socket.fromshare:socket.fromshare()| on a socket
+  created by |:library/socket.txt/socket.socket.share:socket.share| in older Python versions is not supported.
+
+* "repr" for |:library/exceptions.txt/BaseException:BaseException| has changed to not include the trailing comma.  Most
+  exceptions are affected by this change. (Contributed by Serhiy Storchaka in
+  |:bugs.python.org/issue30399:bpo-30399|.)
+
+* "repr" for |:library/datetime.txt/datetime.timedelta:datetime.timedelta| has changed to include the keyword arguments in
+  the output. (Contributed by Utkarsh Upadhyay in |:bugs.python.org/issue30302:bpo-30302|.)
+
+* Because |:library/shutil.txt/shutil.rmtree:shutil.rmtree()| is now implemented using the |:library/os.txt/os.scandir:os.scandir()| function,
+  the user specified handler *onerror* is now called with the first argument "
+  os.scandir" instead of "os.listdir" when listing the directory is failed.
+
+* Support for nested sets and set operations in regular expressions as in
+  |:unicode.org/reports/tr18:Unicode Technical Standard #18| might be added in the future.  This would
+  change the syntax.  To facilitate this future change a |:library/exceptions.txt/FutureWarning:FutureWarning| will be
+  raised in ambiguous cases for the time being. That include sets starting with a
+  literal "'['" or containing literal character sequences "'--'", "'&&'", "'~~'",
+  and "'||'".  To avoid a warning, escape them with a backslash. (Contributed by
+  Serhiy Storchaka in |:bugs.python.org/issue30349:bpo-30349|.)
+
+  *|unicode-technical-standard-18:⚓|*
+
+* The result of splitting a string on a |:library/re.txt/module-re:regular expression| that could match an
+  empty string has been changed.  For example splitting on "r'\s*'" will now split
+  not only on whitespaces as it did previously, but also on empty strings before
+  all non-whitespace characters and just before the end of the string. The
+  previous behavior can be restored by changing the pattern to "r'\s+'".  A
+  |:library/exceptions.txt/FutureWarning:FutureWarning| was emitted for such patterns since Python 3.5.
+
+  For patterns that match both empty and non-empty strings, the result of
+  searching for all matches may also be changed in other cases.  For example in
+  the string "'a\n\n'", the pattern "r'(?m)^\s*?$'" will not only match empty
+  strings at positions 2 and 3, but also the string "'\n'" at positions 2–3.  To
+  match only blank lines, the pattern should be rewritten as "r'(?m)^[^\S\n]*$'".
+
+  |:library/re.txt/re.sub:re.sub()| now replaces empty matches adjacent to a previous non-empty match.
+  For example "re.sub('x*', '-', 'abxd')" returns now "'-a-b--d-'" instead of "
+  '-a-b-d-'" (the first minus between ‘b’ and ‘d’ replaces ‘x’, and the second
+  minus replaces an empty string between ‘x’ and ‘d’).
+
+  (Contributed by Serhiy Storchaka in |:bugs.python.org/issue25054:bpo-25054| and |:bugs.python.org/issue32308:bpo-32308|.)
+
+* Change |:library/re.txt/re.escape:re.escape()| to only escape regex special characters instead of escaping
+  all characters other than ASCII letters, numbers, and "'_'". (Contributed by
+  Serhiy Storchaka in |:bugs.python.org/issue29995:bpo-29995|.)
+
+* |:library/tracemalloc.txt/tracemalloc.Traceback:tracemalloc.Traceback| frames are now sorted from oldest to most recent to be
+  more consistent with |:library/traceback.txt/module-traceback:traceback|. (Contributed by Jesse Bakker in |:bugs.python.org/issue32121:bpo-32121|.)
+
+* On OSes that support |:library/socket.txt/socket.SOCK_NONBLOCK:socket.SOCK_NONBLOCK| or |:library/socket.txt/socket.SOCK_CLOEXEC:socket.SOCK_CLOEXEC| bit flags,
+  the |:library/socket.txt/socket.socket.type:socket.type| no longer has them applied. Therefore, checks like "if
+  sock.type == socket.SOCK_STREAM" work as expected on all platforms. (Contributed
+  by Yury Selivanov in |:bugs.python.org/issue32331:bpo-32331|.)
+
+* On Windows the default for the *close_fds* argument of |:library/subprocess.txt/subprocess.Popen:subprocess.Popen| was
+  changed from |:library/constants.txt/False:False| to |:library/constants.txt/True:True| when redirecting the standard handles. If you
+  previously depended on handles being inherited when using |:library/subprocess.txt/subprocess.Popen:subprocess.Popen|
+  with standard io redirection, you will have to pass "close_fds=False" to
+  preserve the previous behaviour, or use |:library/subprocess.txt/subprocess.STARTUPINFO.lpAttributeList:STARTUPINFO.lpAttributeList|.
+
+* |:library/importlib.txt/importlib.machinery.PathFinder.invalidate_caches:importlib.machinery.PathFinder.invalidate_caches()| – which implicitly affects
+  |:library/importlib.txt/importlib.invalidate_caches:importlib.invalidate_caches()| – now deletes entries in
+  |:library/sys.txt/sys.path_importer_cache:sys.path_importer_cache| which are set to "None". (Contributed by Brett Cannon
+  in |:bugs.python.org/issue33169:bpo-33169|.)
+
+* In |:library/asyncio.txt/module-asyncio:asyncio|, |:library/asyncio-eventloop.txt/asyncio.loop.sock_recv:loop.sock_recv()|, |:library/asyncio-eventloop.txt/asyncio.loop.sock_sendall:loop.sock_sendall()|, |:library/asyncio-eventloop.txt/asyncio.loop.sock_accept:loop.sock_accept()|,
+  |:library/asyncio-eventloop.txt/asyncio.loop.getaddrinfo:loop.getaddrinfo()|, |:library/asyncio-eventloop.txt/asyncio.loop.getnameinfo:loop.getnameinfo()| have been changed to be proper
+  coroutine methods to match their documentation.  Previously, these methods
+  returned |:library/asyncio-future.txt/asyncio.Future:asyncio.Future| instances. (Contributed by Yury Selivanov in
+  |:bugs.python.org/issue32327:bpo-32327|.)
+
+* |:library/asyncio-eventloop.txt/asyncio.Server.sockets:asyncio.Server.sockets| now returns a copy of the internal list of server
+  sockets, instead of returning it directly. (Contributed by Yury Selivanov in
+  |:bugs.python.org/issue32662:bpo-32662|.)
+
+* |:library/struct.txt/struct.Struct.format:Struct.format| is now a |:library/stdtypes.txt/str:str| instance instead of a |:library/stdtypes.txt/bytes:bytes| instance.
+  (Contributed by Victor Stinner in |:bugs.python.org/issue21071:bpo-21071|.)
+
+* |:library/argparse.txt/module-argparse:argparse| subparsers can now be made mandatory by passing "required=True" to
+  |:library/argparse.txt/argparse.ArgumentParser.add_subparsers:ArgumentParser.add_subparsers()|. (Contributed by Anthony Sottile in
+  |:bugs.python.org/issue26510:bpo-26510|.)
+
+* |:library/ast.txt/ast.literal_eval:ast.literal_eval()| is now stricter.  Addition and subtraction of arbitrary
+  numbers are no longer allowed. (Contributed by Serhiy Storchaka in |:bugs.python.org/issue31778:bpo-31778|.)
+
+* |:library/calendar.txt/calendar.Calendar.itermonthdates:Calendar.itermonthdates| will now consistently raise an exception when a date
+  falls outside of the "0001-01-01" through "9999-12-31" range.  To support
+  applications that cannot tolerate such exceptions, the new
+  |:library/calendar.txt/calendar.Calendar.itermonthdays3:Calendar.itermonthdays3| and |:library/calendar.txt/calendar.Calendar.itermonthdays4:Calendar.itermonthdays4| can be used. The new
+  methods return tuples and are not restricted by the range supported by
+  |:library/datetime.txt/datetime.date:datetime.date|. (Contributed by Alexander Belopolsky in |:bugs.python.org/issue28292:bpo-28292|.)
+
+* |:library/collections.txt/collections.ChainMap:collections.ChainMap| now preserves the order of the underlying mappings.
+  (Contributed by Raymond Hettinger in |:bugs.python.org/issue32792:bpo-32792|.)
+
+* The "submit()" method of |:library/concurrent.futures.txt/concurrent.futures.ThreadPoolExecutor:concurrent.futures.ThreadPoolExecutor| and
+  |:library/concurrent.futures.txt/concurrent.futures.ProcessPoolExecutor:concurrent.futures.ProcessPoolExecutor| now raises a |:library/exceptions.txt/RuntimeError:RuntimeError| if called
+  during interpreter shutdown. (Contributed by Mark Nemec in |:bugs.python.org/issue33097:bpo-33097|.)
+
+* The |:library/configparser.txt/configparser.ConfigParser:configparser.ConfigParser| constructor now uses "read_dict()" to process
+  the default values, making its behavior consistent with the rest of the parser.
+  Non-string keys and values in the defaults dictionary are now being implicitly
+  converted to strings. (Contributed by James Tocknell in |:bugs.python.org/issue23835:bpo-23835|.)
+
+* Several undocumented internal imports were removed. One example is that "
+  os.errno" is no longer available; use "import errno" directly instead. Note that
+  such undocumented internal imports may be removed any time without notice, even
+  in micro version releases.
+
+## changes-in-the-c-api:Changes in the C API
+
+The function |:c-api/slice.txt/c.PySlice_GetIndicesEx:PySlice_GetIndicesEx()| is considered unsafe for resizable
+sequences.  If the slice indices are not instances of |:library/functions.txt/int:int|, but objects that
+implement the "__index__()" method, the sequence can be resized after passing
+its length to *!|:c-api/slice.txt/c.PySlice_GetIndicesEx:PySlice_GetIndicesEx|*.  This can lead to returning indices out
+of the length of the sequence.  For avoiding possible problems use new functions
+|:c-api/slice.txt/c.PySlice_Unpack:PySlice_Unpack()| and |:c-api/slice.txt/c.PySlice_AdjustIndices:PySlice_AdjustIndices()|. (Contributed by Serhiy
+Storchaka in |:bugs.python.org/issue27867:bpo-27867|.)
+
+## cpython-bytecode-changes:CPython bytecode changes
+
+There are two new opcodes: |:library/dis.txt/opcode-LOAD_METHOD:LOAD_METHOD| and |:library/dis.txt/opcode-CALL_METHOD:CALL_METHOD|. (Contributed by Yury
+Selivanov and INADA Naoki in |:bugs.python.org/issue26110:bpo-26110|.)
+
+The "STORE_ANNOTATION" opcode has been removed. (Contributed by Mark Shannon in
+|:bugs.python.org/issue32550:bpo-32550|.)
+
+## id12:Windows-only Changes
+
+The file used to override |:library/sys.txt/sys.path:sys.path| is now called "<python-executable>._pth"
+instead of "'sys.path'". See |:using/windows.txt/finding-modules:Finding modules| for more information.
+(Contributed by Steve Dower in |:bugs.python.org/issue28137:bpo-28137|.)
+
+## id13:Other CPython implementation changes
+
+In preparation for potential future changes to the public CPython runtime
+initialization API (see *|index-38:⚓|* |:www.python.org/dev/peps/pep-0432:PEP 432| for an initial, but somewhat
+outdated, draft), CPython’s internal startup and configuration management logic
+has been significantly refactored. While these updates are intended to be
+entirely transparent to both embedding applications and users of the regular
+CPython CLI, they’re being mentioned here as the refactoring changes the
+internal order of various operations during interpreter startup, and hence may
+uncover previously latent defects, either in embedding applications, or in
+CPython itself. (Initially contributed by Nick Coghlan and Eric Snow as part of
+|:bugs.python.org/issue22257:bpo-22257|, and further updated by Nick, Eric, and Victor Stinner in a number
+of other issues). Some known details affected:
+
+* |:c-api/sys.txt/c.PySys_AddWarnOptionUnicode:PySys_AddWarnOptionUnicode()| is not currently usable by embedding applications
+  due to the requirement to create a Unicode object prior to calling *
+  Py_Initialize*. Use |:c-api/sys.txt/c.PySys_AddWarnOption:PySys_AddWarnOption()| instead.
+
+* warnings filters added by an embedding application with |:c-api/sys.txt/c.PySys_AddWarnOption:PySys_AddWarnOption()|
+  should now more consistently take precedence over the default filters set by the
+  interpreter
+
+Due to changes in the way the default warnings filters are configured, setting
+|:c-api/init.txt/c.Py_BytesWarningFlag:Py_BytesWarningFlag| to a value greater than one is no longer sufficient to
+both emit |:library/exceptions.txt/BytesWarning:BytesWarning| messages and have them converted to exceptions.
+Instead, the flag must be set (to cause the warnings to be emitted in the first
+place), and an explicit "error::BytesWarning" warnings filter added to convert
+them to exceptions.
+
+Due to a change in the way docstrings are handled by the compiler, the implicit
+"return None" in a function body consisting solely of a docstring is now marked
+as occurring on the same line as the docstring, not on the function’s header
+line.
+
+The current exception state has been moved from the frame object to the co-
+routine. This simplified the interpreter and fixed a couple of obscure bugs
+caused by having swap exception state when entering or exiting a generator.
+(Contributed by Mark Shannon in |:bugs.python.org/issue25612:bpo-25612|.)
+
+# notable-changes-in-python-3-7-1:Notable changes in Python 3.7.1
+
+Starting in 3.7.1, |:c-api/init.txt/c.Py_Initialize:Py_Initialize()| now consistently reads and respects all of
+the same environment settings as |:c-api/veryhigh.txt/c.Py_Main:Py_Main()| (in earlier Python versions, it
+respected an ill-defined subset of those environment variables, while in Python
+3.7.0 it didn’t read any of them due to |:bugs.python.org/issue34247:bpo-34247|). If this behavior is
+unwanted, set |:c-api/init.txt/c.Py_IgnoreEnvironmentFlag:Py_IgnoreEnvironmentFlag| to 1 before calling |:c-api/init.txt/c.Py_Initialize:Py_Initialize()|.
+
+In 3.7.1 the C API for Context Variables |:c-api/contextvars.txt/contextvarsobjects-pointertype-change:was updated| to use |:c-api/structures.txt/c.PyObject:PyObject|
+pointers.  See also |:bugs.python.org/issue34762:bpo-34762|.
+
+In 3.7.1 the |:library/tokenize.txt/module-tokenize:tokenize| module now implicitly emits a "NEWLINE" token when
+provided with input that does not have a trailing new line.  This behavior now
+matches what the C tokenizer does internally. (Contributed by Ammar Askar in
+|:bugs.python.org/issue33899:bpo-33899|.)
+
+# notable-changes-in-python-3-7-2:Notable changes in Python 3.7.2
+
+In 3.7.2, |:library/venv.txt/module-venv:venv| on Windows no longer copies the original binaries, but creates
+redirector scripts named "python.exe" and "pythonw.exe" instead. This resolves a
+long standing issue where all virtual environments would have to be upgraded or
+recreated with each Python update. However, note that this release will still
+require recreation of virtual environments in order to get the new scripts.
+
+# notable-changes-in-python-3-7-6:Notable changes in Python 3.7.6
+
+Due to significant security concerns, the *reuse_address* parameter of
+|:library/asyncio-eventloop.txt/asyncio.loop.create_datagram_endpoint:asyncio.loop.create_datagram_endpoint()| is no longer supported. This is
+because of the behavior of the socket option "SO_REUSEADDR" in UDP. For more
+details, see the documentation for "loop.create_datagram_endpoint()".
+(Contributed by Kyle Stanley, Antoine Pitrou, and Yury Selivanov in |:bugs.python.org/issue37228:bpo-37228|
+.)
+
+# notable-changes-in-python-3-7-10:Notable changes in Python 3.7.10
+
+Earlier Python versions allowed using both ";" and "&" as query parameter
+separators in |:library/urllib.parse.txt/urllib.parse.parse_qs:urllib.parse.parse_qs()| and |:library/urllib.parse.txt/urllib.parse.parse_qsl:urllib.parse.parse_qsl()|.  Due to
+security concerns, and to conform with newer W3C recommendations, this has been
+changed to allow only a single separator key, with "&" as the default.  This
+change also affects |:library/cgi.txt/cgi.parse:cgi.parse()| and |:library/cgi.txt/cgi.parse_multipart:cgi.parse_multipart()| as they use the
+affected functions internally. For more details, please see their respective
+documentation. (Contributed by Adam Goldschmidt, Senthil Kumaran and Ken Jin in
+|:bugs.python.org/issue42967:bpo-42967|.)
+
+
+

@@ -1,0 +1,119 @@
+%hyperhelp title="Slice Objects" date="2021-07-11"
+*|slice-objects:⚓|*
+
+*c.PySlice_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PySlice_Type
+*
+
+   The type object for slice objects.  This is the same as |:library/functions.txt/slice:slice| in the Python
+   layer.
+
+*c.PySlice_Check:int PySlice_Check(PyObject *ob)
+*
+
+   Return true if *ob* is a slice object; *ob* must not be "NULL".
+
+*c.PySlice_New:|:c-api/structures.txt/c.PyObject:PyObject| *PySlice_New(PyObject *start, PyObject *stop, PyObject *step)
+*
+    *Return value: New reference.*
+
+   Return a new slice object with the given values.  The *start*, *stop*, and *step
+   * parameters are used as the values of the slice object attributes of the same
+   names.  Any of the values may be "NULL", in which case the "None" will be used
+   for the corresponding attribute.  Return "NULL" if the new object could not be
+   allocated.
+
+*c.PySlice_GetIndices:int PySlice_GetIndices(PyObject *slice, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t *step)
+*
+
+   Retrieve the start, stop and step indices from the slice object *slice*,
+   assuming a sequence of length *length*. Treats indices greater than *length* as
+   errors.
+
+   Returns "0" on success and "-1" on error with no exception set (unless one of
+   the indices was not |:library/constants.txt/None:None| and failed to be converted to an integer, in which
+   case "-1" is returned with an exception set).
+
+   You probably do not want to use this function.
+
+   Changed in version 3.2: The parameter type for the *slice* parameter was "
+   PySliceObject*" before.
+
+*c.PySlice_GetIndicesEx:int PySlice_GetIndicesEx(PyObject *slice, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t *step, Py_ssize_t *slicelength)
+*
+
+   Usable replacement for |:c.PySlice_GetIndices:PySlice_GetIndices()|.  Retrieve the start, stop, and
+   step indices from the slice object *slice* assuming a sequence of length *length
+   *, and store the length of the slice in *slicelength*.  Out of bounds indices
+   are clipped in a manner consistent with the handling of normal slices.
+
+   Returns "0" on success and "-1" on error with exception set.
+
+   Note:
+
+     This function is considered not safe for resizable sequences. Its invocation
+     should be replaced by a combination of |:c.PySlice_Unpack:PySlice_Unpack()| and
+     |:c.PySlice_AdjustIndices:PySlice_AdjustIndices()| where
+
+```rst
+if (PySlice_GetIndicesEx(slice, length, &start, &stop, &step, &slicelength) < 0) {
+    // return error
+}
+```
+
+     is replaced by
+
+```rst
+if (PySlice_Unpack(slice, &start, &stop, &step) < 0) {
+    // return error
+}
+slicelength = PySlice_AdjustIndices(length, &start, &stop, step);
+```
+
+   Changed in version 3.2: The parameter type for the *slice* parameter was "
+   PySliceObject*" before.
+
+   Changed in version 3.6.1: If "Py_LIMITED_API" is not set or set to the value
+   between "0x03050400" and "0x03060000" (not including) or "0x03060100" or higher
+   *!|:c.PySlice_GetIndicesEx:PySlice_GetIndicesEx|* is implemented as a macro using *!|:c.PySlice_Unpack:PySlice_Unpack|*
+   and *!|:c.PySlice_AdjustIndices:PySlice_AdjustIndices|*. Arguments *start*, *stop* and *step* are
+   evaluated more than once.
+
+   Deprecated since version 3.6.1: If "Py_LIMITED_API" is set to the value less
+   than "0x03050400" or between "0x03060000" and "0x03060100" (not including) *!
+   |:c.PySlice_GetIndicesEx:PySlice_GetIndicesEx|* is a deprecated function.
+
+*c.PySlice_Unpack:int PySlice_Unpack(PyObject *slice, Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t *step)
+*
+
+   Extract the start, stop and step data members from a slice object as C integers.
+   Silently reduce values larger than "PY_SSIZE_T_MAX" to "PY_SSIZE_T_MAX",
+   silently boost the start and stop values less than "PY_SSIZE_T_MIN" to "
+   PY_SSIZE_T_MIN", and silently boost the step values less than "-PY_SSIZE_T_MAX"
+   to "-PY_SSIZE_T_MAX".
+
+   Return "-1" on error, "0" on success.
+
+   New in version 3.6.1.
+
+*c.PySlice_AdjustIndices:Py_ssize_t PySlice_AdjustIndices(Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t step)
+*
+
+   Adjust start/end slice indices assuming a sequence of the specified length. Out
+   of bounds indices are clipped in a manner consistent with the handling of normal
+   slices.
+
+   Return the length of the slice.  Always successful.  Doesn’t call Python code.
+
+   New in version 3.6.1.
+
+ ellipsis-object:Ellipsis Object
+
+*c.Py_Ellipsis:|:c-api/structures.txt/c.PyObject:PyObject| *Py_Ellipsis
+*
+
+   The Python "Ellipsis" object.  This object has no methods.  It needs to be
+   treated just like any other object with respect to reference counts.  Like
+   |:c-api/none.txt/c.Py_None:Py_None| it is a singleton object.
+
+
+

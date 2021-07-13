@@ -1,0 +1,95 @@
+%hyperhelp title="Program Frameworks" date="2021-07-11"
+*|program-frameworks:⚓|*
+
+The modules described in this chapter are frameworks that will largely dictate
+the structure of your program.  Currently the modules described  here are all
+oriented toward writing command-line interfaces.
+
+The full list of modules described in this chapter is:
+
+* |:library/turtle.txt:turtle — Turtle graphics|
+
+  * |:library/turtle.txt/introduction:Introduction|
+
+  * |:library/turtle.txt/overview-of-available-turtle-and-screen-methods:Overview of available Turtle and Screen methods|
+
+    * |:library/turtle.txt/turtle-methods:Turtle methods|
+
+    * |:library/turtle.txt/methods-of-turtlescreen-screen:Methods of TurtleScreen/Screen|
+
+  * |:library/turtle.txt/methods-of-rawturtle-turtle-and-corresponding-functions:Methods of RawTurtle/Turtle and corresponding functions|
+
+    * |:library/turtle.txt/turtle-motion:Turtle motion|
+
+    * |:library/turtle.txt/tell-turtle-s-state:Tell Turtle’s state|
+
+    * |:library/turtle.txt/settings-for-measurement:Settings for measurement|
+
+    * |:library/turtle.txt/pen-control:Pen control|
+
+      * |:library/turtle.txt/drawing-state:Drawing state|
+
+      * |:library/turtle.txt/color-control:Color control|
+
+      * |:library/turtle.txt/filling:Filling|
+
+      * |:library/turtle.txt/more-drawing-control:More drawing control|
+
+    * |:library/turtle.txt/turtle-state:Turtle state|
+
+      * |:library/turtle.txt/visibility:Visibility|
+
+      * |:library/turtle.txt/appearance:Appearance|
+
+    * |:library/turtle.txt/using-events:Using events|
+
+    * |:library/turtle.txt/special-turtle-methods:Special Turtle methods|
+
+    * |:library/turtle.txt/compound-shapes:Compound shapes|
+
+  * |:library/turtle.txt/methods-of-turtlescreen-screen-and-corresponding-functions:Methods of TurtleScreen/Screen and corresponding functions|
+
+    * |:library/turtle.txt/window-control:Window control|
+
+    * |:library/turtle.txt/animation-control:Animation control|
+
+    * |:library/turtle.txt/using-screen-events:Using screen events|
+
+    * |:library/turtle.txt/input-methods:Input methods|
+
+    * |:library/turtle.txt/settings-and-special-methods:Settings and special methods|
+
+    * |:library/turtle.txt/methods-specific-to-screen-not-inherited-from-turtlescreen:Methods specific to Screen, not inherited from TurtleScreen|
+
+  * |:library/turtle.txt/public-classes:Public classes|
+
+  * |:library/turtle.txt/help-and-configuration:Help and configuration|
+
+    * |:library/turtle.txt/how-to-use-help:How to use help|
+
+    * |:library/turtle.txt/translation-of-docstrings-into-different-languages:Translation of docstrings into different languages|
+
+    * |:library/turtle.txt/how-to-configure-screen-and-turtles:How to configure Screen and Turtles|
+
+  * |:library/turtle.txt/module-turtledemo:turtledemo — Demo scripts|
+
+  * |:library/turtle.txt/changes-since-python-2-6:Changes since Python 2.6|
+
+  * |:library/turtle.txt/changes-since-python-3-0:Changes since Python 3.0|
+
+* |:library/cmd.txt:cmd — Support for line-oriented command interpreters|
+
+  * |:library/cmd.txt/cmd-objects:Cmd Objects|
+
+  * |:library/cmd.txt/cmd-example:Cmd Example|
+
+* |:library/shlex.txt:shlex — Simple lexical analysis|
+
+  * |:library/shlex.txt/shlex-objects:shlex Objects|
+
+  * |:library/shlex.txt/parsing-rules:Parsing Rules|
+
+  * |:library/shlex.txt/improved-compatibility-with-shells:Improved Compatibility with Shells|
+
+
+

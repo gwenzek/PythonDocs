@@ -1,0 +1,647 @@
+%hyperhelp title="tracemalloc" date="2021-07-11"
+*|module-tracemalloc:⚓|*
+
+New in version 3.4.
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/tracemalloc.py:Lib/tracemalloc.py|
+
+======================================================================
+
+The tracemalloc module is a debug tool to trace memory blocks allocated by
+Python. It provides the following information:
+
+* Traceback where an object was allocated
+
+* Statistics on allocated memory blocks per filename and per line number: total
+  size, number and average size of allocated memory blocks
+
+* Compute the differences between two snapshots to detect memory leaks
+
+To trace most memory blocks allocated by Python, the module should be started as
+early as possible by setting the *|index-0:⚓|* |:using/cmdline.txt/envvar-PYTHONTRACEMALLOC:PYTHONTRACEMALLOC| environment
+variable to "1", or by using |:using/cmdline.txt/cmdoption-X:-X| "tracemalloc" command line option. The
+|:tracemalloc.start:tracemalloc.start()| function can be called at runtime to start tracing Python
+memory allocations.
+
+By default, a trace of an allocated memory block only stores the most recent
+frame (1 frame). To store 25 frames at startup: set the *|index-1:⚓|*
+|:using/cmdline.txt/envvar-PYTHONTRACEMALLOC:PYTHONTRACEMALLOC| environment variable to "25", or use the |:using/cmdline.txt/cmdoption-X:-X| "
+tracemalloc=25" command line option.
+
+# examples:Examples## display-the-top-10:Display the top 10
+
+Display the 10 files allocating the most memory:
+
+```rst
+import tracemalloc
+
+tracemalloc.start()
+
+# ... run your application ...
+
+snapshot = tracemalloc.take_snapshot()
+top_stats = snapshot.statistics('lineno')
+
+print("[ Top 10 ]")
+for stat in top_stats[:10]:
+    print(stat)
+```
+
+Example of output of the Python test suite:
+
+```rst
+[ Top 10 ]
+<frozen importlib._bootstrap>:716: size=4855 KiB, count=39328, average=126 B
+<frozen importlib._bootstrap>:284: size=521 KiB, count=3199, average=167 B
+/usr/lib/python3.4/collections/__init__.py:368: size=244 KiB, count=2315, average=108 B
+/usr/lib/python3.4/unittest/case.py:381: size=185 KiB, count=779, average=243 B
+/usr/lib/python3.4/unittest/case.py:402: size=154 KiB, count=378, average=416 B
+/usr/lib/python3.4/abc.py:133: size=88.7 KiB, count=347, average=262 B
+<frozen importlib._bootstrap>:1446: size=70.4 KiB, count=911, average=79 B
+<frozen importlib._bootstrap>:1454: size=52.0 KiB, count=25, average=2131 B
+<string>:5: size=49.7 KiB, count=148, average=344 B
+/usr/lib/python3.4/sysconfig.py:411: size=48.0 KiB, count=1, average=48.0 KiB
+```
+
+We can see that Python loaded "4855 KiB" data (bytecode and constants) from
+modules and that the |:library/collections.txt/module-collections:collections| module allocated "244 KiB" to build
+|:library/collections.txt/collections.namedtuple:namedtuple| types.
+
+See |:tracemalloc.Snapshot.statistics:Snapshot.statistics()| for more options.
+
+## compute-differences:Compute differences
+
+Take two snapshots and display the differences:
+
+```rst
+import tracemalloc
+tracemalloc.start()
+# ... start your application ...
+
+snapshot1 = tracemalloc.take_snapshot()
+# ... call the function leaking memory ...
+snapshot2 = tracemalloc.take_snapshot()
+
+top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+
+print("[ Top 10 differences ]")
+for stat in top_stats[:10]:
+    print(stat)
+```
+
+Example of output before/after running some tests of the Python test suite:
+
+```rst
+[ Top 10 differences ]
+<frozen importlib._bootstrap>:716: size=8173 KiB (+4428 KiB), count=71332 (+39369), average=117 B
+/usr/lib/python3.4/linecache.py:127: size=940 KiB (+940 KiB), count=8106 (+8106), average=119 B
+/usr/lib/python3.4/unittest/case.py:571: size=298 KiB (+298 KiB), count=589 (+589), average=519 B
+<frozen importlib._bootstrap>:284: size=1005 KiB (+166 KiB), count=7423 (+1526), average=139 B
+/usr/lib/python3.4/mimetypes.py:217: size=112 KiB (+112 KiB), count=1334 (+1334), average=86 B
+/usr/lib/python3.4/http/server.py:848: size=96.0 KiB (+96.0 KiB), count=1 (+1), average=96.0 KiB
+/usr/lib/python3.4/inspect.py:1465: size=83.5 KiB (+83.5 KiB), count=109 (+109), average=784 B
+/usr/lib/python3.4/unittest/mock.py:491: size=77.7 KiB (+77.7 KiB), count=143 (+143), average=557 B
+/usr/lib/python3.4/urllib/parse.py:476: size=71.8 KiB (+71.8 KiB), count=969 (+969), average=76 B
+/usr/lib/python3.4/contextlib.py:38: size=67.2 KiB (+67.2 KiB), count=126 (+126), average=546 B
+```
+
+We can see that Python has loaded "8173 KiB" of module data (bytecode and
+constants), and that this is "4428 KiB" more than had been loaded before the
+tests, when the previous snapshot was taken. Similarly, the |:library/linecache.txt/module-linecache:linecache| module
+has cached "940 KiB" of Python source code to format tracebacks, all of it since
+the previous snapshot.
+
+If the system has little free memory, snapshots can be written on disk using the
+|:tracemalloc.Snapshot.dump:Snapshot.dump()| method to analyze the snapshot offline. Then use the
+|:tracemalloc.Snapshot.load:Snapshot.load()| method reload the snapshot.
+
+## get-the-traceback-of-a-memory-block:Get the traceback of a memory block
+
+Code to display the traceback of the biggest memory block:
+
+```rst
+import tracemalloc
+
+# Store 25 frames
+tracemalloc.start(25)
+
+# ... run your application ...
+
+snapshot = tracemalloc.take_snapshot()
+top_stats = snapshot.statistics('traceback')
+
+# pick the biggest memory block
+stat = top_stats[0]
+print("%s memory blocks: %.1f KiB" % (stat.count, stat.size / 1024))
+for line in stat.traceback.format():
+    print(line)
+```
+
+Example of output of the Python test suite (traceback limited to 25 frames):
+
+```rst
+903 memory blocks: 870.1 KiB
+  File "<frozen importlib._bootstrap>", line 716
+  File "<frozen importlib._bootstrap>", line 1036
+  File "<frozen importlib._bootstrap>", line 934
+  File "<frozen importlib._bootstrap>", line 1068
+  File "<frozen importlib._bootstrap>", line 619
+  File "<frozen importlib._bootstrap>", line 1581
+  File "<frozen importlib._bootstrap>", line 1614
+  File "/usr/lib/python3.4/doctest.py", line 101
+    import pdb
+  File "<frozen importlib._bootstrap>", line 284
+  File "<frozen importlib._bootstrap>", line 938
+  File "<frozen importlib._bootstrap>", line 1068
+  File "<frozen importlib._bootstrap>", line 619
+  File "<frozen importlib._bootstrap>", line 1581
+  File "<frozen importlib._bootstrap>", line 1614
+  File "/usr/lib/python3.4/test/support/__init__.py", line 1728
+    import doctest
+  File "/usr/lib/python3.4/test/test_pickletools.py", line 21
+    support.run_doctest(pickletools)
+  File "/usr/lib/python3.4/test/regrtest.py", line 1276
+    test_runner()
+  File "/usr/lib/python3.4/test/regrtest.py", line 976
+    display_failure=not verbose)
+  File "/usr/lib/python3.4/test/regrtest.py", line 761
+    match_tests=ns.match_tests)
+  File "/usr/lib/python3.4/test/regrtest.py", line 1563
+    main()
+  File "/usr/lib/python3.4/test/__main__.py", line 3
+    regrtest.main_in_temp_cwd()
+  File "/usr/lib/python3.4/runpy.py", line 73
+    exec(code, run_globals)
+  File "/usr/lib/python3.4/runpy.py", line 160
+    "__main__", fname, loader, pkg_name)
+```
+
+We can see that the most memory was allocated in the |:library/importlib.txt/module-importlib:importlib| module to load
+data (bytecode and constants) from modules: "870.1 KiB". The traceback is where
+the |:library/importlib.txt/module-importlib:importlib| loaded data most recently: on the "import pdb" line of the
+|:library/doctest.txt/module-doctest:doctest| module. The traceback may change if a new module is loaded.
+
+## pretty-top:Pretty top
+
+Code to display the 10 lines allocating the most memory with a pretty output,
+ignoring "<frozen importlib._bootstrap>" and "<unknown>" files:
+
+```rst
+import linecache
+import os
+import tracemalloc
+
+def display_top(snapshot, key_type='lineno', limit=10):
+    snapshot = snapshot.filter_traces((
+        tracemalloc.Filter(False, "<frozen importlib._bootstrap>"),
+        tracemalloc.Filter(False, "<unknown>"),
+    ))
+    top_stats = snapshot.statistics(key_type)
+
+    print("Top %s lines" % limit)
+    for index, stat in enumerate(top_stats[:limit], 1):
+        frame = stat.traceback[0]
+        print("#%s: %s:%s: %.1f KiB"
+              % (index, frame.filename, frame.lineno, stat.size / 1024))
+        line = linecache.getline(frame.filename, frame.lineno).strip()
+        if line:
+            print('    %s' % line)
+
+    other = top_stats[limit:]
+    if other:
+        size = sum(stat.size for stat in other)
+        print("%s other: %.1f KiB" % (len(other), size / 1024))
+    total = sum(stat.size for stat in top_stats)
+    print("Total allocated size: %.1f KiB" % (total / 1024))
+
+tracemalloc.start()
+
+# ... run your application ...
+
+snapshot = tracemalloc.take_snapshot()
+display_top(snapshot)
+```
+
+Example of output of the Python test suite:
+
+```rst
+Top 10 lines
+#1: Lib/base64.py:414: 419.8 KiB
+    _b85chars2 = [(a + b) for a in _b85chars for b in _b85chars]
+#2: Lib/base64.py:306: 419.8 KiB
+    _a85chars2 = [(a + b) for a in _a85chars for b in _a85chars]
+#3: collections/__init__.py:368: 293.6 KiB
+    exec(class_definition, namespace)
+#4: Lib/abc.py:133: 115.2 KiB
+    cls = super().__new__(mcls, name, bases, namespace)
+#5: unittest/case.py:574: 103.1 KiB
+    testMethod()
+#6: Lib/linecache.py:127: 95.4 KiB
+    lines = fp.readlines()
+#7: urllib/parse.py:476: 71.8 KiB
+    for a in _hexdig for b in _hexdig}
+#8: <string>:5: 62.0 KiB
+#9: Lib/_weakrefset.py:37: 60.0 KiB
+    self.data = set()
+#10: Lib/base64.py:142: 59.8 KiB
+    _b32tab2 = [a + b for a in _b32tab for b in _b32tab]
+6220 other: 3602.8 KiB
+Total allocated size: 5303.1 KiB
+```
+
+See |:tracemalloc.Snapshot.statistics:Snapshot.statistics()| for more options.
+
+# api:API## functions:Functions
+
+*tracemalloc.clear_traces:tracemalloc.clear_traces()*
+
+   Clear traces of memory blocks allocated by Python.
+
+   See also |:tracemalloc.stop:stop()|.
+
+*tracemalloc.get_object_traceback:tracemalloc.get_object_traceback(obj)*
+
+   Get the traceback where the Python object *obj* was allocated. Return a
+   |:tracemalloc.Traceback:Traceback| instance, or "None" if the |:module-tracemalloc:tracemalloc| module is not tracing
+   memory allocations or did not trace the allocation of the object.
+
+   See also |:library/gc.txt/gc.get_referrers:gc.get_referrers()| and |:library/sys.txt/sys.getsizeof:sys.getsizeof()| functions.
+
+*tracemalloc.get_traceback_limit:tracemalloc.get_traceback_limit()*
+
+   Get the maximum number of frames stored in the traceback of a trace.
+
+   The |:module-tracemalloc:tracemalloc| module must be tracing memory allocations to get the limit,
+   otherwise an exception is raised.
+
+   The limit is set by the |:tracemalloc.start:start()| function.
+
+*tracemalloc.get_traced_memory:tracemalloc.get_traced_memory()*
+
+   Get the current size and peak size of memory blocks traced by the |:module-tracemalloc:tracemalloc|
+   module as a tuple: "(current: int, peak: int)".
+
+*tracemalloc.get_tracemalloc_memory:tracemalloc.get_tracemalloc_memory()*
+
+   Get the memory usage in bytes of the |:module-tracemalloc:tracemalloc| module used to store traces
+   of memory blocks. Return an |:library/functions.txt/int:int|.
+
+*tracemalloc.is_tracing:tracemalloc.is_tracing()*
+
+   "True" if the |:module-tracemalloc:tracemalloc| module is tracing Python memory allocations, "False"
+   otherwise.
+
+   See also |:tracemalloc.start:start()| and |:tracemalloc.stop:stop()| functions.
+
+*tracemalloc.start:tracemalloc.start(nframe: int = 1)*
+
+   Start tracing Python memory allocations: install hooks on Python memory
+   allocators. Collected tracebacks of traces will be limited to *nframe* frames.
+   By default, a trace of a memory block only stores the most recent frame: the
+   limit is "1". *nframe* must be greater or equal to "1".
+
+   Storing more than "1" frame is only useful to compute statistics grouped by "
+   'traceback'" or to compute cumulative statistics: see the
+   |:tracemalloc.Snapshot.compare_to:Snapshot.compare_to()| and |:tracemalloc.Snapshot.statistics:Snapshot.statistics()| methods.
+
+   Storing more frames increases the memory and CPU overhead of the |:module-tracemalloc:tracemalloc|
+   module. Use the |:tracemalloc.get_tracemalloc_memory:get_tracemalloc_memory()| function to measure how much memory
+   is used by the |:module-tracemalloc:tracemalloc| module.
+
+   The *|index-2:⚓|* |:using/cmdline.txt/envvar-PYTHONTRACEMALLOC:PYTHONTRACEMALLOC| environment variable ("
+   PYTHONTRACEMALLOC=NFRAME") and the |:using/cmdline.txt/cmdoption-X:-X| "tracemalloc=NFRAME" command line option
+   can be used to start tracing at startup.
+
+   See also |:tracemalloc.stop:stop()|, |:tracemalloc.is_tracing:is_tracing()| and |:tracemalloc.get_traceback_limit:get_traceback_limit()| functions.
+
+*tracemalloc.stop:tracemalloc.stop()*
+
+   Stop tracing Python memory allocations: uninstall hooks on Python memory
+   allocators. Also clears all previously collected traces of memory blocks
+   allocated by Python.
+
+   Call |:tracemalloc.take_snapshot:take_snapshot()| function to take a snapshot of traces before clearing
+   them.
+
+   See also |:tracemalloc.start:start()|, |:tracemalloc.is_tracing:is_tracing()| and |:tracemalloc.clear_traces:clear_traces()| functions.
+
+*tracemalloc.take_snapshot:tracemalloc.take_snapshot()*
+
+   Take a snapshot of traces of memory blocks allocated by Python. Return a new
+   |:tracemalloc.Snapshot:Snapshot| instance.
+
+   The snapshot does not include memory blocks allocated before the |:module-tracemalloc:tracemalloc|
+   module started to trace memory allocations.
+
+   Tracebacks of traces are limited to |:tracemalloc.get_traceback_limit:get_traceback_limit()| frames. Use the *
+   nframe* parameter of the |:tracemalloc.start:start()| function to store more frames.
+
+   The |:module-tracemalloc:tracemalloc| module must be tracing memory allocations to take a snapshot,
+   see the |:tracemalloc.start:start()| function.
+
+   See also the |:tracemalloc.get_object_traceback:get_object_traceback()| function.
+
+## domainfilter:DomainFilter
+
+*tracemalloc.DomainFilter:class tracemalloc.DomainFilter(inclusive: bool, domain: int)*
+
+   Filter traces of memory blocks by their address space (domain).
+
+   New in version 3.6.
+
+   *tracemalloc.DomainFilter.inclusive:inclusive*
+
+      If *inclusive* is "True" (include), match memory blocks allocated in the address
+      space |:tracemalloc.DomainFilter.domain:domain|.
+
+      If *inclusive* is "False" (exclude), match memory blocks not allocated in the
+      address space |:tracemalloc.DomainFilter.domain:domain|.
+
+   *tracemalloc.DomainFilter.domain:domain*
+
+      Address space of a memory block ("int"). Read-only property.
+
+## filter:Filter
+
+*tracemalloc.Filter:class tracemalloc.Filter(inclusive: bool, filename_pattern: str, lineno: int = None, all_frames: bool = False, domain: int = None)*
+
+   Filter on traces of memory blocks.
+
+   See the |:library/fnmatch.txt/fnmatch.fnmatch:fnmatch.fnmatch()| function for the syntax of *filename_pattern*. The "
+   '.pyc'" file extension is replaced with "'.py'".
+
+   Examples:
+
+   * "Filter(True, subprocess.__file__)" only includes traces of the |:library/subprocess.txt/module-subprocess:subprocess|
+     module
+
+   * "Filter(False, tracemalloc.__file__)" excludes traces of the |:module-tracemalloc:tracemalloc|
+     module
+
+   * "Filter(False, "<unknown>")" excludes empty tracebacks
+
+   Changed in version 3.5: The "'.pyo'" file extension is no longer replaced with "
+   '.py'".
+
+   Changed in version 3.6: Added the |:tracemalloc.Filter.domain:domain| attribute.
+
+   *tracemalloc.Filter.domain:domain*
+
+      Address space of a memory block ("int" or "None").
+
+      tracemalloc uses the domain "0" to trace memory allocations made by Python. C
+      extensions can use other domains to trace other resources.
+
+   *tracemalloc.Filter.inclusive:inclusive*
+
+      If *inclusive* is "True" (include), only match memory blocks allocated in a file
+      with a name matching |:tracemalloc.Filter.filename_pattern:filename_pattern| at line number |:tracemalloc.Filter.lineno:lineno|.
+
+      If *inclusive* is "False" (exclude), ignore memory blocks allocated in a file
+      with a name matching |:tracemalloc.Filter.filename_pattern:filename_pattern| at line number |:tracemalloc.Filter.lineno:lineno|.
+
+   *tracemalloc.Filter.lineno:lineno*
+
+      Line number ("int") of the filter. If *lineno* is "None", the filter matches any
+      line number.
+
+   *tracemalloc.Filter.filename_pattern:filename_pattern*
+
+      Filename pattern of the filter ("str"). Read-only property.
+
+   *tracemalloc.Filter.all_frames:all_frames*
+
+      If *all_frames* is "True", all frames of the traceback are checked. If *
+      all_frames* is "False", only the most recent frame is checked.
+
+      This attribute has no effect if the traceback limit is "1".  See the
+      |:tracemalloc.get_traceback_limit:get_traceback_limit()| function and |:tracemalloc.Snapshot.traceback_limit:Snapshot.traceback_limit| attribute.
+
+## frame:Frame
+
+*tracemalloc.Frame:class tracemalloc.Frame*
+
+   Frame of a traceback.
+
+   The |:tracemalloc.Traceback:Traceback| class is a sequence of |:tracemalloc.Frame:Frame| instances.
+
+   *tracemalloc.Frame.filename:filename*
+
+      Filename ("str").
+
+   *tracemalloc.Frame.lineno:lineno*
+
+      Line number ("int").
+
+## snapshot:Snapshot
+
+*tracemalloc.Snapshot:class tracemalloc.Snapshot*
+
+   Snapshot of traces of memory blocks allocated by Python.
+
+   The |:tracemalloc.take_snapshot:take_snapshot()| function creates a snapshot instance.
+
+   *tracemalloc.Snapshot.compare_to:compare_to(old_snapshot: Snapshot, key_type: str, cumulative: bool = False)*
+
+      Compute the differences with an old snapshot. Get statistics as a sorted list of
+      |:tracemalloc.StatisticDiff:StatisticDiff| instances grouped by *key_type*.
+
+      See the |:tracemalloc.Snapshot.statistics:Snapshot.statistics()| method for *key_type* and *cumulative*
+      parameters.
+
+      The result is sorted from the biggest to the smallest by: absolute value of
+      |:tracemalloc.StatisticDiff.size_diff:StatisticDiff.size_diff|, |:tracemalloc.StatisticDiff.size:StatisticDiff.size|, absolute value of
+      |:tracemalloc.StatisticDiff.count_diff:StatisticDiff.count_diff|, |:tracemalloc.Statistic.count:Statistic.count| and then by
+      |:tracemalloc.StatisticDiff.traceback:StatisticDiff.traceback|.
+
+   *tracemalloc.Snapshot.dump:dump(filename)*
+
+      Write the snapshot into a file.
+
+      Use |:tracemalloc.Snapshot.load:load()| to reload the snapshot.
+
+   *tracemalloc.Snapshot.filter_traces:filter_traces(filters)*
+
+      Create a new |:tracemalloc.Snapshot:Snapshot| instance with a filtered |:tracemalloc.Snapshot.traces:traces| sequence, *filters* is
+      a list of |:tracemalloc.DomainFilter:DomainFilter| and |:tracemalloc.Filter:Filter| instances.  If *filters* is an empty list,
+      return a new |:tracemalloc.Snapshot:Snapshot| instance with a copy of the traces.
+
+      All inclusive filters are applied at once, a trace is ignored if no inclusive
+      filters match it. A trace is ignored if at least one exclusive filter matches
+      it.
+
+      Changed in version 3.6: |:tracemalloc.DomainFilter:DomainFilter| instances are now also accepted in *
+      filters*.
+
+   *tracemalloc.Snapshot.load:classmethod load(filename)*
+
+      Load a snapshot from a file.
+
+      See also |:tracemalloc.Snapshot.dump:dump()|.
+
+   *tracemalloc.Snapshot.statistics:statistics(key_type: str, cumulative: bool = False)*
+
+      Get statistics as a sorted list of |:tracemalloc.Statistic:Statistic| instances grouped by *key_type*:
+
+      +-----------------------+--------------------------+
+      | key_type              | description              |
+      |=======================|==========================|
+      | "'filename'"          | filename                 |
+      +-----------------------+--------------------------+
+      | "'lineno'"            | filename and line number |
+      +-----------------------+--------------------------+
+      | "'traceback'"         | traceback                |
+      +-----------------------+--------------------------+
+
+      If *cumulative* is "True", cumulate size and count of memory blocks of all
+      frames of the traceback of a trace, not only the most recent frame. The
+      cumulative mode can only be used with *key_type* equals to "'filename'" and "
+      'lineno'".
+
+      The result is sorted from the biggest to the smallest by: |:tracemalloc.Statistic.size:Statistic.size|,
+      |:tracemalloc.Statistic.count:Statistic.count| and then by |:tracemalloc.Statistic.traceback:Statistic.traceback|.
+
+   *tracemalloc.Snapshot.traceback_limit:traceback_limit*
+
+      Maximum number of frames stored in the traceback of |:tracemalloc.Snapshot.traces:traces|: result of the
+      |:tracemalloc.get_traceback_limit:get_traceback_limit()| when the snapshot was taken.
+
+   *tracemalloc.Snapshot.traces:traces*
+
+      Traces of all memory blocks allocated by Python: sequence of |:tracemalloc.Trace:Trace| instances.
+
+      The sequence has an undefined order. Use the |:tracemalloc.Snapshot.statistics:Snapshot.statistics()| method to
+      get a sorted list of statistics.
+
+## statistic:Statistic
+
+*tracemalloc.Statistic:class tracemalloc.Statistic*
+
+   Statistic on memory allocations.
+
+   |:tracemalloc.Snapshot.statistics:Snapshot.statistics()| returns a list of |:tracemalloc.Statistic:Statistic| instances.
+
+   See also the |:tracemalloc.StatisticDiff:StatisticDiff| class.
+
+   *tracemalloc.Statistic.count:count*
+
+      Number of memory blocks ("int").
+
+   *tracemalloc.Statistic.size:size*
+
+      Total size of memory blocks in bytes ("int").
+
+   *tracemalloc.Statistic.traceback:traceback*
+
+      Traceback where the memory block was allocated, |:tracemalloc.Traceback:Traceback| instance.
+
+## statisticdiff:StatisticDiff
+
+*tracemalloc.StatisticDiff:class tracemalloc.StatisticDiff*
+
+   Statistic difference on memory allocations between an old and a new |:tracemalloc.Snapshot:Snapshot|
+   instance.
+
+   |:tracemalloc.Snapshot.compare_to:Snapshot.compare_to()| returns a list of |:tracemalloc.StatisticDiff:StatisticDiff| instances. See also
+   the |:tracemalloc.Statistic:Statistic| class.
+
+   *tracemalloc.StatisticDiff.count:count*
+
+      Number of memory blocks in the new snapshot ("int"): "0" if the memory blocks
+      have been released in the new snapshot.
+
+   *tracemalloc.StatisticDiff.count_diff:count_diff*
+
+      Difference of number of memory blocks between the old and the new snapshots ("
+      int"): "0" if the memory blocks have been allocated in the new snapshot.
+
+   *tracemalloc.StatisticDiff.size:size*
+
+      Total size of memory blocks in bytes in the new snapshot ("int"): "0" if the
+      memory blocks have been released in the new snapshot.
+
+   *tracemalloc.StatisticDiff.size_diff:size_diff*
+
+      Difference of total size of memory blocks in bytes between the old and the new
+      snapshots ("int"): "0" if the memory blocks have been allocated in the new
+      snapshot.
+
+   *tracemalloc.StatisticDiff.traceback:traceback*
+
+      Traceback where the memory blocks were allocated, |:tracemalloc.Traceback:Traceback| instance.
+
+## trace:Trace
+
+*tracemalloc.Trace:class tracemalloc.Trace*
+
+   Trace of a memory block.
+
+   The |:tracemalloc.Snapshot.traces:Snapshot.traces| attribute is a sequence of |:tracemalloc.Trace:Trace| instances.
+
+   Changed in version 3.6: Added the |:tracemalloc.Trace.domain:domain| attribute.
+
+   *tracemalloc.Trace.domain:domain*
+
+      Address space of a memory block ("int"). Read-only property.
+
+      tracemalloc uses the domain "0" to trace memory allocations made by Python. C
+      extensions can use other domains to trace other resources.
+
+   *tracemalloc.Trace.size:size*
+
+      Size of the memory block in bytes ("int").
+
+   *tracemalloc.Trace.traceback:traceback*
+
+      Traceback where the memory block was allocated, |:tracemalloc.Traceback:Traceback| instance.
+
+## traceback:Traceback
+
+*tracemalloc.Traceback:class tracemalloc.Traceback*
+
+   Sequence of |:tracemalloc.Frame:Frame| instances sorted from the oldest frame to the most recent
+   frame.
+
+   A traceback contains at least "1" frame. If the "tracemalloc" module failed to
+   get a frame, the filename ""<unknown>"" at line number "0" is used.
+
+   When a snapshot is taken, tracebacks of traces are limited to
+   |:tracemalloc.get_traceback_limit:get_traceback_limit()| frames. See the |:tracemalloc.take_snapshot:take_snapshot()| function.
+
+   The |:tracemalloc.Trace.traceback:Trace.traceback| attribute is an instance of |:tracemalloc.Traceback:Traceback| instance.
+
+   Changed in version 3.7: Frames are now sorted from the oldest to the most
+   recent, instead of most recent to oldest.
+
+   *tracemalloc.Traceback.format:format(limit=None, most_recent_first=False)*
+
+      Format the traceback as a list of lines with newlines. Use the |:library/linecache.txt/module-linecache:linecache|
+      module to retrieve lines from the source code. If *limit* is set, format the *
+      limit* most recent frames if *limit* is positive. Otherwise, format the "
+      abs(limit)" oldest frames. If *most_recent_first* is "True", the order of the
+      formatted frames is reversed, returning the most recent frame first instead of
+      last.
+
+      Similar to the |:library/traceback.txt/traceback.format_tb:traceback.format_tb()| function, except that |:tracemalloc.Traceback.format:format()| does not
+      include newlines.
+
+      Example:
+
+```rst
+print("Traceback (most recent call first):")
+for line in traceback:
+    print(line)
+```
+
+      Output:
+
+```rst
+Traceback (most recent call first):
+  File "test.py", line 9
+    obj = Object()
+  File "test.py", line 12
+    tb = tracemalloc.get_object_traceback(f())
+```
+
+
+

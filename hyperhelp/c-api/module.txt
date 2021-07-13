@@ -1,0 +1,500 @@
+%hyperhelp title="Module Objects" date="2021-07-11"
+*|module-objects:⚓|*
+
+*|index-0:⚓|*
+
+*c.PyModule_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyModule_Type
+*
+    *|index-1:⚓|*
+
+   This instance of |:c-api/type.txt/c.PyTypeObject:PyTypeObject| represents the Python module type.  This is
+   exposed to Python programs as "types.ModuleType".
+
+*c.PyModule_Check:int PyModule_Check(PyObject *p)
+*
+
+   Return true if *p* is a module object, or a subtype of a module object.
+
+*c.PyModule_CheckExact:int PyModule_CheckExact(PyObject *p)
+*
+
+   Return true if *p* is a module object, but not a subtype of |:c.PyModule_Type:PyModule_Type|.
+
+*c.PyModule_NewObject:|:c-api/structures.txt/c.PyObject:PyObject| *PyModule_NewObject(PyObject *name)
+*
+    *Return value: New reference.**|index-2:⚓|*
+
+   Return a new module object with the |:reference/import.txt/name__:__name__| attribute set to *name*. The
+   module’s |:reference/import.txt/name__:__name__|, "__doc__", |:reference/import.txt/package__:__package__|, and |:reference/import.txt/loader__:__loader__| attributes are
+   filled in (all but |:reference/import.txt/name__:__name__| are set to "None"); the caller is responsible for
+   providing a |:reference/import.txt/file__:__file__| attribute.
+
+   New in version 3.3.
+
+   Changed in version 3.4: |:reference/import.txt/package__:__package__| and |:reference/import.txt/loader__:__loader__| are set to "None".
+
+*c.PyModule_New:|:c-api/structures.txt/c.PyObject:PyObject| *PyModule_New(const char *name)
+*
+    *Return value: New reference.*
+
+   Similar to |:c.PyModule_NewObject:PyModule_NewObject()|, but the name is a UTF-8 encoded string
+   instead of a Unicode object.
+
+*c.PyModule_GetDict:|:c-api/structures.txt/c.PyObject:PyObject| *PyModule_GetDict(PyObject *module)
+*
+    *Return value: Borrowed reference.**|index-3:⚓|*
+
+   Return the dictionary object that implements *module*’s namespace; this object
+   is the same as the |:library/stdtypes.txt/object.__dict__:__dict__| attribute of the module object. If *module* is not
+   a module object (or a subtype of a module object), |:library/exceptions.txt/SystemError:SystemError| is raised and "
+   NULL" is returned.
+
+   It is recommended extensions use other *PyModule_** and *PyObject_** functions
+   rather than directly manipulate a module’s |:library/stdtypes.txt/object.__dict__:__dict__|.
+
+*c.PyModule_GetNameObject:|:c-api/structures.txt/c.PyObject:PyObject| *PyModule_GetNameObject(PyObject *module)
+*
+    *Return value: New reference.**|index-4:⚓|*
+
+   Return *module*’s |:reference/import.txt/name__:__name__| value.  If the module does not provide one, or if
+   it is not a string, |:library/exceptions.txt/SystemError:SystemError| is raised and "NULL" is returned.
+
+   New in version 3.3.
+
+*c.PyModule_GetName:const char *PyModule_GetName(PyObject *module)
+*
+
+   Similar to |:c.PyModule_GetNameObject:PyModule_GetNameObject()| but return the name encoded to "'utf-8'".
+
+*c.PyModule_GetState:void *PyModule_GetState(PyObject *module)
+*
+
+   Return the “state” of the module, that is, a pointer to the block of memory
+   allocated at module creation time, or "NULL".  See |:c.PyModuleDef.m_size:PyModuleDef.m_size|.
+
+*c.PyModule_GetDef:|:c.PyModuleDef:PyModuleDef| *PyModule_GetDef(PyObject *module)
+*
+
+   Return a pointer to the |:c.PyModuleDef:PyModuleDef| struct from which the module was created,
+   or "NULL" if the module wasn’t created from a definition.
+
+*c.PyModule_GetFilenameObject:|:c-api/structures.txt/c.PyObject:PyObject| *PyModule_GetFilenameObject(PyObject *module)
+*
+    *Return value: New reference.**|index-5:⚓|*
+
+   Return the name of the file from which *module* was loaded using *module*’s
+   |:reference/import.txt/file__:__file__| attribute.  If this is not defined, or if it is not a unicode string,
+   raise |:library/exceptions.txt/SystemError:SystemError| and return "NULL"; otherwise return a reference to a Unicode
+   object.
+
+   New in version 3.2.
+
+*c.PyModule_GetFilename:const char *PyModule_GetFilename(PyObject *module)
+*
+
+   Similar to |:c.PyModule_GetFilenameObject:PyModule_GetFilenameObject()| but return the filename encoded to
+   ‘utf-8’.
+
+   Deprecated since version 3.2: |:c.PyModule_GetFilename:PyModule_GetFilename()| raises "
+   UnicodeEncodeError" on unencodable filenames, use |:c.PyModule_GetFilenameObject:PyModule_GetFilenameObject()|
+   instead.
+
+# initializing-c-modules:Initializing C modules
+
+Modules objects are usually created from extension modules (shared libraries
+which export an initialization function), or compiled-in modules (where the
+initialization function is added using |:c-api/import.txt/c.PyImport_AppendInittab:PyImport_AppendInittab()|). See
+|:extending/building.txt/building:Building C and C++ Extensions| or |:extending/embedding.txt/extending-with-embedding:Extending Embedded Python| for details.
+
+The initialization function can either pass a module definition instance to
+|:c.PyModule_Create:PyModule_Create()|, and return the resulting module object, or request “multi-
+phase initialization” by returning the definition struct itself.
+
+*c.PyModuleDef:type PyModuleDef
+*
+
+   The module definition struct, which holds all information needed to create a
+   module object. There is usually only one statically initialized variable of this
+   type for each module.
+
+   *c.PyModuleDef.m_base:PyModuleDef_Base m_base
+   *
+
+      Always initialize this member to "PyModuleDef_HEAD_INIT".
+
+   *c.PyModuleDef.m_name:const char *m_name
+   *
+
+      Name for the new module.
+
+   *c.PyModuleDef.m_doc:const char *m_doc
+   *
+
+      Docstring for the module; usually a docstring variable created with
+      |:c-api/intro.txt/c.PyDoc_STRVAR:PyDoc_STRVAR| is used.
+
+   *c.PyModuleDef.m_size:Py_ssize_t m_size
+   *
+
+      Module state may be kept in a per-module memory area that can be retrieved with
+      |:c.PyModule_GetState:PyModule_GetState()|, rather than in static globals. This makes modules safe
+      for use in multiple sub-interpreters.
+
+      This memory area is allocated based on *m_size* on module creation, and freed
+      when the module object is deallocated, after the |:c.PyModuleDef.m_free:m_free| function has been
+      called, if present.
+
+      Setting "m_size" to "-1" means that the module does not support sub-
+      interpreters, because it has global state.
+
+      Setting it to a non-negative value means that the module can be re-initialized
+      and specifies the additional amount of memory it requires for its state. Non-
+      negative "m_size" is required for multi-phase initialization.
+
+      See *|index-6:⚓|* |:www.python.org/dev/peps/pep-3121:PEP 3121| for more details.
+
+   *c.PyModuleDef.m_methods:|:c-api/structures.txt/c.PyMethodDef:PyMethodDef| *m_methods
+   *
+
+      A pointer to a table of module-level functions, described by |:c-api/structures.txt/c.PyMethodDef:PyMethodDef|
+      values.  Can be "NULL" if no functions are present.
+
+   *c.PyModuleDef.m_slots:|:c.PyModuleDef_Slot:PyModuleDef_Slot| *m_slots
+   *
+
+      An array of slot definitions for multi-phase initialization, terminated by a "
+      {0, NULL}" entry. When using single-phase initialization, *m_slots* must be "
+      NULL".
+
+      Changed in version 3.5: Prior to version 3.5, this member was always set to "
+      NULL", and was defined as:
+
+         *c.PyModuleDef.m_slots.m_reload:|:c-api/gcsupport.txt/c.inquiry:inquiry| m_reload
+         *
+
+   *c.PyModuleDef.m_traverse:|:c-api/gcsupport.txt/c.traverseproc:traverseproc| m_traverse
+   *
+
+      A traversal function to call during GC traversal of the module object, or "NULL"
+      if not needed. This function may be called before module state is allocated (
+      |:c.PyModule_GetState:PyModule_GetState()| may return *NULL*), and before the |:c.Py_mod_exec:Py_mod_exec| function
+      is executed.
+
+   *c.PyModuleDef.m_clear:|:c-api/gcsupport.txt/c.inquiry:inquiry| m_clear
+   *
+
+      A clear function to call during GC clearing of the module object, or "NULL" if
+      not needed. This function may be called before module state is allocated (
+      |:c.PyModule_GetState:PyModule_GetState()| may return *NULL*), and before the |:c.Py_mod_exec:Py_mod_exec| function
+      is executed.
+
+   *c.PyModuleDef.m_free:|:c-api/typeobj.txt/c.freefunc:freefunc| m_free
+   *
+
+      A function to call during deallocation of the module object, or "NULL" if not
+      needed. This function may be called before module state is allocated (
+      |:c.PyModule_GetState:PyModule_GetState()| may return *NULL*), and before the |:c.Py_mod_exec:Py_mod_exec| function
+      is executed.
+
+## single-phase-initialization:Single-phase initialization
+
+The module initialization function may create and return the module object
+directly. This is referred to as “single-phase initialization”, and uses one of
+the following two module creation functions:
+
+*c.PyModule_Create:|:c-api/structures.txt/c.PyObject:PyObject| *PyModule_Create(PyModuleDef *def)
+*
+    *Return value: New reference.*
+
+   Create a new module object, given the definition in *def*.  This behaves like
+   |:c.PyModule_Create2:PyModule_Create2()| with *module_api_version* set to "PYTHON_API_VERSION".
+
+*c.PyModule_Create2:|:c-api/structures.txt/c.PyObject:PyObject| *PyModule_Create2(PyModuleDef *def, int module_api_version)
+*
+    *Return value: New reference.*
+
+   Create a new module object, given the definition in *def*, assuming the API
+   version *module_api_version*.  If that version does not match the version of the
+   running interpreter, a |:library/exceptions.txt/RuntimeWarning:RuntimeWarning| is emitted.
+
+   Note:
+
+     Most uses of this function should be using |:c.PyModule_Create:PyModule_Create()| instead; only use
+     this if you are sure you need it.
+
+Before it is returned from in the initialization function, the resulting module
+object is typically populated using functions like |:c.PyModule_AddObject:PyModule_AddObject()|.
+
+*|multi-phase-initialization:⚓|* ## multi-phase-initialization:Multi-phase
+initialization
+
+An alternate way to specify extensions is to request “multi-phase
+initialization”. Extension modules created this way behave more like Python
+modules: the initialization is split between the *creation phase*, when the
+module object is created, and the *execution phase*, when it is populated. The
+distinction is similar to the "__new__()" and "__init__()" methods of classes.
+
+Unlike modules created using single-phase initialization, these modules are not
+singletons: if the *sys.modules* entry is removed and the module is re-imported,
+a new module object is created, and the old module is subject to normal garbage
+collection – as with Python modules. By default, multiple modules created from
+the same definition should be independent: changes to one should not affect the
+others. This means that all state should be specific to the module object (using
+e.g. using |:c.PyModule_GetState:PyModule_GetState()|), or its contents (such as the module’s "
+__dict__" or individual classes created with |:c-api/type.txt/c.PyType_FromSpec:PyType_FromSpec()|).
+
+All modules created using multi-phase initialization are expected to support
+|:c-api/init.txt/sub-interpreter-support:sub-interpreters|. Making sure multiple modules are independent is typically
+enough to achieve this.
+
+To request multi-phase initialization, the initialization function
+(PyInit_modulename) returns a |:c.PyModuleDef:PyModuleDef| instance with non-empty |:c.PyModuleDef.m_slots:m_slots|.
+Before it is returned, the "PyModuleDef" instance must be initialized with the
+following function:
+
+*c.PyModuleDef_Init:|:c-api/structures.txt/c.PyObject:PyObject| *PyModuleDef_Init(PyModuleDef *def)
+*
+    *Return value: Borrowed reference.*
+
+   Ensures a module definition is a properly initialized Python object that
+   correctly reports its type and reference count.
+
+   Returns *def* cast to "PyObject*", or "NULL" if an error occurred.
+
+   New in version 3.5.
+
+The *m_slots* member of the module definition must point to an array of "
+PyModuleDef_Slot" structures:
+
+*c.PyModuleDef_Slot:type PyModuleDef_Slot
+*
+
+   *c.PyModuleDef_Slot.slot:int slot
+   *
+
+      A slot ID, chosen from the available values explained below.
+
+   *c.PyModuleDef_Slot.value:void *value
+   *
+
+      Value of the slot, whose meaning depends on the slot ID.
+
+   New in version 3.5.
+
+The *m_slots* array must be terminated by a slot with id 0.
+
+The available slot types are:
+
+*c.Py_mod_create:Py_mod_create
+*
+
+   Specifies a function that is called to create the module object itself. The *
+   value* pointer of this slot must point to a function of the signature:
+
+   *c.Py_mod_create.create_module:|:c-api/structures.txt/c.PyObject:PyObject| *create_module(PyObject *spec, PyModuleDef *def)
+   *
+
+   The function receives a |:library/importlib.txt/importlib.machinery.ModuleSpec:ModuleSpec| instance, as defined in *|index-7:⚓|*
+   |:www.python.org/dev/peps/pep-0451:PEP 451|, and the module definition. It should return a new module object, or
+   set an error and return "NULL".
+
+   This function should be kept minimal. In particular, it should not call
+   arbitrary Python code, as trying to import the same module again may result in
+   an infinite loop.
+
+   Multiple "Py_mod_create" slots may not be specified in one module definition.
+
+   If "Py_mod_create" is not specified, the import machinery will create a normal
+   module object using |:c.PyModule_New:PyModule_New()|. The name is taken from *spec*, not the
+   definition, to allow extension modules to dynamically adjust to their place in
+   the module hierarchy and be imported under different names through symlinks, all
+   while sharing a single module definition.
+
+   There is no requirement for the returned object to be an instance of
+   |:c.PyModule_Type:PyModule_Type|. Any type can be used, as long as it supports setting and
+   getting import-related attributes. However, only "PyModule_Type" instances may
+   be returned if the "PyModuleDef" has non-"NULL" "m_traverse", "m_clear", "m_free
+   "; non-zero "m_size"; or slots other than "Py_mod_create".
+
+*c.Py_mod_exec:Py_mod_exec
+*
+
+   Specifies a function that is called to *execute* the module. This is equivalent
+   to executing the code of a Python module: typically, this function adds classes
+   and constants to the module. The signature of the function is:
+
+   *c.Py_mod_exec.exec_module:int exec_module(PyObject *module)
+   *
+
+   If multiple "Py_mod_exec" slots are specified, they are processed in the order
+   they appear in the *m_slots* array.
+
+See *|index-8:⚓|* |:www.python.org/dev/peps/pep-0489:PEP 489| for more details on multi-phase initialization.
+
+## low-level-module-creation-functions:Low-level module creation functions
+
+The following functions are called under the hood when using multi-phase
+initialization. They can be used directly, for example when creating module
+objects dynamically. Note that both "PyModule_FromDefAndSpec" and "
+PyModule_ExecDef" must be called to fully initialize a module.
+
+*c.PyModule_FromDefAndSpec:|:c-api/structures.txt/c.PyObject:PyObject| *PyModule_FromDefAndSpec(PyModuleDef *def, PyObject *spec)
+*
+    *Return value: New reference.*
+
+   Create a new module object, given the definition in *module* and the ModuleSpec
+   *spec*.  This behaves like |:c.PyModule_FromDefAndSpec2:PyModule_FromDefAndSpec2()| with *module_api_version
+   * set to "PYTHON_API_VERSION".
+
+   New in version 3.5.
+
+*c.PyModule_FromDefAndSpec2:|:c-api/structures.txt/c.PyObject:PyObject| *PyModule_FromDefAndSpec2(PyModuleDef *def, PyObject *spec, int module_api_version)
+*
+    *Return value: New reference.*
+
+   Create a new module object, given the definition in *module* and the ModuleSpec
+   *spec*, assuming the API version *module_api_version*. If that version does not
+   match the version of the running interpreter, a |:library/exceptions.txt/RuntimeWarning:RuntimeWarning| is emitted.
+
+   Note:
+
+     Most uses of this function should be using |:c.PyModule_FromDefAndSpec:PyModule_FromDefAndSpec()| instead;
+     only use this if you are sure you need it.
+
+   New in version 3.5.
+
+*c.PyModule_ExecDef:int PyModule_ExecDef(PyObject *module, PyModuleDef *def)
+*
+
+   Process any execution slots (|:c.Py_mod_exec:Py_mod_exec|) given in *def*.
+
+   New in version 3.5.
+
+*c.PyModule_SetDocString:int PyModule_SetDocString(PyObject *module, const char *docstring)
+*
+
+   Set the docstring for *module* to *docstring*. This function is called
+   automatically when creating a module from "PyModuleDef", using either "
+   PyModule_Create" or "PyModule_FromDefAndSpec".
+
+   New in version 3.5.
+
+*c.PyModule_AddFunctions:int PyModule_AddFunctions(PyObject *module, PyMethodDef *functions)
+*
+
+   Add the functions from the "NULL" terminated *functions* array to *module*.
+   Refer to the |:c-api/structures.txt/c.PyMethodDef:PyMethodDef| documentation for details on individual entries (due
+   to the lack of a shared module namespace, module level “functions” implemented
+   in C typically receive the module as their first parameter, making them similar
+   to instance methods on Python classes). This function is called automatically
+   when creating a module from "PyModuleDef", using either "PyModule_Create" or "
+   PyModule_FromDefAndSpec".
+
+   New in version 3.5.
+
+## support-functions:Support functions
+
+The module initialization function (if using single phase initialization) or a
+function called from a module execution slot (if using multi-phase
+initialization), can use the following functions to help initialize the module
+state:
+
+*c.PyModule_AddObject:int PyModule_AddObject(PyObject *module, const char *name, PyObject *value)
+*
+
+   Add an object to *module* as *name*.  This is a convenience function which can
+   be used from the module’s initialization function.  This steals a reference to *
+   value* on success.  Return "-1" on error, "0" on success.
+
+   Note:
+
+     Unlike other functions that steal references, "PyModule_AddObject()" only
+     decrements the reference count of *value* *on success*.This means that its
+     return value must be checked, and calling code must |:c-api/refcounting.txt/c.Py_DECREF:Py_DECREF()| *value*
+     manually on error. Example usage:
+
+```rst
+Py_INCREF(spam);
+if (PyModule_AddObject(module, "spam", spam) < 0) {
+    Py_DECREF(module);
+    Py_DECREF(spam);
+    return NULL;
+}
+```
+
+*c.PyModule_AddIntConstant:int PyModule_AddIntConstant(PyObject *module, const char *name, long value)
+*
+
+   Add an integer constant to *module* as *name*.  This convenience function can be
+   used from the module’s initialization function. Return "-1" on error, "0" on
+   success.
+
+*c.PyModule_AddStringConstant:int PyModule_AddStringConstant(PyObject *module, const char *name, const char *value)
+*
+
+   Add a string constant to *module* as *name*.  This convenience function can be
+   used from the module’s initialization function.  The string *value* must be "
+   NULL"-terminated.  Return "-1" on error, "0" on success.
+
+*c.PyModule_AddIntMacro:int PyModule_AddIntMacro(PyObject *module, macro)
+*
+
+   Add an int constant to *module*. The name and the value are taken from *macro*.
+   For example "PyModule_AddIntMacro(module, AF_INET)" adds the int constant *
+   AF_INET* with the value of *AF_INET* to *module*. Return "-1" on error, "0" on
+   success.
+
+*c.PyModule_AddStringMacro:int PyModule_AddStringMacro(PyObject *module, macro)
+*
+
+   Add a string constant to *module*.
+
+# module-lookup:Module lookup
+
+Single-phase initialization creates singleton modules that can be looked up in
+the context of the current interpreter. This allows the module object to be
+retrieved later with only a reference to the module definition.
+
+These functions will not work on modules created using multi-phase
+initialization, since multiple such modules can be created from a single
+definition.
+
+*c.PyState_FindModule:|:c-api/structures.txt/c.PyObject:PyObject| *PyState_FindModule(PyModuleDef *def)
+*
+    *Return value: Borrowed reference.*
+
+   Returns the module object that was created from *def* for the current
+   interpreter. This method requires that the module object has been attached to
+   the interpreter state with |:c.PyState_AddModule:PyState_AddModule()| beforehand. In case the
+   corresponding module object is not found or has not been attached to the
+   interpreter state yet, it returns "NULL".
+
+*c.PyState_AddModule:int PyState_AddModule(PyObject *module, PyModuleDef *def)
+*
+
+   Attaches the module object passed to the function to the interpreter state. This
+   allows the module object to be accessible via |:c.PyState_FindModule:PyState_FindModule()|.
+
+   Only effective on modules created using single-phase initialization.
+
+   Python calls "PyState_AddModule" automatically after importing a module, so it
+   is unnecessary (but harmless) to call it from module initialization code. An
+   explicit call is needed only if the module’s own init code subsequently calls "
+   PyState_FindModule". The function is mainly intended for implementing
+   alternative import mechanisms (either by calling it directly, or by referring to
+   its implementation for details of the required state updates).
+
+   Return 0 on success or -1 on failure.
+
+   New in version 3.3.
+
+*c.PyState_RemoveModule:int PyState_RemoveModule(PyModuleDef *def)
+*
+
+   Removes the module object created from *def* from the interpreter state. Return
+   0 on success or -1 on failure.
+
+   New in version 3.3.
+
+
+

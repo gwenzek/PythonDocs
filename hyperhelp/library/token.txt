@@ -1,0 +1,291 @@
+%hyperhelp title="token" date="2021-07-11"
+*|module-token:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/token.py:Lib/token.py|
+
+======================================================================
+
+This module provides constants which represent the numeric values of leaf nodes
+of the parse tree (terminal tokens).  Refer to the file "Grammar/Grammar" in the
+Python distribution for the definitions of the names in the context of the
+language grammar.  The specific numeric values which the names map to may change
+between Python versions.
+
+The module also provides a mapping from numeric codes to names and some
+functions.  The functions mirror definitions in the Python C header files.
+
+*token.tok_name:token.tok_name*
+
+   Dictionary mapping the numeric values of the constants defined in this module
+   back to name strings, allowing more human-readable representation of parse trees
+   to be generated.
+
+*token.ISTERMINAL:token.ISTERMINAL(x)*
+
+   Return "True" for terminal token values.
+
+*token.ISNONTERMINAL:token.ISNONTERMINAL(x)*
+
+   Return "True" for non-terminal token values.
+
+*token.ISEOF:token.ISEOF(x)*
+
+   Return "True" if *x* is the marker indicating the end of input.
+
+The token constants are:
+
+*token.ENDMARKER:token.ENDMARKER*
+
+*token.NAME:token.NAME*
+
+*token.NUMBER:token.NUMBER*
+
+*token.STRING:token.STRING*
+
+*token.NEWLINE:token.NEWLINE*
+
+*token.INDENT:token.INDENT*
+
+*token.DEDENT:token.DEDENT*
+
+*token.LPAR:token.LPAR*
+
+   Token value for ""("".
+
+*token.RPAR:token.RPAR*
+
+   Token value for "")"".
+
+*token.LSQB:token.LSQB*
+
+   Token value for ""["".
+
+*token.RSQB:token.RSQB*
+
+   Token value for ""]"".
+
+*token.COLON:token.COLON*
+
+   Token value for "":"".
+
+*token.COMMA:token.COMMA*
+
+   Token value for "","".
+
+*token.SEMI:token.SEMI*
+
+   Token value for "";"".
+
+*token.PLUS:token.PLUS*
+
+   Token value for ""+"".
+
+*token.MINUS:token.MINUS*
+
+   Token value for ""-"".
+
+*token.STAR:token.STAR*
+
+   Token value for ""*"".
+
+*token.SLASH:token.SLASH*
+
+   Token value for ""/"".
+
+*token.VBAR:token.VBAR*
+
+   Token value for ""|"".
+
+*token.AMPER:token.AMPER*
+
+   Token value for ""&"".
+
+*token.LESS:token.LESS*
+
+   Token value for ""<"".
+
+*token.GREATER:token.GREATER*
+
+   Token value for "">"".
+
+*token.EQUAL:token.EQUAL*
+
+   Token value for ""="".
+
+*token.DOT:token.DOT*
+
+   Token value for ""."".
+
+*token.PERCENT:token.PERCENT*
+
+   Token value for ""%"".
+
+*token.LBRACE:token.LBRACE*
+
+   Token value for ""{"".
+
+*token.RBRACE:token.RBRACE*
+
+   Token value for ""}"".
+
+*token.EQEQUAL:token.EQEQUAL*
+
+   Token value for ""=="".
+
+*token.NOTEQUAL:token.NOTEQUAL*
+
+   Token value for ""!="".
+
+*token.LESSEQUAL:token.LESSEQUAL*
+
+   Token value for ""<="".
+
+*token.GREATEREQUAL:token.GREATEREQUAL*
+
+   Token value for "">="".
+
+*token.TILDE:token.TILDE*
+
+   Token value for ""~"".
+
+*token.CIRCUMFLEX:token.CIRCUMFLEX*
+
+   Token value for ""^"".
+
+*token.LEFTSHIFT:token.LEFTSHIFT*
+
+   Token value for ""<<"".
+
+*token.RIGHTSHIFT:token.RIGHTSHIFT*
+
+   Token value for "">>"".
+
+*token.DOUBLESTAR:token.DOUBLESTAR*
+
+   Token value for ""**"".
+
+*token.PLUSEQUAL:token.PLUSEQUAL*
+
+   Token value for ""+="".
+
+*token.MINEQUAL:token.MINEQUAL*
+
+   Token value for ""-="".
+
+*token.STAREQUAL:token.STAREQUAL*
+
+   Token value for ""*="".
+
+*token.SLASHEQUAL:token.SLASHEQUAL*
+
+   Token value for ""/="".
+
+*token.PERCENTEQUAL:token.PERCENTEQUAL*
+
+   Token value for ""%="".
+
+*token.AMPEREQUAL:token.AMPEREQUAL*
+
+   Token value for ""&="".
+
+*token.VBAREQUAL:token.VBAREQUAL*
+
+   Token value for ""|="".
+
+*token.CIRCUMFLEXEQUAL:token.CIRCUMFLEXEQUAL*
+
+   Token value for ""^="".
+
+*token.LEFTSHIFTEQUAL:token.LEFTSHIFTEQUAL*
+
+   Token value for ""<<="".
+
+*token.RIGHTSHIFTEQUAL:token.RIGHTSHIFTEQUAL*
+
+   Token value for "">>="".
+
+*token.DOUBLESTAREQUAL:token.DOUBLESTAREQUAL*
+
+   Token value for ""**="".
+
+*token.DOUBLESLASH:token.DOUBLESLASH*
+
+   Token value for ""//"".
+
+*token.DOUBLESLASHEQUAL:token.DOUBLESLASHEQUAL*
+
+   Token value for ""//="".
+
+*token.AT:token.AT*
+
+   Token value for ""@"".
+
+*token.ATEQUAL:token.ATEQUAL*
+
+   Token value for ""@="".
+
+*token.RARROW:token.RARROW*
+
+   Token value for ""->"".
+
+*token.ELLIPSIS:token.ELLIPSIS*
+
+   Token value for ""..."".
+
+*token.COLONEQUAL:token.COLONEQUAL*
+
+   Token value for "":="".
+
+*token.OP:token.OP*
+
+*token.AWAIT:token.AWAIT*
+
+*token.ASYNC:token.ASYNC*
+
+*token.TYPE_IGNORE:token.TYPE_IGNORE*
+
+*token.TYPE_COMMENT:token.TYPE_COMMENT*
+
+*token.ERRORTOKEN:token.ERRORTOKEN*
+
+*token.N_TOKENS:token.N_TOKENS*
+
+*token.NT_OFFSET:token.NT_OFFSET*
+
+The following token type values aren’t used by the C tokenizer but are needed
+for the |:library/tokenize.txt/module-tokenize:tokenize| module.
+
+*token.COMMENT:token.COMMENT*
+
+   Token value used to indicate a comment.
+
+*token.NL:token.NL*
+
+   Token value used to indicate a non-terminating newline.  The |:token.NEWLINE:NEWLINE| token
+   indicates the end of a logical line of Python code; "NL" tokens are generated
+   when a logical line of code is continued over multiple physical lines.
+
+*token.ENCODING:token.ENCODING*
+
+   Token value that indicates the encoding used to decode the source bytes into
+   text. The first token returned by |:library/tokenize.txt/tokenize.tokenize:tokenize.tokenize()| will always be an "
+   ENCODING" token.
+
+token.TYPE_COMMENT
+
+   Token value indicating that a type comment was recognized.  Such tokens are only
+   produced when |:library/ast.txt/ast.parse:ast.parse()| is invoked with "type_comments=True".
+
+Changed in version 3.5: Added |:token.AWAIT:AWAIT| and |:token.ASYNC:ASYNC| tokens.
+
+Changed in version 3.7: Added |:token.COMMENT:COMMENT|, |:token.NL:NL| and |:token.ENCODING:ENCODING| tokens.
+
+Changed in version 3.7: Removed |:token.AWAIT:AWAIT| and |:token.ASYNC:ASYNC| tokens. “async” and “await”
+are now tokenized as |:token.NAME:NAME| tokens.
+
+Changed in version 3.8: Added |:token.TYPE_COMMENT:TYPE_COMMENT|, |:token.TYPE_IGNORE:TYPE_IGNORE|, |:token.COLONEQUAL:COLONEQUAL|. Added
+|:token.AWAIT:AWAIT| and |:token.ASYNC:ASYNC| tokens back (they’re needed to support parsing older Python
+versions for |:library/ast.txt/ast.parse:ast.parse()| with "feature_version" set to 6 or lower).
+
+
+

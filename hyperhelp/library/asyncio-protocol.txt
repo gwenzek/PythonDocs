@@ -1,0 +1,927 @@
+%hyperhelp title="Transports and Protocols" date="2021-07-11"
+*|transports-and-protocols:⚓|*
+
+-[ Preface ]-
+
+Transports and Protocols are used by the *low-level* event loop APIs such as
+|:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()|.  They use callback-based programming style and
+enable high-performance implementations of network or IPC protocols (e.g. HTTP).
+
+Essentially, transports and protocols should only be used in libraries and
+frameworks and never in high-level asyncio applications.
+
+This documentation page covers both |:transports:Transports| and |:protocols:Protocols|.
+
+-[ Introduction ]-
+
+At the highest level, the transport is concerned with *how* bytes are
+transmitted, while the protocol determines *which* bytes to transmit (and to
+some extent when).
+
+A different way of saying the same thing: a transport is an abstraction for a
+socket (or similar I/O endpoint) while a protocol is an abstraction for an
+application, from the transport’s point of view.
+
+Yet another view is the transport and protocol interfaces together define an
+abstract interface for using network I/O and interprocess I/O.
+
+There is always a 1:1 relationship between transport and protocol objects: the
+protocol calls transport methods to send data, while the transport calls
+protocol methods to pass it data that has been received.
+
+Most of connection oriented event loop methods (such as
+|:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()|) usually accept a *protocol_factory* argument used to
+create a *Protocol* object for an accepted connection, represented by a *
+Transport* object. Such methods usually return a tuple of "(transport, protocol)
+".
+
+-[ Contents ]-
+
+This documentation page contains the following sections:
+
+* The |:transports:Transports| section documents asyncio |:asyncio.BaseTransport:BaseTransport|, |:asyncio.ReadTransport:ReadTransport|,
+  |:asyncio.WriteTransport:WriteTransport|, |:asyncio.Transport:Transport|, |:asyncio.DatagramTransport:DatagramTransport|, and |:asyncio.SubprocessTransport:SubprocessTransport|
+  classes.
+
+* The |:protocols:Protocols| section documents asyncio |:asyncio.BaseProtocol:BaseProtocol|, |:asyncio.Protocol:Protocol|,
+  |:asyncio.BufferedProtocol:BufferedProtocol|, |:asyncio.DatagramProtocol:DatagramProtocol|, and |:asyncio.SubprocessProtocol:SubprocessProtocol| classes.
+
+* The |:examples:Examples| section showcases how to work with transports, protocols, and
+  low-level event loop APIs.
+
+# transports:Transports
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/asyncio/transports.py:Lib/asyncio/transports.py|
+
+======================================================================
+
+Transports are classes provided by |:library/asyncio.txt/module-asyncio:asyncio| in order to abstract various kinds
+of communication channels.
+
+Transport objects are always instantiated by an |:library/asyncio-eventloop.txt/asyncio-event-loop:asyncio event loop|.
+
+asyncio implements transports for TCP, UDP, SSL, and subprocess pipes. The
+methods available on a transport depend on the transport’s kind.
+
+The transport classes are |:library/asyncio-dev.txt/asyncio-multithreading:not thread safe|.
+
+## transports-hierarchy:Transports Hierarchy
+
+*asyncio.BaseTransport:class asyncio.BaseTransport*
+
+   Base class for all transports.  Contains methods that all asyncio transports
+   share.
+
+*asyncio.WriteTransport:class asyncio.WriteTransport(BaseTransport)*
+
+   A base transport for write-only connections.
+
+   Instances of the *WriteTransport* class are returned from the
+   |:library/asyncio-eventloop.txt/asyncio.loop.connect_write_pipe:loop.connect_write_pipe()| event loop method and are also used by subprocess-
+   related methods like |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_exec:loop.subprocess_exec()|.
+
+*asyncio.ReadTransport:class asyncio.ReadTransport(BaseTransport)*
+
+   A base transport for read-only connections.
+
+   Instances of the *ReadTransport* class are returned from the
+   |:library/asyncio-eventloop.txt/asyncio.loop.connect_read_pipe:loop.connect_read_pipe()| event loop method and are also used by subprocess-
+   related methods like |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_exec:loop.subprocess_exec()|.
+
+*asyncio.Transport:class asyncio.Transport(WriteTransport, ReadTransport)*
+
+   Interface representing a bidirectional transport, such as a TCP connection.
+
+   The user does not instantiate a transport directly; they call a utility
+   function, passing it a protocol factory and other information necessary to
+   create the transport and protocol.
+
+   Instances of the *Transport* class are returned from or used by event loop
+   methods like |:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()|, |:library/asyncio-eventloop.txt/asyncio.loop.create_unix_connection:loop.create_unix_connection()|,
+   |:library/asyncio-eventloop.txt/asyncio.loop.create_server:loop.create_server()|, |:library/asyncio-eventloop.txt/asyncio.loop.sendfile:loop.sendfile()|, etc.
+
+*asyncio.DatagramTransport:class asyncio.DatagramTransport(BaseTransport)*
+
+   A transport for datagram (UDP) connections.
+
+   Instances of the *DatagramTransport* class are returned from the
+   |:library/asyncio-eventloop.txt/asyncio.loop.create_datagram_endpoint:loop.create_datagram_endpoint()| event loop method.
+
+*asyncio.SubprocessTransport:class asyncio.SubprocessTransport(BaseTransport)*
+
+   An abstraction to represent a connection between a parent and its child OS
+   process.
+
+   Instances of the *SubprocessTransport* class are returned from event loop
+   methods |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_shell:loop.subprocess_shell()| and |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_exec:loop.subprocess_exec()|.
+
+## base-transport:Base Transport
+
+*asyncio.BaseTransport.close:BaseTransport.close()*
+
+   Close the transport.
+
+   If the transport has a buffer for outgoing data, buffered data will be flushed
+   asynchronously.  No more data will be received.  After all buffered data is
+   flushed, the protocol’s |:asyncio.BaseProtocol.connection_lost:protocol.connection_lost()| method will be called with
+   |:library/constants.txt/None:None| as its argument.
+
+*asyncio.BaseTransport.is_closing:BaseTransport.is_closing()*
+
+   Return "True" if the transport is closing or is closed.
+
+*asyncio.BaseTransport.get_extra_info:BaseTransport.get_extra_info(name, default=None)*
+
+   Return information about the transport or underlying resources it uses.
+
+   *name* is a string representing the piece of transport-specific information to
+   get.
+
+   *default* is the value to return if the information is not available, or if the
+   transport does not support querying it with the given third-party event loop
+   implementation or on the current platform.
+
+   For example, the following code attempts to get the underlying socket object of
+   the transport:
+
+```rst
+sock = transport.get_extra_info('socket')
+if sock is not None:
+    print(sock.getsockopt(...))
+```
+
+   Categories of information that can be queried on some transports:
+
+   * socket:
+
+     * "'peername'": the remote address to which the socket is connected, result of
+       |:library/socket.txt/socket.socket.getpeername:socket.socket.getpeername()| ("None" on error)
+
+     * "'socket'": |:library/socket.txt/socket.socket:socket.socket| instance
+
+     * "'sockname'": the socket’s own address, result of |:library/socket.txt/socket.socket.getsockname:socket.socket.getsockname()|
+
+   * SSL socket:
+
+     * "'compression'": the compression algorithm being used as a string, or "None" if
+       the connection isn’t compressed; result of |:library/ssl.txt/ssl.SSLSocket.compression:ssl.SSLSocket.compression()|
+
+     * "'cipher'": a three-value tuple containing the name of the cipher being used,
+       the version of the SSL protocol that defines its use, and the number of secret
+       bits being used; result of |:library/ssl.txt/ssl.SSLSocket.cipher:ssl.SSLSocket.cipher()|
+
+     * "'peercert'": peer certificate; result of |:library/ssl.txt/ssl.SSLSocket.getpeercert:ssl.SSLSocket.getpeercert()|
+
+     * "'sslcontext'": |:library/ssl.txt/ssl.SSLContext:ssl.SSLContext| instance
+
+     * "'ssl_object'": |:library/ssl.txt/ssl.SSLObject:ssl.SSLObject| or |:library/ssl.txt/ssl.SSLSocket:ssl.SSLSocket| instance
+
+   * pipe:
+
+     * "'pipe'": pipe object
+
+   * subprocess:
+
+     * "'subprocess'": |:library/subprocess.txt/subprocess.Popen:subprocess.Popen| instance
+
+*asyncio.BaseTransport.set_protocol:BaseTransport.set_protocol(protocol)*
+
+   Set a new protocol.
+
+   Switching protocol should only be done when both protocols are documented to
+   support the switch.
+
+*asyncio.BaseTransport.get_protocol:BaseTransport.get_protocol()*
+
+   Return the current protocol.
+
+## read-only-transports:Read-only Transports
+
+*asyncio.ReadTransport.is_reading:ReadTransport.is_reading()*
+
+   Return "True" if the transport is receiving new data.
+
+   New in version 3.7.
+
+*asyncio.ReadTransport.pause_reading:ReadTransport.pause_reading()*
+
+   Pause the receiving end of the transport.  No data will be passed to the
+   protocol’s |:asyncio.Protocol.data_received:protocol.data_received()| method until |:asyncio.ReadTransport.resume_reading:resume_reading()| is called.
+
+   Changed in version 3.7: The method is idempotent, i.e. it can be called when the
+   transport is already paused or closed.
+
+*asyncio.ReadTransport.resume_reading:ReadTransport.resume_reading()*
+
+   Resume the receiving end.  The protocol’s |:asyncio.Protocol.data_received:protocol.data_received()| method will
+   be called once again if some data is available for reading.
+
+   Changed in version 3.7: The method is idempotent, i.e. it can be called when the
+   transport is already reading.
+
+## write-only-transports:Write-only Transports
+
+*asyncio.WriteTransport.abort:WriteTransport.abort()*
+
+   Close the transport immediately, without waiting for pending operations to
+   complete.  Buffered data will be lost.  No more data will be received. The
+   protocol’s |:asyncio.BaseProtocol.connection_lost:protocol.connection_lost()| method will eventually be called with
+   |:library/constants.txt/None:None| as its argument.
+
+*asyncio.WriteTransport.can_write_eof:WriteTransport.can_write_eof()*
+
+   Return |:library/constants.txt/True:True| if the transport supports |:asyncio.WriteTransport.write_eof:write_eof()|, |:library/constants.txt/False:False| if not.
+
+*asyncio.WriteTransport.get_write_buffer_size:WriteTransport.get_write_buffer_size()*
+
+   Return the current size of the output buffer used by the transport.
+
+*asyncio.WriteTransport.get_write_buffer_limits:WriteTransport.get_write_buffer_limits()*
+
+   Get the *high* and *low* watermarks for write flow control. Return a tuple "
+   (low, high)" where *low* and *high* are positive number of bytes.
+
+   Use |:asyncio.WriteTransport.set_write_buffer_limits:set_write_buffer_limits()| to set the limits.
+
+   New in version 3.4.2.
+
+*asyncio.WriteTransport.set_write_buffer_limits:WriteTransport.set_write_buffer_limits(high=None, low=None)*
+
+   Set the *high* and *low* watermarks for write flow control.
+
+   These two values (measured in number of bytes) control when the protocol’s
+   |:asyncio.BaseProtocol.pause_writing:protocol.pause_writing()| and |:asyncio.BaseProtocol.resume_writing:protocol.resume_writing()| methods are called.
+   If specified, the low watermark must be less than or equal to the high
+   watermark.  Neither *high* nor *low* can be negative.
+
+   |:asyncio.BaseProtocol.pause_writing:pause_writing()| is called when the buffer size becomes greater than or equal
+   to the *high* value. If writing has been paused, |:asyncio.BaseProtocol.resume_writing:resume_writing()| is called
+   when the buffer size becomes less than or equal to the *low* value.
+
+   The defaults are implementation-specific.  If only the high watermark is given,
+   the low watermark defaults to an implementation-specific value less than or
+   equal to the high watermark.  Setting *high* to zero forces *low* to zero as
+   well, and causes |:asyncio.BaseProtocol.pause_writing:pause_writing()| to be called whenever the buffer becomes non-
+   empty.  Setting *low* to zero causes |:asyncio.BaseProtocol.resume_writing:resume_writing()| to be called only once
+   the buffer is empty. Use of zero for either limit is generally sub-optimal as it
+   reduces opportunities for doing I/O and computation concurrently.
+
+   Use |:asyncio.WriteTransport.get_write_buffer_limits:get_write_buffer_limits()| to get the limits.
+
+*asyncio.WriteTransport.write:WriteTransport.write(data)*
+
+   Write some *data* bytes to the transport.
+
+   This method does not block; it buffers the data and arranges for it to be sent
+   out asynchronously.
+
+*asyncio.WriteTransport.writelines:WriteTransport.writelines(list_of_data)*
+
+   Write a list (or any iterable) of data bytes to the transport. This is
+   functionally equivalent to calling |:asyncio.WriteTransport.write:write()| on each element yielded by the
+   iterable, but may be implemented more efficiently.
+
+*asyncio.WriteTransport.write_eof:WriteTransport.write_eof()*
+
+   Close the write end of the transport after flushing all buffered data. Data may
+   still be received.
+
+   This method can raise |:library/exceptions.txt/NotImplementedError:NotImplementedError| if the transport (e.g. SSL) doesn’t
+   support half-closed connections.
+
+## datagram-transports:Datagram Transports
+
+*asyncio.DatagramTransport.sendto:DatagramTransport.sendto(data, addr=None)*
+
+   Send the *data* bytes to the remote peer given by *addr* (a transport-dependent
+   target address).  If *addr* is |:library/constants.txt/None:None|, the data is sent to the target address
+   given on transport creation.
+
+   This method does not block; it buffers the data and arranges for it to be sent
+   out asynchronously.
+
+*asyncio.DatagramTransport.abort:DatagramTransport.abort()*
+
+   Close the transport immediately, without waiting for pending operations to
+   complete.  Buffered data will be lost. No more data will be received.  The
+   protocol’s |:asyncio.BaseProtocol.connection_lost:protocol.connection_lost()| method will eventually be called with
+   |:library/constants.txt/None:None| as its argument.
+
+*|asyncio-subprocess-transports:⚓|* ## subprocess-transports:Subprocess
+Transports
+
+*asyncio.SubprocessTransport.get_pid:SubprocessTransport.get_pid()*
+
+   Return the subprocess process id as an integer.
+
+*asyncio.SubprocessTransport.get_pipe_transport:SubprocessTransport.get_pipe_transport(fd)*
+
+   Return the transport for the communication pipe corresponding to the integer
+   file descriptor *fd*:
+
+   * "0": readable streaming transport of the standard input (*stdin*), or |:library/constants.txt/None:None| if
+     the subprocess was not created with "stdin=PIPE"
+
+   * "1": writable streaming transport of the standard output (*stdout*), or |:library/constants.txt/None:None|
+     if the subprocess was not created with "stdout=PIPE"
+
+   * "2": writable streaming transport of the standard error (*stderr*), or |:library/constants.txt/None:None| if
+     the subprocess was not created with "stderr=PIPE"
+
+   * other *fd*: |:library/constants.txt/None:None|
+
+*asyncio.SubprocessTransport.get_returncode:SubprocessTransport.get_returncode()*
+
+   Return the subprocess return code as an integer or |:library/constants.txt/None:None| if it hasn’t returned,
+   which is similar to the |:library/subprocess.txt/subprocess.Popen.returncode:subprocess.Popen.returncode| attribute.
+
+*asyncio.SubprocessTransport.kill:SubprocessTransport.kill()*
+
+   Kill the subprocess.
+
+   On POSIX systems, the function sends SIGKILL to the subprocess. On Windows, this
+   method is an alias for |:asyncio.SubprocessTransport.terminate:terminate()|.
+
+   See also |:library/subprocess.txt/subprocess.Popen.kill:subprocess.Popen.kill()|.
+
+*asyncio.SubprocessTransport.send_signal:SubprocessTransport.send_signal(signal)*
+
+   Send the *signal* number to the subprocess, as in
+   |:library/subprocess.txt/subprocess.Popen.send_signal:subprocess.Popen.send_signal()|.
+
+*asyncio.SubprocessTransport.terminate:SubprocessTransport.terminate()*
+
+   Stop the subprocess.
+
+   On POSIX systems, this method sends SIGTERM to the subprocess. On Windows, the
+   Windows API function TerminateProcess() is called to stop the subprocess.
+
+   See also |:library/subprocess.txt/subprocess.Popen.terminate:subprocess.Popen.terminate()|.
+
+*asyncio.SubprocessTransport.close:SubprocessTransport.close()*
+
+   Kill the subprocess by calling the |:asyncio.SubprocessTransport.kill:kill()| method.
+
+   If the subprocess hasn’t returned yet, and close transports of *stdin*, *stdout*
+   , and *stderr* pipes.
+
+*|asyncio-protocol:⚓|* # protocols:Protocols
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/asyncio/protocols.py:Lib/asyncio/protocols.py|
+
+======================================================================
+
+asyncio provides a set of abstract base classes that should be used to implement
+network protocols.  Those classes are meant to be used together with
+|:asyncio-transport:transports|.
+
+Subclasses of abstract base protocol classes may implement some or all methods.
+All these methods are callbacks: they are called by transports on certain
+events, for example when some data is received. A base protocol method should be
+called by the corresponding transport.
+
+## base-protocols:Base Protocols
+
+*asyncio.BaseProtocol:class asyncio.BaseProtocol*
+
+   Base protocol with methods that all protocols share.
+
+*asyncio.Protocol:class asyncio.Protocol(BaseProtocol)*
+
+   The base class for implementing streaming protocols (TCP, Unix sockets, etc).
+
+*asyncio.BufferedProtocol:class asyncio.BufferedProtocol(BaseProtocol)*
+
+   A base class for implementing streaming protocols with manual control of the
+   receive buffer.
+
+*asyncio.DatagramProtocol:class asyncio.DatagramProtocol(BaseProtocol)*
+
+   The base class for implementing datagram (UDP) protocols.
+
+*asyncio.SubprocessProtocol:class asyncio.SubprocessProtocol(BaseProtocol)*
+
+   The base class for implementing protocols communicating with child processes
+   (unidirectional pipes).
+
+## base-protocol:Base Protocol
+
+All asyncio protocols can implement Base Protocol callbacks.
+
+-[ Connection Callbacks ]-
+
+Connection callbacks are called on all protocols, exactly once per a successful
+connection.  All other protocol callbacks can only be called between those two
+methods.
+
+*asyncio.BaseProtocol.connection_made:BaseProtocol.connection_made(transport)*
+
+   Called when a connection is made.
+
+   The *transport* argument is the transport representing the connection.  The
+   protocol is responsible for storing the reference to its transport.
+
+*asyncio.BaseProtocol.connection_lost:BaseProtocol.connection_lost(exc)*
+
+   Called when the connection is lost or closed.
+
+   The argument is either an exception object or |:library/constants.txt/None:None|. The latter means a regular
+   EOF is received, or the connection was aborted or closed by this side of the
+   connection.
+
+-[ Flow Control Callbacks ]-
+
+Flow control callbacks can be called by transports to pause or resume writing
+performed by the protocol.
+
+See the documentation of the |:asyncio.WriteTransport.set_write_buffer_limits:set_write_buffer_limits()| method for more
+details.
+
+*asyncio.BaseProtocol.pause_writing:BaseProtocol.pause_writing()*
+
+   Called when the transport’s buffer goes over the high watermark.
+
+*asyncio.BaseProtocol.resume_writing:BaseProtocol.resume_writing()*
+
+   Called when the transport’s buffer drains below the low watermark.
+
+If the buffer size equals the high watermark, |:asyncio.BaseProtocol.pause_writing:pause_writing()| is not called:
+the buffer size must go strictly over.
+
+Conversely, |:asyncio.BaseProtocol.resume_writing:resume_writing()| is called when the buffer size is equal or lower
+than the low watermark.  These end conditions are important to ensure that
+things go as expected when either mark is zero.
+
+## streaming-protocols:Streaming Protocols
+
+Event methods, such as |:library/asyncio-eventloop.txt/asyncio.loop.create_server:loop.create_server()|, |:library/asyncio-eventloop.txt/asyncio.loop.create_unix_server:loop.create_unix_server()|,
+|:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()|, |:library/asyncio-eventloop.txt/asyncio.loop.create_unix_connection:loop.create_unix_connection()|,
+|:library/asyncio-eventloop.txt/asyncio.loop.connect_accepted_socket:loop.connect_accepted_socket()|, |:library/asyncio-eventloop.txt/asyncio.loop.connect_read_pipe:loop.connect_read_pipe()|, and
+|:library/asyncio-eventloop.txt/asyncio.loop.connect_write_pipe:loop.connect_write_pipe()| accept factories that return streaming protocols.
+
+*asyncio.Protocol.data_received:Protocol.data_received(data)*
+
+   Called when some data is received.  *data* is a non-empty bytes object
+   containing the incoming data.
+
+   Whether the data is buffered, chunked or reassembled depends on the transport.
+   In general, you shouldn’t rely on specific semantics and instead make your
+   parsing generic and flexible. However, data is always received in the correct
+   order.
+
+   The method can be called an arbitrary number of times while a connection is
+   open.
+
+   However, |:asyncio.Protocol.eof_received:protocol.eof_received()| is called at most once.  Once *eof_received()
+   * is called, "data_received()" is not called anymore.
+
+*asyncio.Protocol.eof_received:Protocol.eof_received()*
+
+   Called when the other end signals it won’t send any more data (for example by
+   calling |:asyncio.WriteTransport.write_eof:transport.write_eof()|, if the other end also uses asyncio).
+
+   This method may return a false value (including "None"), in which case the
+   transport will close itself.  Conversely, if this method returns a true value,
+   the protocol used determines whether to close the transport. Since the default
+   implementation returns "None", it implicitly closes the connection.
+
+   Some transports, including SSL, don’t support half-closed connections, in which
+   case returning true from this method will result in the connection being closed.
+
+State machine:
+
+```rst
+start -> connection_made
+    [-> data_received]*
+    [-> eof_received]?
+-> connection_lost -> end
+```
+
+## buffered-streaming-protocols:Buffered Streaming Protocols
+
+New in version 3.7: *Important:* this has been added to asyncio in Python 3.7 *
+on a provisional basis*!  This is as an experimental API that might be changed
+or removed completely in Python 3.8.
+
+Buffered Protocols can be used with any event loop method that supports
+|:streaming-protocols:Streaming Protocols|.
+
+"BufferedProtocol" implementations allow explicit manual allocation and control
+of the receive buffer.  Event loops can then use the buffer provided by the
+protocol to avoid unnecessary data copies.  This can result in noticeable
+performance improvement for protocols that receive big amounts of data.
+Sophisticated protocol implementations can significantly reduce the number of
+buffer allocations.
+
+The following callbacks are called on |:asyncio.BufferedProtocol:BufferedProtocol| instances:
+
+*asyncio.BufferedProtocol.get_buffer:BufferedProtocol.get_buffer(sizehint)*
+
+   Called to allocate a new receive buffer.
+
+   *sizehint* is the recommended minimum size for the returned buffer.  It is
+   acceptable to return smaller or larger buffers than what *sizehint* suggests.
+   When set to -1, the buffer size can be arbitrary. It is an error to return a
+   buffer with a zero size.
+
+   "get_buffer()" must return an object implementing the |:c-api/buffer.txt/bufferobjects:buffer protocol|.
+
+*asyncio.BufferedProtocol.buffer_updated:BufferedProtocol.buffer_updated(nbytes)*
+
+   Called when the buffer was updated with the received data.
+
+   *nbytes* is the total number of bytes that were written to the buffer.
+
+*asyncio.BufferedProtocol.eof_received:BufferedProtocol.eof_received()*
+
+   See the documentation of the |:asyncio.Protocol.eof_received:protocol.eof_received()| method.
+
+|:asyncio.BufferedProtocol.get_buffer:get_buffer()| can be called an arbitrary number of times during a connection.
+However, |:asyncio.Protocol.eof_received:protocol.eof_received()| is called at most once and, if called,
+|:asyncio.BufferedProtocol.get_buffer:get_buffer()| and |:asyncio.BufferedProtocol.buffer_updated:buffer_updated()| won’t be called after it.
+
+State machine:
+
+```rst
+start -> connection_made
+    [-> get_buffer
+        [-> buffer_updated]?
+    ]*
+    [-> eof_received]?
+-> connection_lost -> end
+```
+
+## datagram-protocols:Datagram Protocols
+
+Datagram Protocol instances should be constructed by protocol factories passed
+to the |:library/asyncio-eventloop.txt/asyncio.loop.create_datagram_endpoint:loop.create_datagram_endpoint()| method.
+
+*asyncio.DatagramProtocol.datagram_received:DatagramProtocol.datagram_received(data, addr)*
+
+   Called when a datagram is received.  *data* is a bytes object containing the
+   incoming data.  *addr* is the address of the peer sending the data; the exact
+   format depends on the transport.
+
+*asyncio.DatagramProtocol.error_received:DatagramProtocol.error_received(exc)*
+
+   Called when a previous send or receive operation raises an |:library/exceptions.txt/OSError:OSError|.  *exc* is
+   the |:library/exceptions.txt/OSError:OSError| instance.
+
+   This method is called in rare conditions, when the transport (e.g. UDP) detects
+   that a datagram could not be delivered to its recipient. In many conditions
+   though, undeliverable datagrams will be silently dropped.
+
+Note:
+
+  On BSD systems (macOS, FreeBSD, etc.) flow control is not supported for datagram
+  protocols, because there is no reliable way to detect send failures caused by
+  writing too many packets.The socket always appears ‘ready’ and excess packets
+  are dropped. An |:library/exceptions.txt/OSError:OSError| with "errno" set to |:library/errno.txt/errno.ENOBUFS:errno.ENOBUFS| may or may not be
+  raised; if it is raised, it will be reported to
+  |:asyncio.DatagramProtocol.error_received:DatagramProtocol.error_received()| but otherwise ignored.
+
+*|asyncio-subprocess-protocols:⚓|* ## subprocess-protocols:Subprocess Protocols
+
+Datagram Protocol instances should be constructed by protocol factories passed
+to the |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_exec:loop.subprocess_exec()| and |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_shell:loop.subprocess_shell()| methods.
+
+*asyncio.SubprocessProtocol.pipe_data_received:SubprocessProtocol.pipe_data_received(fd, data)*
+
+   Called when the child process writes data into its stdout or stderr pipe.
+
+   *fd* is the integer file descriptor of the pipe.
+
+   *data* is a non-empty bytes object containing the received data.
+
+*asyncio.SubprocessProtocol.pipe_connection_lost:SubprocessProtocol.pipe_connection_lost(fd, exc)*
+
+   Called when one of the pipes communicating with the child process is closed.
+
+   *fd* is the integer file descriptor that was closed.
+
+*asyncio.SubprocessProtocol.process_exited:SubprocessProtocol.process_exited()*
+
+   Called when the child process has exited.
+
+# examples:Examples## tcp-echo-server:TCP Echo Server
+
+Create a TCP echo server using the |:library/asyncio-eventloop.txt/asyncio.loop.create_server:loop.create_server()| method, send back
+received data, and close the connection:
+
+```rst
+import asyncio
+
+
+class EchoServerProtocol(asyncio.Protocol):
+    def connection_made(self, transport):
+        peername = transport.get_extra_info('peername')
+        print('Connection from {}'.format(peername))
+        self.transport = transport
+
+    def data_received(self, data):
+        message = data.decode()
+        print('Data received: {!r}'.format(message))
+
+        print('Send: {!r}'.format(message))
+        self.transport.write(data)
+
+        print('Close the client socket')
+        self.transport.close()
+
+
+async def main():
+    # Get a reference to the event loop as we plan to use
+    # low-level APIs.
+    loop = asyncio.get_running_loop()
+
+    server = await loop.create_server(
+        lambda: EchoServerProtocol(),
+        '127.0.0.1', 8888)
+
+    async with server:
+        await server.serve_forever()
+
+
+asyncio.run(main())
+```
+
+See also:
+
+  The |:library/asyncio-stream.txt/asyncio-tcp-echo-server-streams:TCP echo server using streams| example uses the high-level
+  |:library/asyncio-stream.txt/asyncio.start_server:asyncio.start_server()| function.
+
+*|asyncio-example-tcp-echo-client-protocol:⚓|* ## tcp-echo-client:TCP Echo
+Client
+
+A TCP echo client using the |:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()| method, sends data, and
+waits until the connection is closed:
+
+```rst
+import asyncio
+
+
+class EchoClientProtocol(asyncio.Protocol):
+    def __init__(self, message, on_con_lost):
+        self.message = message
+        self.on_con_lost = on_con_lost
+
+    def connection_made(self, transport):
+        transport.write(self.message.encode())
+        print('Data sent: {!r}'.format(self.message))
+
+    def data_received(self, data):
+        print('Data received: {!r}'.format(data.decode()))
+
+    def connection_lost(self, exc):
+        print('The server closed the connection')
+        self.on_con_lost.set_result(True)
+
+
+async def main():
+    # Get a reference to the event loop as we plan to use
+    # low-level APIs.
+    loop = asyncio.get_running_loop()
+
+    on_con_lost = loop.create_future()
+    message = 'Hello World!'
+
+    transport, protocol = await loop.create_connection(
+        lambda: EchoClientProtocol(message, on_con_lost),
+        '127.0.0.1', 8888)
+
+    # Wait until the protocol signals that the connection
+    # is lost and close the transport.
+    try:
+        await on_con_lost
+    finally:
+        transport.close()
+
+
+asyncio.run(main())
+```
+
+See also:
+
+  The |:library/asyncio-stream.txt/asyncio-tcp-echo-client-streams:TCP echo client using streams| example uses the high-level
+  |:library/asyncio-stream.txt/asyncio.open_connection:asyncio.open_connection()| function.
+
+*|asyncio-udp-echo-server-protocol:⚓|* ## udp-echo-server:UDP Echo Server
+
+A UDP echo server, using the |:library/asyncio-eventloop.txt/asyncio.loop.create_datagram_endpoint:loop.create_datagram_endpoint()| method, sends
+back received data:
+
+```rst
+import asyncio
+
+
+class EchoServerProtocol:
+    def connection_made(self, transport):
+        self.transport = transport
+
+    def datagram_received(self, data, addr):
+        message = data.decode()
+        print('Received %r from %s' % (message, addr))
+        print('Send %r to %s' % (message, addr))
+        self.transport.sendto(data, addr)
+
+
+async def main():
+    print("Starting UDP server")
+
+    # Get a reference to the event loop as we plan to use
+    # low-level APIs.
+    loop = asyncio.get_running_loop()
+
+    # One protocol instance will be created to serve all
+    # client requests.
+    transport, protocol = await loop.create_datagram_endpoint(
+        lambda: EchoServerProtocol(),
+        local_addr=('127.0.0.1', 9999))
+
+    try:
+        await asyncio.sleep(3600)  # Serve for 1 hour.
+    finally:
+        transport.close()
+
+
+asyncio.run(main())
+```
+
+*|asyncio-udp-echo-client-protocol:⚓|* ## udp-echo-client:UDP Echo Client
+
+A UDP echo client, using the |:library/asyncio-eventloop.txt/asyncio.loop.create_datagram_endpoint:loop.create_datagram_endpoint()| method, sends
+data and closes the transport when it receives the answer:
+
+```rst
+import asyncio
+
+
+class EchoClientProtocol:
+    def __init__(self, message, on_con_lost):
+        self.message = message
+        self.on_con_lost = on_con_lost
+        self.transport = None
+
+    def connection_made(self, transport):
+        self.transport = transport
+        print('Send:', self.message)
+        self.transport.sendto(self.message.encode())
+
+    def datagram_received(self, data, addr):
+        print("Received:", data.decode())
+
+        print("Close the socket")
+        self.transport.close()
+
+    def error_received(self, exc):
+        print('Error received:', exc)
+
+    def connection_lost(self, exc):
+        print("Connection closed")
+        self.on_con_lost.set_result(True)
+
+
+async def main():
+    # Get a reference to the event loop as we plan to use
+    # low-level APIs.
+    loop = asyncio.get_running_loop()
+
+    on_con_lost = loop.create_future()
+    message = "Hello World!"
+
+    transport, protocol = await loop.create_datagram_endpoint(
+        lambda: EchoClientProtocol(message, on_con_lost),
+        remote_addr=('127.0.0.1', 9999))
+
+    try:
+        await on_con_lost
+    finally:
+        transport.close()
+
+
+asyncio.run(main())
+```
+
+*|asyncio-example-create-connection:⚓|* ## connecting-existing-sockets:
+Connecting Existing Sockets
+
+Wait until a socket receives data using the |:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()| method
+with a protocol:
+
+```rst
+import asyncio
+import socket
+
+
+class MyProtocol(asyncio.Protocol):
+
+    def __init__(self, on_con_lost):
+        self.transport = None
+        self.on_con_lost = on_con_lost
+
+    def connection_made(self, transport):
+        self.transport = transport
+
+    def data_received(self, data):
+        print("Received:", data.decode())
+
+        # We are done: close the transport;
+        # connection_lost() will be called automatically.
+        self.transport.close()
+
+    def connection_lost(self, exc):
+        # The socket has been closed
+        self.on_con_lost.set_result(True)
+
+
+async def main():
+    # Get a reference to the event loop as we plan to use
+    # low-level APIs.
+    loop = asyncio.get_running_loop()
+    on_con_lost = loop.create_future()
+
+    # Create a pair of connected sockets
+    rsock, wsock = socket.socketpair()
+
+    # Register the socket to wait for data.
+    transport, protocol = await loop.create_connection(
+        lambda: MyProtocol(on_con_lost), sock=rsock)
+
+    # Simulate the reception of data from the network.
+    loop.call_soon(wsock.send, 'abc'.encode())
+
+    try:
+        await protocol.on_con_lost
+    finally:
+        transport.close()
+        wsock.close()
+
+asyncio.run(main())
+```
+
+See also:
+
+  The |:library/asyncio-eventloop.txt/asyncio-example-watch-fd:watch a file descriptor for read events| example uses the low-level
+  |:library/asyncio-eventloop.txt/asyncio.loop.add_reader:loop.add_reader()| method to register an FD.
+
+  The |:library/asyncio-stream.txt/asyncio-example-create-connection-streams:register an open socket to wait for data using streams| example uses high-
+  level streams created by the |:library/asyncio-stream.txt/asyncio.open_connection:open_connection()| function in a coroutine.
+
+*|asyncio-example-subprocess-proto:⚓|* ## loop-subprocess-exec-and-
+subprocessprotocol:loop.subprocess_exec() and SubprocessProtocol
+
+An example of a subprocess protocol used to get the output of a subprocess and
+to wait for the subprocess exit.
+
+The subprocess is created by the |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_exec:loop.subprocess_exec()| method:
+
+```rst
+import asyncio
+import sys
+
+class DateProtocol(asyncio.SubprocessProtocol):
+    def __init__(self, exit_future):
+        self.exit_future = exit_future
+        self.output = bytearray()
+
+    def pipe_data_received(self, fd, data):
+        self.output.extend(data)
+
+    def process_exited(self):
+        self.exit_future.set_result(True)
+
+async def get_date():
+    # Get a reference to the event loop as we plan to use
+    # low-level APIs.
+    loop = asyncio.get_running_loop()
+
+    code = 'import datetime; print(datetime.datetime.now())'
+    exit_future = asyncio.Future(loop=loop)
+
+    # Create the subprocess controlled by DateProtocol;
+    # redirect the standard output into a pipe.
+    transport, protocol = await loop.subprocess_exec(
+        lambda: DateProtocol(exit_future),
+        sys.executable, '-c', code,
+        stdin=None, stderr=None)
+
+    # Wait for the subprocess exit using the process_exited()
+    # method of the protocol.
+    await exit_future
+
+    # Close the stdout pipe.
+    transport.close()
+
+    # Read the output which was collected by the
+    # pipe_data_received() method of the protocol.
+    data = bytes(protocol.output)
+    return data.decode('ascii').rstrip()
+
+date = asyncio.run(get_date())
+print(f"Current date: {date}")
+```
+
+See also the |:library/asyncio-subprocess.txt/asyncio-example-create-subprocess-exec:same example| written using high-level APIs.
+
+
+

@@ -1,0 +1,195 @@
+%hyperhelp title="email.utils" date="2021-07-11"
+*|module-email.utils:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/email/utils.py:Lib/email/utils.py|
+
+======================================================================
+
+There are a couple of useful utilities provided in the |:module-email.utils:email.utils| module:
+
+*email.utils.localtime:email.utils.localtime(dt=None)*
+
+   Return local time as an aware datetime object.  If called without arguments,
+   return current time.  Otherwise *dt* argument should be a |:library/datetime.txt/datetime.datetime:datetime| instance,
+   and it is converted to the local time zone according to the system time zone
+   database.  If *dt* is naive (that is, "dt.tzinfo" is "None"), it is assumed to
+   be in local time.  In this case, a positive or zero value for *isdst* causes "
+   localtime" to presume initially that summer time (for example, Daylight Saving
+   Time) is or is not (respectively) in effect for the specified time.  A negative
+   value for *isdst* causes the "localtime" to attempt to divine whether summer
+   time is in effect for the specified time.
+
+   New in version 3.3.
+
+*email.utils.make_msgid:email.utils.make_msgid(idstring=None, domain=None)*
+
+   Returns a string suitable for an *|index-0:⚓|* |:tools.ietf.org/html/rfc2822.html:RFC 2822|-compliant *Message-ID*
+   header.  Optional *idstring* if given, is a string used to strengthen the
+   uniqueness of the message id.  Optional *domain* if given provides the portion
+   of the msgid after the ‘@’.  The default is the local hostname.  It is not
+   normally necessary to override this default, but may be useful certain cases,
+   such as a constructing distributed system that uses a consistent domain name
+   across multiple hosts.
+
+   Changed in version 3.2: Added the *domain* keyword.
+
+The remaining functions are part of the legacy ("Compat32") email API.  There is
+no need to directly use these with the new API, since the parsing and formatting
+they provide is done automatically by the header parsing machinery of the new
+API.
+
+*email.utils.quote:email.utils.quote(str)*
+
+   Return a new string with backslashes in *str* replaced by two backslashes, and
+   double quotes replaced by backslash-double quote.
+
+*email.utils.unquote:email.utils.unquote(str)*
+
+   Return a new string which is an *unquoted* version of *str*. If *str* ends and
+   begins with double quotes, they are stripped off.  Likewise if *str* ends and
+   begins with angle brackets, they are stripped off.
+
+*email.utils.parseaddr:email.utils.parseaddr(address)*
+
+   Parse address – which should be the value of some address-containing field such
+   as *To* or *Cc* – into its constituent *realname* and *email address* parts.
+   Returns a tuple of that information, unless the parse fails, in which case a
+   2-tuple of "('', '')" is returned.
+
+*email.utils.formataddr:email.utils.formataddr(pair, charset='utf-8')*
+
+   The inverse of |:email.utils.parseaddr:parseaddr()|, this takes a 2-tuple of the form "(realname,
+   email_address)" and returns the string value suitable for a *To* or *Cc* header.
+   If the first element of *pair* is false, then the second element is returned
+   unmodified.
+
+   Optional *charset* is the character set that will be used in the *|index-1:⚓|*
+   |:tools.ietf.org/html/rfc2047.html:RFC 2047| encoding of the "realname" if the "realname" contains non-ASCII
+   characters.  Can be an instance of |:library/stdtypes.txt/str:str| or a |:library/email.charset.txt/email.charset.Charset:Charset|.  Defaults to "utf-8".
+
+   Changed in version 3.3: Added the *charset* option.
+
+*email.utils.getaddresses:email.utils.getaddresses(fieldvalues)*
+
+   This method returns a list of 2-tuples of the form returned by "parseaddr()". *
+   fieldvalues* is a sequence of header field values as might be returned by
+   |:library/email.compat32-message.txt/email.message.Message.get_all:Message.get_all|.  Here’s a simple example that gets all the recipients of a
+   message:
+
+```rst
+from email.utils import getaddresses
+
+tos = msg.get_all('to', [])
+ccs = msg.get_all('cc', [])
+resent_tos = msg.get_all('resent-to', [])
+resent_ccs = msg.get_all('resent-cc', [])
+all_recipients = getaddresses(tos + ccs + resent_tos + resent_ccs)
+```
+
+*email.utils.parsedate:email.utils.parsedate(date)*
+
+   Attempts to parse a date according to the rules in *|index-2:⚓|* |:tools.ietf.org/html/rfc2822.html:RFC 2822|.
+   however, some mailers don’t follow that format as specified, so |:email.utils.parsedate:parsedate()|
+   tries to guess correctly in such cases.  *date* is a string containing an
+   *|index-3:⚓|* |:tools.ietf.org/html/rfc2822.html:RFC 2822| date, such as  ""Mon, 20 Nov 1995 19:12:08 -0500"".  If
+   it succeeds in parsing the date, |:email.utils.parsedate:parsedate()| returns a 9-tuple that can be
+   passed directly to |:library/time.txt/time.mktime:time.mktime()|; otherwise "None" will be returned.  Note
+   that indexes 6, 7, and 8 of the result tuple are not usable.
+
+*email.utils.parsedate_tz:email.utils.parsedate_tz(date)*
+
+   Performs the same function as |:email.utils.parsedate:parsedate()|, but returns either "None" or a
+   10-tuple; the first 9 elements make up a tuple that can be passed directly to
+   |:library/time.txt/time.mktime:time.mktime()|, and the tenth is the offset of the date’s timezone from UTC
+   (which is the official term for Greenwich Mean Time) [1].  If the input string
+   has no timezone, the last element of the tuple returned is "0", which represents
+   UTC. Note that indexes 6, 7, and 8 of the result tuple are not usable.
+
+*email.utils.parsedate_to_datetime:email.utils.parsedate_to_datetime(date)*
+
+   The inverse of |:email.utils.format_datetime:format_datetime()|.  Performs the same function as |:email.utils.parsedate:parsedate()|
+   , but on success returns a |:library/datetime.txt/datetime.datetime:datetime|.  If the input date has a timezone of "
+   -0000", the "datetime" will be a naive "datetime", and if the date is conforming
+   to the RFCs it will represent a time in UTC but with no indication of the actual
+   source timezone of the message the date comes from.  If the input date has any
+   other valid timezone offset, the "datetime" will be an aware "datetime" with the
+   corresponding a |:library/datetime.txt/datetime.timezone:timezone| |:library/datetime.txt/datetime.tzinfo:tzinfo|.
+
+   New in version 3.3.
+
+*email.utils.mktime_tz:email.utils.mktime_tz(tuple)*
+
+   Turn a 10-tuple as returned by |:email.utils.parsedate_tz:parsedate_tz()| into a UTC timestamp (seconds
+   since the Epoch).  If the timezone item in the tuple is "None", assume local
+   time.
+
+*email.utils.formatdate:email.utils.formatdate(timeval=None, localtime=False, usegmt=False)*
+
+   Returns a date string as per *|index-4:⚓|* |:tools.ietf.org/html/rfc2822.html:RFC 2822|, e.g.:
+
+```rst
+Fri, 09 Nov 2001 01:08:47 -0000
+```
+
+   Optional *timeval* if given is a floating point time value as accepted by
+   |:library/time.txt/time.gmtime:time.gmtime()| and |:library/time.txt/time.localtime:time.localtime()|, otherwise the current time is used.
+
+   Optional *localtime* is a flag that when "True", interprets *timeval*, and
+   returns a date relative to the local timezone instead of UTC, properly taking
+   daylight savings time into account. The default is "False" meaning UTC is used.
+
+   Optional *usegmt* is a flag that when "True", outputs a  date string with the
+   timezone as an ascii string "GMT", rather than a numeric "-0000". This is needed
+   for some protocols (such as HTTP). This only applies when *localtime* is "False"
+   .  The default is "False".
+
+*email.utils.format_datetime:email.utils.format_datetime(dt, usegmt=False)*
+
+   Like "formatdate", but the input is a |:library/datetime.txt/module-datetime:datetime| instance.  If it is a naive
+   datetime, it is assumed to be “UTC with no information about the source
+   timezone”, and the conventional "-0000" is used for the timezone. If it is an
+   aware "datetime", then the numeric timezone offset is used. If it is an aware
+   timezone with offset zero, then *usegmt* may be set to "True", in which case the
+   string "GMT" is used instead of the numeric timezone offset.  This provides a
+   way to generate standards conformant HTTP date headers.
+
+   New in version 3.3.
+
+*email.utils.decode_rfc2231:email.utils.decode_rfc2231(s)*
+
+   Decode the string *s* according to *|index-5:⚓|* |:tools.ietf.org/html/rfc2231.html:RFC 2231|.
+
+*email.utils.encode_rfc2231:email.utils.encode_rfc2231(s, charset=None, language=None)*
+
+   Encode the string *s* according to *|index-6:⚓|* |:tools.ietf.org/html/rfc2231.html:RFC 2231|.  Optional *charset*
+   and *language*, if given is the character set name and language name to use.  If
+   neither is given, *s* is returned as-is.  If *charset* is given but *language*
+   is not, the string is encoded using the empty string for *language*.
+
+*email.utils.collapse_rfc2231_value:email.utils.collapse_rfc2231_value(value, errors='replace', fallback_charset='us-ascii')*
+
+   When a header parameter is encoded in *|index-7:⚓|* |:tools.ietf.org/html/rfc2231.html:RFC 2231| format,
+   |:library/email.compat32-message.txt/email.message.Message.get_param:Message.get_param| may return a 3-tuple containing the character set, language,
+   and value.  |:email.utils.collapse_rfc2231_value:collapse_rfc2231_value()| turns this into a unicode string.
+   Optional *errors* is passed to the *errors* argument of |:library/stdtypes.txt/str:str|’s |:library/stdtypes.txt/str.encode:encode()|
+   method; it defaults to "'replace'".  Optional *fallback_charset* specifies the
+   character set to use if the one in the *|index-8:⚓|* |:tools.ietf.org/html/rfc2231.html:RFC 2231| header is not
+   known by Python; it defaults to "'us-ascii'".
+
+   For convenience, if the *value* passed to |:email.utils.collapse_rfc2231_value:collapse_rfc2231_value()| is not a
+   tuple, it should be a string and it is returned unquoted.
+
+*email.utils.decode_params:email.utils.decode_params(params)*
+
+   Decode parameters list according to *|index-9:⚓|* |:tools.ietf.org/html/rfc2231.html:RFC 2231|.  *params* is a
+   sequence of 2-tuples containing elements of the form "(content-type, string-
+   value)".
+
+-[ Footnotes ]-
+
+[1] Note that the sign of the timezone offset is the opposite of the sign of the "
+    time.timezone" variable for the same timezone; the latter variable follows the
+    POSIX standard while this module follows *|index-10:⚓|* |:tools.ietf.org/html/rfc2822.html:RFC 2822|.
+
+
+

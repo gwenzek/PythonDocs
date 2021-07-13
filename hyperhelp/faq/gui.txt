@@ -1,0 +1,128 @@
+%hyperhelp title="Graphic User Interface FAQ" date="2021-07-11"
+*|graphic-user-interface-faq:⚓|*
+
+# general-gui-questions:General GUI Questions# what-platform-independent-gui-
+toolkits-exist-for-python:What platform-independent GUI toolkits exist for
+Python?
+
+Depending on what platform(s) you are aiming at, there are several.  Some of
+them haven’t been ported to Python 3 yet.  At least |:tkinter:Tkinter| and |:qt:Qt| are known
+to be Python 3-compatible.
+
+## tkinter:Tkinter
+
+Standard builds of Python include an object-oriented interface to the Tcl/Tk
+widget set, called |:library/tk.txt/tkinter:tkinter|.  This is probably the easiest to install (since it
+comes included with most |:www.python.org/downloads:binary distributions|*|binary-distributions:⚓|*  of
+Python) and use. For more info about Tk, including pointers to the source, see
+the |:www.tcl.tk:Tcl/Tk home page|*|tcl-tk-home-page:⚓|* .  Tcl/Tk is fully portable to the
+Mac OS X, Windows, and Unix platforms.
+
+## wxwidgets:wxWidgets
+
+wxWidgets (|:www.wxwidgets.org:https://www.wxwidgets.org|) is a free, portable GUI class library
+written in C++ that provides a native look and feel on a number of platforms,
+with Windows, Mac OS X, GTK, X11, all listed as current stable targets.
+Language bindings are available for a number of languages including Python,
+Perl, Ruby, etc.
+
+|:www.wxpython.org:wxPython|*|wxpython:⚓|*  is the Python binding for wxwidgets.  While it often
+lags slightly behind the official wxWidgets releases, it also offers a number of
+features via pure Python extensions that are not available in other language
+bindings.  There is an active wxPython user and developer community.
+
+Both wxWidgets and wxPython are free, open source, software with permissive
+licences that allow their use in commercial products as well as in freeware or
+shareware.
+
+## qt:Qt
+
+There are bindings available for the Qt toolkit (using either |:riverbankcomputing.com/software/pyqt/intro:PyQt|*|pyqt:⚓|* 
+or |:wiki.qt.io/PySide:PySide|*|pyside:⚓|* ) and for KDE (|:techbase.kde.org/Languages/Python/Using_PyKDE_4:PyKDE4|). PyQt is currently more mature
+than PySide, but you must buy a PyQt license from |:www.riverbankcomputing.com/commercial/license-faq:Riverbank Computing|
+*|riverbank-computing:⚓|*  if you want to write proprietary applications.
+PySide is free for all applications.
+
+Qt 4.5 upwards is licensed under the LGPL license; also, commercial licenses are
+available from |:www.qt.io/licensing:The Qt Company|*|the-qt-company:⚓|* .
+
+## gtk:Gtk+
+
+The |:wiki.gnome.org/Projects/PyGObject:GObject introspection bindings|*|gobject-introspection-bindings:⚓|*  for
+Python allow you to write GTK+ 3 applications.  There is also a
+|:python-gtk-3-tutorial.readthedocs.io:Python GTK+ 3 Tutorial|*|python-gtk-3-tutorial:⚓|* .
+
+The older PyGtk bindings for the |:www.gtk.org:Gtk+ 2 toolkit|*|gtk-2-toolkit:⚓|*  have been
+implemented by James Henstridge; see <|:www.pygtk.org:http://www.pygtk.org|>.
+
+## kivy:Kivy
+
+|:kivy.org:Kivy|*|id1:⚓|*  is a cross-platform GUI library supporting both desktop
+operating systems (Windows, macOS, Linux) and mobile devices (Android, iOS).  It
+is written in Python and Cython, and can use a range of windowing backends.
+
+Kivy is free and open source software distributed under the MIT license.
+
+## fltk:FLTK
+
+Python bindings for |:www.fltk.org:the FLTK toolkit|*|the-fltk-toolkit:⚓|* , a simple yet
+powerful and mature cross-platform windowing system, are available from
+|:pyfltk.sourceforge.net:the
+PyFLTK project|*|the-pyfltk-project:⚓|* .
+
+## opengl:OpenGL
+
+For OpenGL bindings, see |:pyopengl.sourceforge.net:PyOpenGL|*|pyopengl:⚓|* .
+
+# what-platform-specific-gui-toolkits-exist-for-python:What platform-specific
+GUI toolkits exist for Python?
+
+By installing the |:pypi.org/project/pyobjc:PyObjc Objective-C bridge|*|pyobjc-objective-c-bridge:⚓|* ,
+Python programs can use Mac OS X’s Cocoa libraries.
+
+|:faq/windows.txt/windows-faq:Pythonwin| by Mark Hammond includes an interface to the Microsoft Foundation
+Classes and a Python programming environment that’s written mostly in Python
+using the MFC classes.
+
+# tkinter-questions:Tkinter questions## how-do-i-freeze-tkinter-applications:How
+do I freeze Tkinter applications?
+
+Freeze is a tool to create stand-alone applications.  When freezing Tkinter
+applications, the applications will not be truly stand-alone, as the application
+will still need the Tcl and Tk libraries.
+
+One solution is to ship the application with the Tcl and Tk libraries, and point
+to them at run-time using the *|index-0:⚓|* "TCL_LIBRARY" and *|index-1:⚓|* "
+TK_LIBRARY" environment variables.
+
+To get truly stand-alone applications, the Tcl scripts that form the library
+have to be integrated into the application as well. One tool supporting that is
+SAM (stand-alone modules), which is part of the Tix distribution (
+|:tix.sourceforge.net:http://tix.sourceforge.net/|).
+
+Build Tix with SAM enabled, perform the appropriate call to "Tclsam_init()",
+etc. inside Python’s "Modules/tkappinit.c", and link with libtclsam and libtksam
+(you might include the Tix libraries as well).
+
+## can-i-have-tk-events-handled-while-waiting-for-i-o:Can I have Tk events
+handled while waiting for I/O?
+
+On platforms other than Windows, yes, and you don’t even need threads!  But
+you’ll have to restructure your I/O code a bit.  Tk has the equivalent of Xt’s "
+XtAddInput()" call, which allows you to register a callback function which will
+be called from the Tk mainloop when I/O is possible on a file descriptor.  See
+|:library/tkinter.txt/tkinter-file-handlers:File Handlers|.
+
+## i-can-t-get-key-bindings-to-work-in-tkinter-why:I can’t get key bindings to
+work in Tkinter: why?
+
+An often-heard complaint is that event handlers bound to events with the "bind()
+" method don’t get handled even when the appropriate key is pressed.
+
+The most common cause is that the widget to which the binding applies doesn’t
+have “keyboard focus”.  Check out the Tk documentation for the focus command.
+Usually a widget is given the keyboard focus by clicking in it (but not for
+labels; see the takefocus option).
+
+
+

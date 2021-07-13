@@ -1,0 +1,106 @@
+%hyperhelp title="Debugging and Profiling" date="2021-07-11"
+*|debugging-and-profiling:⚓|*
+
+These libraries help you with Python development: the debugger enables you to
+step through code, analyze stack frames and set breakpoints etc., and the
+profilers run code and give you a detailed breakdown of execution times,
+allowing you to identify bottlenecks in your programs. Auditing events provide
+visibility into runtime behaviors that would otherwise require intrusive
+debugging or patching.
+
+* |:library/audit_events.txt:Audit events table|
+
+* |:library/bdb.txt:bdb — Debugger framework|
+
+* |:library/faulthandler.txt:faulthandler — Dump the Python traceback|
+
+  * |:library/faulthandler.txt/dumping-the-traceback:Dumping the traceback|
+
+  * |:library/faulthandler.txt/fault-handler-state:Fault handler state|
+
+  * |:library/faulthandler.txt/dumping-the-tracebacks-after-a-timeout:Dumping the tracebacks after a timeout|
+
+  * |:library/faulthandler.txt/dumping-the-traceback-on-a-user-signal:Dumping the traceback on a user signal|
+
+  * |:library/faulthandler.txt/issue-with-file-descriptors:Issue with file descriptors|
+
+  * |:library/faulthandler.txt/example:Example|
+
+* |:library/pdb.txt:pdb — The Python Debugger|
+
+  * |:library/pdb.txt/debugger-commands:Debugger Commands|
+
+* |:library/profile.txt:The Python Profilers|
+
+  * |:library/profile.txt/introduction-to-the-profilers:Introduction to the profilers|
+
+  * |:library/profile.txt/instant-user-s-manual:Instant User’s Manual|
+
+  * |:library/profile.txt/module-cProfile:profile and cProfile Module Reference|
+
+  * |:library/profile.txt/the-stats-class:The Stats Class|
+
+  * |:library/profile.txt/what-is-deterministic-profiling:What Is Deterministic Profiling?|
+
+  * |:library/profile.txt/limitations:Limitations|
+
+  * |:library/profile.txt/calibration:Calibration|
+
+  * |:library/profile.txt/using-a-custom-timer:Using a custom timer|
+
+* |:library/timeit.txt:timeit — Measure execution time of small code snippets|
+
+  * |:library/timeit.txt/basic-examples:Basic Examples|
+
+  * |:library/timeit.txt/python-interface:Python Interface|
+
+  * |:library/timeit.txt/command-line-interface:Command-Line Interface|
+
+  * |:library/timeit.txt/examples:Examples|
+
+* |:library/trace.txt:trace — Trace or track Python statement execution|
+
+  * |:library/trace.txt/command-line-usage:Command-Line Usage|
+
+    * |:library/trace.txt/main-options:Main options|
+
+    * |:library/trace.txt/modifiers:Modifiers|
+
+    * |:library/trace.txt/filters:Filters|
+
+  * |:library/trace.txt/programmatic-interface:Programmatic Interface|
+
+* |:library/tracemalloc.txt:tracemalloc — Trace memory allocations|
+
+  * |:library/tracemalloc.txt/examples:Examples|
+
+    * |:library/tracemalloc.txt/display-the-top-10:Display the top 10|
+
+    * |:library/tracemalloc.txt/compute-differences:Compute differences|
+
+    * |:library/tracemalloc.txt/get-the-traceback-of-a-memory-block:Get the traceback of a memory block|
+
+    * |:library/tracemalloc.txt/pretty-top:Pretty top|
+
+  * |:library/tracemalloc.txt/api:API|
+
+    * |:library/tracemalloc.txt/functions:Functions|
+
+    * |:library/tracemalloc.txt/domainfilter:DomainFilter|
+
+    * |:library/tracemalloc.txt/filter:Filter|
+
+    * |:library/tracemalloc.txt/frame:Frame|
+
+    * |:library/tracemalloc.txt/snapshot:Snapshot|
+
+    * |:library/tracemalloc.txt/statistic:Statistic|
+
+    * |:library/tracemalloc.txt/statisticdiff:StatisticDiff|
+
+    * |:library/tracemalloc.txt/trace:Trace|
+
+    * |:library/tracemalloc.txt/traceback:Traceback|
+
+
+

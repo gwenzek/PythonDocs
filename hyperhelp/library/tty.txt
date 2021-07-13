@@ -1,0 +1,31 @@
+%hyperhelp title="tty" date="2021-07-11"
+*|module-tty:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/tty.py:Lib/tty.py|
+
+======================================================================
+
+The |:module-tty:tty| module defines functions for putting the tty into cbreak and raw
+modes.
+
+Because it requires the |:library/termios.txt/module-termios:termios| module, it will work only on Unix.
+
+The |:module-tty:tty| module defines the following functions:
+
+*tty.setraw:tty.setraw(fd, when=termios.TCSAFLUSH)*
+
+   Change the mode of the file descriptor *fd* to raw. If *when* is omitted, it
+   defaults to "termios.TCSAFLUSH", and is passed to |:library/termios.txt/termios.tcsetattr:termios.tcsetattr()|.
+
+*tty.setcbreak:tty.setcbreak(fd, when=termios.TCSAFLUSH)*
+
+   Change the mode of file descriptor *fd* to cbreak. If *when* is omitted, it
+   defaults to "termios.TCSAFLUSH", and is passed to |:library/termios.txt/termios.tcsetattr:termios.tcsetattr()|.
+
+See also:
+
+  Module |:library/termios.txt/module-termios:termios|
+     Low-level terminal control interface.
+
+
+

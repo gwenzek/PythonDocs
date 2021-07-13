@@ -1,0 +1,60 @@
+%hyperhelp title="File Formats" date="2021-07-11"
+*|file-formats:⚓|*
+
+The modules described in this chapter parse various miscellaneous file formats
+that aren’t markup languages and are not related to e-mail.
+
+* |:library/csv.txt:csv — CSV File Reading and Writing|
+
+  * |:library/csv.txt/module-contents:Module Contents|
+
+  * |:library/csv.txt/dialects-and-formatting-parameters:Dialects and Formatting Parameters|
+
+  * |:library/csv.txt/reader-objects:Reader Objects|
+
+  * |:library/csv.txt/writer-objects:Writer Objects|
+
+  * |:library/csv.txt/examples:Examples|
+
+* |:library/configparser.txt:configparser — Configuration file parser|
+
+  * |:library/configparser.txt/quick-start:Quick Start|
+
+  * |:library/configparser.txt/supported-datatypes:Supported Datatypes|
+
+  * |:library/configparser.txt/fallback-values:Fallback Values|
+
+  * |:library/configparser.txt/supported-ini-file-structure:Supported INI File Structure|
+
+  * |:library/configparser.txt/interpolation-of-values:Interpolation of values|
+
+  * |:library/configparser.txt/mapping-protocol-access:Mapping Protocol Access|
+
+  * |:library/configparser.txt/customizing-parser-behaviour:Customizing Parser Behaviour|
+
+  * |:library/configparser.txt/legacy-api-examples:Legacy API Examples|
+
+  * |:library/configparser.txt/configparser-objects:ConfigParser Objects|
+
+  * |:library/configparser.txt/rawconfigparser-objects:RawConfigParser Objects|
+
+  * |:library/configparser.txt/exceptions:Exceptions|
+
+* |:library/netrc.txt:netrc — netrc file processing|
+
+  * |:library/netrc.txt/netrc-objects:netrc Objects|
+
+* |:library/xdrlib.txt:xdrlib — Encode and decode XDR data|
+
+  * |:library/xdrlib.txt/packer-objects:Packer Objects|
+
+  * |:library/xdrlib.txt/unpacker-objects:Unpacker Objects|
+
+  * |:library/xdrlib.txt/exceptions:Exceptions|
+
+* |:library/plistlib.txt:plistlib — Generate and parse Mac OS X .plist files|
+
+  * |:library/plistlib.txt/examples:Examples|
+
+
+

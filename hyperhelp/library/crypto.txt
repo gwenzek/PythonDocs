@@ -1,0 +1,55 @@
+%hyperhelp title="Cryptographic Services" date="2021-07-11"
+*|cryptographic-services:⚓|*
+
+*|index-0:⚓|*
+
+The modules described in this chapter implement various algorithms of a
+cryptographic nature.  They are available at the discretion of the installation.
+On Unix systems, the |:library/crypt.txt/module-crypt:crypt| module may also be available. Here’s an overview:
+
+* |:library/hashlib.txt:hashlib — Secure hashes and message digests|
+
+  * |:library/hashlib.txt/hash-algorithms:Hash algorithms|
+
+  * |:library/hashlib.txt/shake-variable-length-digests:SHAKE variable length digests|
+
+  * |:library/hashlib.txt/key-derivation:Key derivation|
+
+  * |:library/hashlib.txt/blake2:BLAKE2|
+
+    * |:library/hashlib.txt/creating-hash-objects:Creating hash objects|
+
+    * |:library/hashlib.txt/constants:Constants|
+
+    * |:library/hashlib.txt/examples:Examples|
+
+      * |:library/hashlib.txt/simple-hashing:Simple hashing|
+
+      * |:library/hashlib.txt/using-different-digest-sizes:Using different digest sizes|
+
+      * |:library/hashlib.txt/keyed-hashing:Keyed hashing|
+
+      * |:library/hashlib.txt/randomized-hashing:Randomized hashing|
+
+      * |:library/hashlib.txt/personalization:Personalization|
+
+      * |:library/hashlib.txt/tree-mode:Tree mode|
+
+    * |:library/hashlib.txt/credits:Credits|
+
+* |:library/hmac.txt:hmac — Keyed-Hashing for Message Authentication|
+
+* |:library/secrets.txt:secrets — Generate secure random numbers for managing secrets|
+
+  * |:library/secrets.txt/random-numbers:Random numbers|
+
+  * |:library/secrets.txt/generating-tokens:Generating tokens|
+
+    * |:library/secrets.txt/how-many-bytes-should-tokens-use:How many bytes should tokens use?|
+
+  * |:library/secrets.txt/other-functions:Other functions|
+
+  * |:library/secrets.txt/recipes-and-best-practices:Recipes and best practices|
+
+
+

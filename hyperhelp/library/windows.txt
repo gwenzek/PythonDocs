@@ -1,0 +1,55 @@
+%hyperhelp title="MS Windows Specific Services" date="2021-07-11"
+*|ms-windows-specific-services:⚓|*
+
+This chapter describes modules that are only available on MS Windows platforms.
+
+* |:library/msilib.txt:msilib — Read and write Microsoft Installer files|
+
+  * |:library/msilib.txt/database-objects:Database Objects|
+
+  * |:library/msilib.txt/view-objects:View Objects|
+
+  * |:library/msilib.txt/summary-information-objects:Summary Information Objects|
+
+  * |:library/msilib.txt/record-objects:Record Objects|
+
+  * |:library/msilib.txt/errors:Errors|
+
+  * |:library/msilib.txt/cab-objects:CAB Objects|
+
+  * |:library/msilib.txt/directory-objects:Directory Objects|
+
+  * |:library/msilib.txt/features:Features|
+
+  * |:library/msilib.txt/gui-classes:GUI classes|
+
+  * |:library/msilib.txt/precomputed-tables:Precomputed tables|
+
+* |:library/msvcrt.txt:msvcrt — Useful routines from the MS VC++ runtime|
+
+  * |:library/msvcrt.txt/file-operations:File Operations|
+
+  * |:library/msvcrt.txt/console-i-o:Console I/O|
+
+  * |:library/msvcrt.txt/other-functions:Other Functions|
+
+* |:library/winreg.txt:winreg — Windows registry access|
+
+  * |:library/winreg.txt/functions:Functions|
+
+  * |:library/winreg.txt/constants:Constants|
+
+    * |:library/winreg.txt/hkey-constants:HKEY_* Constants|
+
+    * |:library/winreg.txt/access-rights:Access Rights|
+
+      * |:library/winreg.txt/bit-specific:64-bit Specific|
+
+    * |:library/winreg.txt/value-types:Value Types|
+
+  * |:library/winreg.txt/registry-handle-objects:Registry Handle Objects|
+
+* |:library/winsound.txt:winsound — Sound-playing interface for Windows|
+
+
+

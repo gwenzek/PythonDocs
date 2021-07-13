@@ -1,0 +1,362 @@
+%hyperhelp title="Generic Operating System Services" date="2021-07-11"
+*|generic-operating-system-services:⚓|*
+
+The modules described in this chapter provide interfaces to operating system
+features that are available on (almost) all operating systems, such as files and
+a clock.  The interfaces are generally modeled after the Unix or C interfaces,
+but they are available on most other systems as well.  Here’s an overview:
+
+* |:library/os.txt:os — Miscellaneous operating system interfaces|
+
+  * |:library/os.txt/file-names-command-line-arguments-and-environment-variables:File Names, Command Line Arguments, and Environment Variables|
+
+  * |:library/os.txt/process-parameters:Process Parameters|
+
+  * |:library/os.txt/file-object-creation:File Object Creation|
+
+  * |:library/os.txt/file-descriptor-operations:File Descriptor Operations|
+
+    * |:library/os.txt/querying-the-size-of-a-terminal:Querying the size of a terminal|
+
+    * |:library/os.txt/inheritance-of-file-descriptors:Inheritance of File Descriptors|
+
+  * |:library/os.txt/files-and-directories:Files and Directories|
+
+    * |:library/os.txt/linux-extended-attributes:Linux extended attributes|
+
+  * |:library/os.txt/process-management:Process Management|
+
+  * |:library/os.txt/interface-to-the-scheduler:Interface to the scheduler|
+
+  * |:library/os.txt/miscellaneous-system-information:Miscellaneous System Information|
+
+  * |:library/os.txt/random-numbers:Random numbers|
+
+* |:library/io.txt:io — Core tools for working with streams|
+
+  * |:library/io.txt/overview:Overview|
+
+    * |:library/io.txt/text-i-o:Text I/O|
+
+    * |:library/io.txt/binary-i-o:Binary I/O|
+
+    * |:library/io.txt/raw-i-o:Raw I/O|
+
+  * |:library/io.txt/high-level-module-interface:High-level Module Interface|
+
+    * |:library/io.txt/in-memory-streams:In-memory streams|
+
+  * |:library/io.txt/class-hierarchy:Class hierarchy|
+
+    * |:library/io.txt/i-o-base-classes:I/O Base Classes|
+
+    * |:library/io.txt/raw-file-i-o:Raw File I/O|
+
+    * |:library/io.txt/buffered-streams:Buffered Streams|
+
+    * |:library/io.txt/id1:Text I/O|
+
+  * |:library/io.txt/performance:Performance|
+
+    * |:library/io.txt/id2:Binary I/O|
+
+    * |:library/io.txt/id3:Text I/O|
+
+    * |:library/io.txt/multi-threading:Multi-threading|
+
+    * |:library/io.txt/reentrancy:Reentrancy|
+
+* |:library/time.txt:time — Time access and conversions|
+
+  * |:library/time.txt/functions:Functions|
+
+  * |:library/time.txt/clock-id-constants:Clock ID Constants|
+
+  * |:library/time.txt/timezone-constants:Timezone Constants|
+
+* |:library/argparse.txt:argparse — Parser for command-line options, arguments and sub-commands|
+
+  * |:library/argparse.txt/example:Example|
+
+    * |:library/argparse.txt/creating-a-parser:Creating a parser|
+
+    * |:library/argparse.txt/adding-arguments:Adding arguments|
+
+    * |:library/argparse.txt/parsing-arguments:Parsing arguments|
+
+  * |:library/argparse.txt/argumentparser-objects:ArgumentParser objects|
+
+    * |:library/argparse.txt/prog:prog|
+
+    * |:library/argparse.txt/usage:usage|
+
+    * |:library/argparse.txt/description:description|
+
+    * |:library/argparse.txt/epilog:epilog|
+
+    * |:library/argparse.txt/parents:parents|
+
+    * |:library/argparse.txt/formatter-class:formatter_class|
+
+    * |:library/argparse.txt/prefix-chars:prefix_chars|
+
+    * |:library/argparse.txt/fromfile-prefix-chars:fromfile_prefix_chars|
+
+    * |:library/argparse.txt/argument-default:argument_default|
+
+    * |:library/argparse.txt/allow-abbrev:allow_abbrev|
+
+    * |:library/argparse.txt/conflict-handler:conflict_handler|
+
+    * |:library/argparse.txt/add-help:add_help|
+
+  * |:library/argparse.txt/the-add-argument-method:The add_argument() method|
+
+    * |:library/argparse.txt/name-or-flags:name or flags|
+
+    * |:library/argparse.txt/action:action|
+
+    * |:library/argparse.txt/nargs:nargs|
+
+    * |:library/argparse.txt/const:const|
+
+    * |:library/argparse.txt/default:default|
+
+    * |:library/argparse.txt/type:type|
+
+    * |:library/argparse.txt/choices:choices|
+
+    * |:library/argparse.txt/required:required|
+
+    * |:library/argparse.txt/help:help|
+
+    * |:library/argparse.txt/metavar:metavar|
+
+    * |:library/argparse.txt/dest:dest|
+
+    * |:library/argparse.txt/action-classes:Action classes|
+
+  * |:library/argparse.txt/the-parse-args-method:The parse_args() method|
+
+    * |:library/argparse.txt/option-value-syntax:Option value syntax|
+
+    * |:library/argparse.txt/invalid-arguments:Invalid arguments|
+
+    * |:library/argparse.txt/arguments-containing:Arguments containing -|
+
+    * |:library/argparse.txt/argument-abbreviations-prefix-matching:Argument abbreviations (prefix matching)|
+
+    * |:library/argparse.txt/beyond-sys-argv:Beyond sys.argv|
+
+    * |:library/argparse.txt/the-namespace-object:The Namespace object|
+
+  * |:library/argparse.txt/other-utilities:Other utilities|
+
+    * |:library/argparse.txt/sub-commands:Sub-commands|
+
+    * |:library/argparse.txt/filetype-objects:FileType objects|
+
+    * |:library/argparse.txt/argument-groups:Argument groups|
+
+    * |:library/argparse.txt/mutual-exclusion:Mutual exclusion|
+
+    * |:library/argparse.txt/parser-defaults:Parser defaults|
+
+    * |:library/argparse.txt/printing-help:Printing help|
+
+    * |:library/argparse.txt/partial-parsing:Partial parsing|
+
+    * |:library/argparse.txt/customizing-file-parsing:Customizing file parsing|
+
+    * |:library/argparse.txt/exiting-methods:Exiting methods|
+
+    * |:library/argparse.txt/intermixed-parsing:Intermixed parsing|
+
+  * |:library/argparse.txt/upgrading-optparse-code:Upgrading optparse code|
+
+* |:library/getopt.txt:getopt — C-style parser for command line options|
+
+* |:library/logging.txt:logging — Logging facility for Python|
+
+  * |:library/logging.txt/logger-objects:Logger Objects|
+
+  * |:library/logging.txt/logging-levels:Logging Levels|
+
+  * |:library/logging.txt/handler-objects:Handler Objects|
+
+  * |:library/logging.txt/formatter-objects:Formatter Objects|
+
+  * |:library/logging.txt/filter-objects:Filter Objects|
+
+  * |:library/logging.txt/logrecord-objects:LogRecord Objects|
+
+  * |:library/logging.txt/logrecord-attributes:LogRecord attributes|
+
+  * |:library/logging.txt/loggeradapter-objects:LoggerAdapter Objects|
+
+  * |:library/logging.txt/thread-safety:Thread Safety|
+
+  * |:library/logging.txt/module-level-functions:Module-Level Functions|
+
+  * |:library/logging.txt/module-level-attributes:Module-Level Attributes|
+
+  * |:library/logging.txt/integration-with-the-warnings-module:Integration with the warnings module|
+
+* |:library/logging.config.txt:logging.config — Logging configuration|
+
+  * |:library/logging.config.txt/configuration-functions:Configuration functions|
+
+  * |:library/logging.config.txt/configuration-dictionary-schema:Configuration dictionary schema|
+
+    * |:library/logging.config.txt/dictionary-schema-details:Dictionary Schema Details|
+
+    * |:library/logging.config.txt/incremental-configuration:Incremental Configuration|
+
+    * |:library/logging.config.txt/object-connections:Object connections|
+
+    * |:library/logging.config.txt/user-defined-objects:User-defined objects|
+
+    * |:library/logging.config.txt/access-to-external-objects:Access to external objects|
+
+    * |:library/logging.config.txt/access-to-internal-objects:Access to internal objects|
+
+    * |:library/logging.config.txt/import-resolution-and-custom-importers:Import resolution and custom importers|
+
+  * |:library/logging.config.txt/configuration-file-format:Configuration file format|
+
+* |:library/logging.handlers.txt:logging.handlers — Logging handlers|
+
+  * |:library/logging.handlers.txt/streamhandler:StreamHandler|
+
+  * |:library/logging.handlers.txt/filehandler:FileHandler|
+
+  * |:library/logging.handlers.txt/nullhandler:NullHandler|
+
+  * |:library/logging.handlers.txt/watchedfilehandler:WatchedFileHandler|
+
+  * |:library/logging.handlers.txt/baserotatinghandler:BaseRotatingHandler|
+
+  * |:library/logging.handlers.txt/rotatingfilehandler:RotatingFileHandler|
+
+  * |:library/logging.handlers.txt/timedrotatingfilehandler:TimedRotatingFileHandler|
+
+  * |:library/logging.handlers.txt/sockethandler:SocketHandler|
+
+  * |:library/logging.handlers.txt/datagramhandler:DatagramHandler|
+
+  * |:library/logging.handlers.txt/sysloghandler:SysLogHandler|
+
+  * |:library/logging.handlers.txt/nteventloghandler:NTEventLogHandler|
+
+  * |:library/logging.handlers.txt/smtphandler:SMTPHandler|
+
+  * |:library/logging.handlers.txt/memoryhandler:MemoryHandler|
+
+  * |:library/logging.handlers.txt/httphandler:HTTPHandler|
+
+  * |:library/logging.handlers.txt/queuehandler:QueueHandler|
+
+  * |:library/logging.handlers.txt/queuelistener:QueueListener|
+
+* |:library/getpass.txt:getpass — Portable password input|
+
+* |:library/curses.txt:curses — Terminal handling for character-cell displays|
+
+  * |:library/curses.txt/functions:Functions|
+
+  * |:library/curses.txt/window-objects:Window Objects|
+
+  * |:library/curses.txt/constants:Constants|
+
+* |:library/curses.txt/module-curses.textpad:curses.textpad — Text input widget for curses programs|
+
+  * |:library/curses.txt/textbox-objects:Textbox objects|
+
+* |:library/curses.ascii.txt:curses.ascii — Utilities for ASCII characters|
+
+* |:library/curses.panel.txt:curses.panel — A panel stack extension for curses|
+
+  * |:library/curses.panel.txt/functions:Functions|
+
+  * |:library/curses.panel.txt/panel-objects:Panel Objects|
+
+* |:library/platform.txt:platform —  Access to underlying platform’s identifying data|
+
+  * |:library/platform.txt/cross-platform:Cross Platform|
+
+  * |:library/platform.txt/java-platform:Java Platform|
+
+  * |:library/platform.txt/windows-platform:Windows Platform|
+
+  * |:library/platform.txt/mac-os-platform:Mac OS Platform|
+
+  * |:library/platform.txt/unix-platforms:Unix Platforms|
+
+* |:library/errno.txt:errno — Standard errno system symbols|
+
+* |:library/ctypes.txt:ctypes — A foreign function library for Python|
+
+  * |:library/ctypes.txt/ctypes-tutorial:ctypes tutorial|
+
+    * |:library/ctypes.txt/loading-dynamic-link-libraries:Loading dynamic link libraries|
+
+    * |:library/ctypes.txt/accessing-functions-from-loaded-dlls:Accessing functions from loaded dlls|
+
+    * |:library/ctypes.txt/calling-functions:Calling functions|
+
+    * |:library/ctypes.txt/fundamental-data-types:Fundamental data types|
+
+    * |:library/ctypes.txt/calling-functions-continued:Calling functions, continued|
+
+    * |:library/ctypes.txt/calling-functions-with-your-own-custom-data-types:Calling functions with your own custom data types|
+
+    * |:library/ctypes.txt/specifying-the-required-argument-types-function-prototypes:Specifying the required argument types (function prototypes)|
+
+    * |:library/ctypes.txt/return-types:Return types|
+
+    * |:library/ctypes.txt/passing-pointers-or-passing-parameters-by-reference:Passing pointers (or: passing parameters by reference)|
+
+    * |:library/ctypes.txt/structures-and-unions:Structures and unions|
+
+    * |:library/ctypes.txt/structure-union-alignment-and-byte-order:Structure/union alignment and byte order|
+
+    * |:library/ctypes.txt/bit-fields-in-structures-and-unions:Bit fields in structures and unions|
+
+    * |:library/ctypes.txt/arrays:Arrays|
+
+    * |:library/ctypes.txt/pointers:Pointers|
+
+    * |:library/ctypes.txt/type-conversions:Type conversions|
+
+    * |:library/ctypes.txt/incomplete-types:Incomplete Types|
+
+    * |:library/ctypes.txt/callback-functions:Callback functions|
+
+    * |:library/ctypes.txt/accessing-values-exported-from-dlls:Accessing values exported from dlls|
+
+    * |:library/ctypes.txt/surprises:Surprises|
+
+    * |:library/ctypes.txt/variable-sized-data-types:Variable-sized data types|
+
+  * |:library/ctypes.txt/ctypes-reference:ctypes reference|
+
+    * |:library/ctypes.txt/finding-shared-libraries:Finding shared libraries|
+
+    * |:library/ctypes.txt/loading-shared-libraries:Loading shared libraries|
+
+    * |:library/ctypes.txt/foreign-functions:Foreign functions|
+
+    * |:library/ctypes.txt/function-prototypes:Function prototypes|
+
+    * |:library/ctypes.txt/utility-functions:Utility functions|
+
+    * |:library/ctypes.txt/data-types:Data types|
+
+    * |:library/ctypes.txt/ctypes-fundamental-data-types-2:Fundamental data types|
+
+    * |:library/ctypes.txt/structured-data-types:Structured data types|
+
+    * |:library/ctypes.txt/arrays-and-pointers:Arrays and pointers|
+
+
+

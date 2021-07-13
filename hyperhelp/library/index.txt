@@ -1,0 +1,646 @@
+%hyperhelp title="The Python Standard Library" date="2021-07-11"
+*|the-python-standard-library:⚓|*
+
+While |:reference/index.txt/reference-index:The Python Language Reference| describes the exact syntax and semantics
+of the Python language, this library reference manual describes the standard
+library that is distributed with Python. It also describes some of the optional
+components that are commonly included in Python distributions.
+
+Python’s standard library is very extensive, offering a wide range of facilities
+as indicated by the long table of contents listed below. The library contains
+built-in modules (written in C) that provide access to system functionality such
+as file I/O that would otherwise be inaccessible to Python programmers, as well
+as modules written in Python that provide standardized solutions for many
+problems that occur in everyday programming. Some of these modules are
+explicitly designed to encourage and enhance the portability of Python programs
+by abstracting away platform-specifics into platform-neutral APIs.
+
+The Python installers for the Windows platform usually include the entire
+standard library and often also include many additional components. For Unix-
+like operating systems Python is normally provided as a collection of packages,
+so it may be necessary to use the packaging tools provided with the operating
+system to obtain some or all of the optional components.
+
+In addition to the standard library, there is a growing collection of several
+thousand components (from individual programs and modules to packages and entire
+application development frameworks), available from the |:pypi.org:Python Package Index|
+*|python-package-index:⚓|* .
+
+* |:library/intro.txt:Introduction|
+
+  * |:library/intro.txt/notes-on-availability:Notes on availability|
+
+* |:library/functions.txt:Built-in Functions|
+
+* |:library/constants.txt:Built-in Constants|
+
+  * |:library/constants.txt/constants-added-by-the-site-module:Constants added by the site module|
+
+* |:library/stdtypes.txt:Built-in Types|
+
+  * |:library/stdtypes.txt/truth-value-testing:Truth Value Testing|
+
+  * |:library/stdtypes.txt/boolean-operations-and-or-not:Boolean Operations — and, or, not|
+
+  * |:library/stdtypes.txt/comparisons:Comparisons|
+
+  * |:library/stdtypes.txt/numeric-types-int-float-complex:Numeric Types — int, float, complex|
+
+  * |:library/stdtypes.txt/iterator-types:Iterator Types|
+
+  * |:library/stdtypes.txt/sequence-types-list-tuple-range:Sequence Types — list, tuple, range|
+
+  * |:library/stdtypes.txt/text-sequence-type-str:Text Sequence Type — str|
+
+  * |:library/stdtypes.txt/binary-sequence-types-bytes-bytearray-memoryview:Binary Sequence Types — bytes, bytearray, memoryview|
+
+  * |:library/stdtypes.txt/set-types-set-frozenset:Set Types — set, frozenset|
+
+  * |:library/stdtypes.txt/mapping-types-dict:Mapping Types — dict|
+
+  * |:library/stdtypes.txt/context-manager-types:Context Manager Types|
+
+  * |:library/stdtypes.txt/other-built-in-types:Other Built-in Types|
+
+  * |:library/stdtypes.txt/special-attributes:Special Attributes|
+
+* |:library/exceptions.txt:Built-in Exceptions|
+
+  * |:library/exceptions.txt/base-classes:Base classes|
+
+  * |:library/exceptions.txt/concrete-exceptions:Concrete exceptions|
+
+  * |:library/exceptions.txt/warnings:Warnings|
+
+  * |:library/exceptions.txt/exception-hierarchy:Exception hierarchy|
+
+* |:library/text.txt:Text Processing Services|
+
+  * |:library/string.txt:string — Common string operations|
+
+  * |:library/re.txt:re — Regular expression operations|
+
+  * |:library/difflib.txt:difflib — Helpers for computing deltas|
+
+  * |:library/textwrap.txt:textwrap — Text wrapping and filling|
+
+  * |:library/unicodedata.txt:unicodedata — Unicode Database|
+
+  * |:library/stringprep.txt:stringprep — Internet String Preparation|
+
+  * |:library/readline.txt:readline — GNU readline interface|
+
+  * |:library/rlcompleter.txt:rlcompleter — Completion function for GNU readline|
+
+* |:library/binary.txt:Binary Data Services|
+
+  * |:library/struct.txt:struct — Interpret bytes as packed binary data|
+
+  * |:library/codecs.txt:codecs — Codec registry and base classes|
+
+* |:library/datatypes.txt:Data Types|
+
+  * |:library/datetime.txt:datetime — Basic date and time types|
+
+  * |:library/calendar.txt:calendar — General calendar-related functions|
+
+  * |:library/collections.txt:collections — Container datatypes|
+
+  * |:library/collections.abc.txt:collections.abc — Abstract Base Classes for Containers|
+
+  * |:library/heapq.txt:heapq — Heap queue algorithm|
+
+  * |:library/bisect.txt:bisect — Array bisection algorithm|
+
+  * |:library/array.txt:array — Efficient arrays of numeric values|
+
+  * |:library/weakref.txt:weakref — Weak references|
+
+  * |:library/types.txt:types — Dynamic type creation and names for built-in types|
+
+  * |:library/copy.txt:copy — Shallow and deep copy operations|
+
+  * |:library/pprint.txt:pprint — Data pretty printer|
+
+  * |:library/reprlib.txt:reprlib — Alternate repr() implementation|
+
+  * |:library/enum.txt:enum — Support for enumerations|
+
+* |:library/numeric.txt:Numeric and Mathematical Modules|
+
+  * |:library/numbers.txt:numbers — Numeric abstract base classes|
+
+  * |:library/math.txt:math — Mathematical functions|
+
+  * |:library/cmath.txt:cmath — Mathematical functions for complex numbers|
+
+  * |:library/decimal.txt:decimal — Decimal fixed point and floating point arithmetic|
+
+  * |:library/fractions.txt:fractions — Rational numbers|
+
+  * |:library/random.txt:random — Generate pseudo-random numbers|
+
+  * |:library/statistics.txt:statistics — Mathematical statistics functions|
+
+* |:library/functional.txt:Functional Programming Modules|
+
+  * |:library/itertools.txt:itertools — Functions creating iterators for efficient looping|
+
+  * |:library/functools.txt:functools — Higher-order functions and operations on callable objects|
+
+  * |:library/operator.txt:operator — Standard operators as functions|
+
+* |:library/filesys.txt:File and Directory Access|
+
+  * |:library/pathlib.txt:pathlib — Object-oriented filesystem paths|
+
+  * |:library/os.path.txt:os.path — Common pathname manipulations|
+
+  * |:library/fileinput.txt:fileinput — Iterate over lines from multiple input streams|
+
+  * |:library/stat.txt:stat — Interpreting stat() results|
+
+  * |:library/filecmp.txt:filecmp — File and Directory Comparisons|
+
+  * |:library/tempfile.txt:tempfile — Generate temporary files and directories|
+
+  * |:library/glob.txt:glob — Unix style pathname pattern expansion|
+
+  * |:library/fnmatch.txt:fnmatch — Unix filename pattern matching|
+
+  * |:library/linecache.txt:linecache — Random access to text lines|
+
+  * |:library/shutil.txt:shutil — High-level file operations|
+
+* |:library/persistence.txt:Data Persistence|
+
+  * |:library/pickle.txt:pickle — Python object serialization|
+
+  * |:library/copyreg.txt:copyreg — Register pickle support functions|
+
+  * |:library/shelve.txt:shelve — Python object persistence|
+
+  * |:library/marshal.txt:marshal — Internal Python object serialization|
+
+  * |:library/dbm.txt:dbm — Interfaces to Unix “databases”|
+
+  * |:library/sqlite3.txt:sqlite3 — DB-API 2.0 interface for SQLite databases|
+
+* |:library/archiving.txt:Data Compression and Archiving|
+
+  * |:library/zlib.txt:zlib — Compression compatible with gzip|
+
+  * |:library/gzip.txt:gzip — Support for gzip files|
+
+  * |:library/bz2.txt:bz2 — Support for bzip2 compression|
+
+  * |:library/lzma.txt:lzma — Compression using the LZMA algorithm|
+
+  * |:library/zipfile.txt:zipfile — Work with ZIP archives|
+
+  * |:library/tarfile.txt:tarfile — Read and write tar archive files|
+
+* |:library/fileformats.txt:File Formats|
+
+  * |:library/csv.txt:csv — CSV File Reading and Writing|
+
+  * |:library/configparser.txt:configparser — Configuration file parser|
+
+  * |:library/netrc.txt:netrc — netrc file processing|
+
+  * |:library/xdrlib.txt:xdrlib — Encode and decode XDR data|
+
+  * |:library/plistlib.txt:plistlib — Generate and parse Mac OS X .plist files|
+
+* |:library/crypto.txt:Cryptographic Services|
+
+  * |:library/hashlib.txt:hashlib — Secure hashes and message digests|
+
+  * |:library/hmac.txt:hmac — Keyed-Hashing for Message Authentication|
+
+  * |:library/secrets.txt:secrets — Generate secure random numbers for managing secrets|
+
+* |:library/allos.txt:Generic Operating System Services|
+
+  * |:library/os.txt:os — Miscellaneous operating system interfaces|
+
+  * |:library/io.txt:io — Core tools for working with streams|
+
+  * |:library/time.txt:time — Time access and conversions|
+
+  * |:library/argparse.txt:argparse — Parser for command-line options, arguments and sub-commands|
+
+  * |:library/getopt.txt:getopt — C-style parser for command line options|
+
+  * |:library/logging.txt:logging — Logging facility for Python|
+
+  * |:library/logging.config.txt:logging.config — Logging configuration|
+
+  * |:library/logging.handlers.txt:logging.handlers — Logging handlers|
+
+  * |:library/getpass.txt:getpass — Portable password input|
+
+  * |:library/curses.txt:curses — Terminal handling for character-cell displays|
+
+  * |:library/curses.txt/module-curses.textpad:curses.textpad — Text input widget for curses programs|
+
+  * |:library/curses.ascii.txt:curses.ascii — Utilities for ASCII characters|
+
+  * |:library/curses.panel.txt:curses.panel — A panel stack extension for curses|
+
+  * |:library/platform.txt:platform —  Access to underlying platform’s identifying data|
+
+  * |:library/errno.txt:errno — Standard errno system symbols|
+
+  * |:library/ctypes.txt:ctypes — A foreign function library for Python|
+
+* |:library/concurrency.txt:Concurrent Execution|
+
+  * |:library/threading.txt:threading — Thread-based parallelism|
+
+  * |:library/multiprocessing.txt:multiprocessing — Process-based parallelism|
+
+  * |:library/multiprocessing.shared_memory.txt:multiprocessing.shared_memory —  Provides shared memory for direct access across processes|
+
+  * |:library/concurrent.txt:The concurrent package|
+
+  * |:library/concurrent.futures.txt:concurrent.futures — Launching parallel tasks|
+
+  * |:library/subprocess.txt:subprocess — Subprocess management|
+
+  * |:library/sched.txt:sched — Event scheduler|
+
+  * |:library/queue.txt:queue — A synchronized queue class|
+
+  * |:library/_thread.txt:_thread — Low-level threading API|
+
+  * |:library/_dummy_thread.txt:_dummy_thread — Drop-in replacement for the _thread module|
+
+  * |:library/dummy_threading.txt:dummy_threading — Drop-in replacement for the threading module|
+
+* |:library/contextvars.txt:contextvars — Context Variables|
+
+  * |:library/contextvars.txt/context-variables:Context Variables|
+
+  * |:library/contextvars.txt/manual-context-management:Manual Context Management|
+
+  * |:library/contextvars.txt/asyncio-support:asyncio support|
+
+* |:library/ipc.txt:Networking and Interprocess Communication|
+
+  * |:library/asyncio.txt:asyncio — Asynchronous I/O|
+
+  * |:library/socket.txt:socket — Low-level networking interface|
+
+  * |:library/ssl.txt:ssl — TLS/SSL wrapper for socket objects|
+
+  * |:library/select.txt:select — Waiting for I/O completion|
+
+  * |:library/selectors.txt:selectors — High-level I/O multiplexing|
+
+  * |:library/asyncore.txt:asyncore — Asynchronous socket handler|
+
+  * |:library/asynchat.txt:asynchat — Asynchronous socket command/response handler|
+
+  * |:library/signal.txt:signal — Set handlers for asynchronous events|
+
+  * |:library/mmap.txt:mmap — Memory-mapped file support|
+
+* |:library/netdata.txt:Internet Data Handling|
+
+  * |:library/email.txt:email — An email and MIME handling package|
+
+  * |:library/json.txt:json — JSON encoder and decoder|
+
+  * |:library/mailcap.txt:mailcap — Mailcap file handling|
+
+  * |:library/mailbox.txt:mailbox — Manipulate mailboxes in various formats|
+
+  * |:library/mimetypes.txt:mimetypes — Map filenames to MIME types|
+
+  * |:library/base64.txt:base64 — Base16, Base32, Base64, Base85 Data Encodings|
+
+  * |:library/binhex.txt:binhex — Encode and decode binhex4 files|
+
+  * |:library/binascii.txt:binascii — Convert between binary and ASCII|
+
+  * |:library/quopri.txt:quopri — Encode and decode MIME quoted-printable data|
+
+  * |:library/uu.txt:uu — Encode and decode uuencode files|
+
+* |:library/markup.txt:Structured Markup Processing Tools|
+
+  * |:library/html.txt:html — HyperText Markup Language support|
+
+  * |:library/html.parser.txt:html.parser — Simple HTML and XHTML parser|
+
+  * |:library/html.entities.txt:html.entities — Definitions of HTML general entities|
+
+  * |:library/xml.txt:XML Processing Modules|
+
+  * |:library/xml.etree.elementtree.txt:xml.etree.ElementTree — The ElementTree XML API|
+
+  * |:library/xml.dom.txt:xml.dom — The Document Object Model API|
+
+  * |:library/xml.dom.minidom.txt:xml.dom.minidom — Minimal DOM implementation|
+
+  * |:library/xml.dom.pulldom.txt:xml.dom.pulldom — Support for building partial DOM trees|
+
+  * |:library/xml.sax.txt:xml.sax — Support for SAX2 parsers|
+
+  * |:library/xml.sax.handler.txt:xml.sax.handler — Base classes for SAX handlers|
+
+  * |:library/xml.sax.utils.txt:xml.sax.saxutils — SAX Utilities|
+
+  * |:library/xml.sax.reader.txt:xml.sax.xmlreader — Interface for XML parsers|
+
+  * |:library/pyexpat.txt:xml.parsers.expat — Fast XML parsing using Expat|
+
+* |:library/internet.txt:Internet Protocols and Support|
+
+  * |:library/webbrowser.txt:webbrowser — Convenient Web-browser controller|
+
+  * |:library/cgi.txt:cgi — Common Gateway Interface support|
+
+  * |:library/cgitb.txt:cgitb — Traceback manager for CGI scripts|
+
+  * |:library/wsgiref.txt:wsgiref — WSGI Utilities and Reference Implementation|
+
+  * |:library/urllib.txt:urllib — URL handling modules|
+
+  * |:library/urllib.request.txt:urllib.request — Extensible library for opening URLs|
+
+  * |:library/urllib.request.txt/module-urllib.response:urllib.response — Response classes used by urllib|
+
+  * |:library/urllib.parse.txt:urllib.parse — Parse URLs into components|
+
+  * |:library/urllib.error.txt:urllib.error — Exception classes raised by urllib.request|
+
+  * |:library/urllib.robotparser.txt:urllib.robotparser —  Parser for robots.txt|
+
+  * |:library/http.txt:http — HTTP modules|
+
+  * |:library/http.client.txt:http.client — HTTP protocol client|
+
+  * |:library/ftplib.txt:ftplib — FTP protocol client|
+
+  * |:library/poplib.txt:poplib — POP3 protocol client|
+
+  * |:library/imaplib.txt:imaplib — IMAP4 protocol client|
+
+  * |:library/nntplib.txt:nntplib — NNTP protocol client|
+
+  * |:library/smtplib.txt:smtplib — SMTP protocol client|
+
+  * |:library/smtpd.txt:smtpd — SMTP Server|
+
+  * |:library/telnetlib.txt:telnetlib — Telnet client|
+
+  * |:library/uuid.txt:uuid — UUID objects according to RFC 4122|
+
+  * |:library/socketserver.txt:socketserver — A framework for network servers|
+
+  * |:library/http.server.txt:http.server — HTTP servers|
+
+  * |:library/http.cookies.txt:http.cookies — HTTP state management|
+
+  * |:library/http.cookiejar.txt:http.cookiejar — Cookie handling for HTTP clients|
+
+  * |:library/xmlrpc.txt:xmlrpc — XMLRPC server and client modules|
+
+  * |:library/xmlrpc.client.txt:xmlrpc.client — XML-RPC client access|
+
+  * |:library/xmlrpc.server.txt:xmlrpc.server — Basic XML-RPC servers|
+
+  * |:library/ipaddress.txt:ipaddress — IPv4/IPv6 manipulation library|
+
+* |:library/mm.txt:Multimedia Services|
+
+  * |:library/audioop.txt:audioop — Manipulate raw audio data|
+
+  * |:library/aifc.txt:aifc — Read and write AIFF and AIFC files|
+
+  * |:library/sunau.txt:sunau — Read and write Sun AU files|
+
+  * |:library/wave.txt:wave — Read and write WAV files|
+
+  * |:library/chunk.txt:chunk — Read IFF chunked data|
+
+  * |:library/colorsys.txt:colorsys — Conversions between color systems|
+
+  * |:library/imghdr.txt:imghdr — Determine the type of an image|
+
+  * |:library/sndhdr.txt:sndhdr — Determine type of sound file|
+
+  * |:library/ossaudiodev.txt:ossaudiodev — Access to OSS-compatible audio devices|
+
+* |:library/i18n.txt:Internationalization|
+
+  * |:library/gettext.txt:gettext — Multilingual internationalization services|
+
+  * |:library/locale.txt:locale — Internationalization services|
+
+* |:library/frameworks.txt:Program Frameworks|
+
+  * |:library/turtle.txt:turtle — Turtle graphics|
+
+  * |:library/cmd.txt:cmd — Support for line-oriented command interpreters|
+
+  * |:library/shlex.txt:shlex — Simple lexical analysis|
+
+* |:library/tk.txt:Graphical User Interfaces with Tk|
+
+  * |:library/tkinter.txt:tkinter — Python interface to Tcl/Tk|
+
+  * |:library/tkinter.ttk.txt:tkinter.ttk — Tk themed widgets|
+
+  * |:library/tkinter.tix.txt:tkinter.tix — Extension widgets for Tk|
+
+  * |:library/tkinter.scrolledtext.txt:tkinter.scrolledtext — Scrolled Text Widget|
+
+  * |:library/idle.txt:IDLE|
+
+  * |:library/othergui.txt:Other Graphical User Interface Packages|
+
+* |:library/development.txt:Development Tools|
+
+  * |:library/typing.txt:typing — Support for type hints|
+
+  * |:library/pydoc.txt:pydoc — Documentation generator and online help system|
+
+  * |:library/doctest.txt:doctest — Test interactive Python examples|
+
+  * |:library/unittest.txt:unittest — Unit testing framework|
+
+  * |:library/unittest.mock.txt:unittest.mock — mock object library|
+
+  * |:library/unittest.mock-examples.txt:unittest.mock — getting started|
+
+  * |:library/2to3.txt:2to3 - Automated Python 2 to 3 code translation|
+
+  * |:library/test.txt:test — Regression tests package for Python|
+
+  * |:library/test.txt/module-test.support:test.support — Utilities for the Python test suite|
+
+  * |:library/test.txt/module-test.support.script_helper:test.support.script_helper — Utilities for the Python execution tests|
+
+* |:library/debug.txt:Debugging and Profiling|
+
+  * |:library/audit_events.txt:Audit events table|
+
+  * |:library/bdb.txt:bdb — Debugger framework|
+
+  * |:library/faulthandler.txt:faulthandler — Dump the Python traceback|
+
+  * |:library/pdb.txt:pdb — The Python Debugger|
+
+  * |:library/profile.txt:The Python Profilers|
+
+  * |:library/timeit.txt:timeit — Measure execution time of small code snippets|
+
+  * |:library/trace.txt:trace — Trace or track Python statement execution|
+
+  * |:library/tracemalloc.txt:tracemalloc — Trace memory allocations|
+
+* |:library/distribution.txt:Software Packaging and Distribution|
+
+  * |:library/distutils.txt:distutils — Building and installing Python modules|
+
+  * |:library/ensurepip.txt:ensurepip — Bootstrapping the pip installer|
+
+  * |:library/venv.txt:venv — Creation of virtual environments|
+
+  * |:library/zipapp.txt:zipapp — Manage executable Python zip archives|
+
+* |:library/python.txt:Python Runtime Services|
+
+  * |:library/sys.txt:sys — System-specific parameters and functions|
+
+  * |:library/sysconfig.txt:sysconfig — Provide access to Python’s configuration information|
+
+  * |:library/builtins.txt:builtins — Built-in objects|
+
+  * |:library/__main__.txt:__main__ — Top-level script environment|
+
+  * |:library/warnings.txt:warnings — Warning control|
+
+  * |:library/dataclasses.txt:dataclasses — Data Classes|
+
+  * |:library/contextlib.txt:contextlib — Utilities for with-statement contexts|
+
+  * |:library/abc.txt:abc — Abstract Base Classes|
+
+  * |:library/atexit.txt:atexit — Exit handlers|
+
+  * |:library/traceback.txt:traceback — Print or retrieve a stack traceback|
+
+  * |:library/__future__.txt:__future__ — Future statement definitions|
+
+  * |:library/gc.txt:gc — Garbage Collector interface|
+
+  * |:library/inspect.txt:inspect — Inspect live objects|
+
+  * |:library/site.txt:site — Site-specific configuration hook|
+
+* |:library/custominterp.txt:Custom Python Interpreters|
+
+  * |:library/code.txt:code — Interpreter base classes|
+
+  * |:library/codeop.txt:codeop — Compile Python code|
+
+* |:library/modules.txt:Importing Modules|
+
+  * |:library/zipimport.txt:zipimport — Import modules from Zip archives|
+
+  * |:library/pkgutil.txt:pkgutil — Package extension utility|
+
+  * |:library/modulefinder.txt:modulefinder — Find modules used by a script|
+
+  * |:library/runpy.txt:runpy — Locating and executing Python modules|
+
+  * |:library/importlib.txt:importlib — The implementation of import|
+
+  * |:library/importlib.metadata.txt:Using importlib.metadata|
+
+* |:library/language.txt:Python Language Services|
+
+  * |:library/parser.txt:parser — Access Python parse trees|
+
+  * |:library/ast.txt:ast — Abstract Syntax Trees|
+
+  * |:library/symtable.txt:symtable — Access to the compiler’s symbol tables|
+
+  * |:library/symbol.txt:symbol — Constants used with Python parse trees|
+
+  * |:library/token.txt:token — Constants used with Python parse trees|
+
+  * |:library/keyword.txt:keyword — Testing for Python keywords|
+
+  * |:library/tokenize.txt:tokenize — Tokenizer for Python source|
+
+  * |:library/tabnanny.txt:tabnanny — Detection of ambiguous indentation|
+
+  * |:library/pyclbr.txt:pyclbr — Python module browser support|
+
+  * |:library/py_compile.txt:py_compile — Compile Python source files|
+
+  * |:library/compileall.txt:compileall — Byte-compile Python libraries|
+
+  * |:library/dis.txt:dis — Disassembler for Python bytecode|
+
+  * |:library/pickletools.txt:pickletools — Tools for pickle developers|
+
+* |:library/misc.txt:Miscellaneous Services|
+
+  * |:library/formatter.txt:formatter — Generic output formatting|
+
+* |:library/windows.txt:MS Windows Specific Services|
+
+  * |:library/msilib.txt:msilib — Read and write Microsoft Installer files|
+
+  * |:library/msvcrt.txt:msvcrt — Useful routines from the MS VC++ runtime|
+
+  * |:library/winreg.txt:winreg — Windows registry access|
+
+  * |:library/winsound.txt:winsound — Sound-playing interface for Windows|
+
+* |:library/unix.txt:Unix Specific Services|
+
+  * |:library/posix.txt:posix — The most common POSIX system calls|
+
+  * |:library/pwd.txt:pwd — The password database|
+
+  * |:library/spwd.txt:spwd — The shadow password database|
+
+  * |:library/grp.txt:grp — The group database|
+
+  * |:library/crypt.txt:crypt — Function to check Unix passwords|
+
+  * |:library/termios.txt:termios — POSIX style tty control|
+
+  * |:library/tty.txt:tty — Terminal control functions|
+
+  * |:library/pty.txt:pty — Pseudo-terminal utilities|
+
+  * |:library/fcntl.txt:fcntl — The fcntl and ioctl system calls|
+
+  * |:library/pipes.txt:pipes — Interface to shell pipelines|
+
+  * |:library/resource.txt:resource — Resource usage information|
+
+  * |:library/nis.txt:nis — Interface to Sun’s NIS (Yellow Pages)|
+
+  * |:library/syslog.txt:syslog — Unix syslog library routines|
+
+* |:library/superseded.txt:Superseded Modules|
+
+  * |:library/optparse.txt:optparse — Parser for command line options|
+
+  * |:library/imp.txt:imp — Access the import internals|
+
+* |:library/undoc.txt:Undocumented Modules|
+
+  * |:library/undoc.txt/platform-specific-modules:Platform specific modules|
+
+
+

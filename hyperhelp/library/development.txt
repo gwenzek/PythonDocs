@@ -1,0 +1,255 @@
+%hyperhelp title="Development Tools" date="2021-07-11"
+*|development-tools:⚓|*
+
+The modules described in this chapter help you write software.  For example, the
+|:library/pydoc.txt/module-pydoc:pydoc| module takes a module and generates documentation based on the module’s
+contents.  The |:library/doctest.txt/module-doctest:doctest| and |:library/unittest.txt/module-unittest:unittest| modules contains frameworks for writing
+unit tests that automatically exercise code and verify that the expected output
+is produced.  *2to3* can translate Python 2.x source code into valid Python 3.x
+code.
+
+The list of modules described in this chapter is:
+
+* |:library/typing.txt:typing — Support for type hints|
+
+  * |:library/typing.txt/type-aliases:Type aliases|
+
+  * |:library/typing.txt/newtype:NewType|
+
+  * |:library/typing.txt/callable:Callable|
+
+  * |:library/typing.txt/generics:Generics|
+
+  * |:library/typing.txt/user-defined-generic-types:User-defined generic types|
+
+  * |:library/typing.txt/the-any-type:The Any type|
+
+  * |:library/typing.txt/nominal-vs-structural-subtyping:Nominal vs structural subtyping|
+
+  * |:library/typing.txt/classes-functions-and-decorators:Classes, functions, and decorators|
+
+* |:library/pydoc.txt:pydoc — Documentation generator and online help system|
+
+* |:library/doctest.txt:doctest — Test interactive Python examples|
+
+  * |:library/doctest.txt/simple-usage-checking-examples-in-docstrings:Simple Usage: Checking Examples in Docstrings|
+
+  * |:library/doctest.txt/simple-usage-checking-examples-in-a-text-file:Simple Usage: Checking Examples in a Text File|
+
+  * |:library/doctest.txt/how-it-works:How It Works|
+
+    * |:library/doctest.txt/which-docstrings-are-examined:Which Docstrings Are Examined?|
+
+    * |:library/doctest.txt/how-are-docstring-examples-recognized:How are Docstring Examples Recognized?|
+
+    * |:library/doctest.txt/what-s-the-execution-context:What’s the Execution Context?|
+
+    * |:library/doctest.txt/what-about-exceptions:What About Exceptions?|
+
+    * |:library/doctest.txt/option-flags:Option Flags|
+
+    * |:library/doctest.txt/directives:Directives|
+
+    * |:library/doctest.txt/warnings:Warnings|
+
+  * |:library/doctest.txt/basic-api:Basic API|
+
+  * |:library/doctest.txt/unittest-api:Unittest API|
+
+  * |:library/doctest.txt/advanced-api:Advanced API|
+
+    * |:library/doctest.txt/doctest-objects:DocTest Objects|
+
+    * |:library/doctest.txt/example-objects:Example Objects|
+
+    * |:library/doctest.txt/doctestfinder-objects:DocTestFinder objects|
+
+    * |:library/doctest.txt/doctestparser-objects:DocTestParser objects|
+
+    * |:library/doctest.txt/doctestrunner-objects:DocTestRunner objects|
+
+    * |:library/doctest.txt/outputchecker-objects:OutputChecker objects|
+
+  * |:library/doctest.txt/debugging:Debugging|
+
+  * |:library/doctest.txt/soapbox:Soapbox|
+
+* |:library/unittest.txt:unittest — Unit testing framework|
+
+  * |:library/unittest.txt/basic-example:Basic example|
+
+  * |:library/unittest.txt/command-line-interface:Command-Line Interface|
+
+    * |:library/unittest.txt/command-line-options:Command-line options|
+
+  * |:library/unittest.txt/test-discovery:Test Discovery|
+
+  * |:library/unittest.txt/organizing-test-code:Organizing test code|
+
+  * |:library/unittest.txt/re-using-old-test-code:Re-using old test code|
+
+  * |:library/unittest.txt/skipping-tests-and-expected-failures:Skipping tests and expected failures|
+
+  * |:library/unittest.txt/distinguishing-test-iterations-using-subtests:Distinguishing test iterations using subtests|
+
+  * |:library/unittest.txt/classes-and-functions:Classes and functions|
+
+    * |:library/unittest.txt/test-cases:Test cases|
+
+      * |:library/unittest.txt/deprecated-aliases:Deprecated aliases|
+
+    * |:library/unittest.txt/grouping-tests:Grouping tests|
+
+    * |:library/unittest.txt/loading-and-running-tests:Loading and running tests|
+
+      * |:library/unittest.txt/load-tests-protocol:load_tests Protocol|
+
+  * |:library/unittest.txt/class-and-module-fixtures:Class and Module Fixtures|
+
+    * |:library/unittest.txt/setupclass-and-teardownclass:setUpClass and tearDownClass|
+
+    * |:library/unittest.txt/setupmodule-and-teardownmodule:setUpModule and tearDownModule|
+
+  * |:library/unittest.txt/signal-handling:Signal Handling|
+
+* |:library/unittest.mock.txt:unittest.mock — mock object library|
+
+  * |:library/unittest.mock.txt/quick-guide:Quick Guide|
+
+  * |:library/unittest.mock.txt/the-mock-class:The Mock Class|
+
+    * |:library/unittest.mock.txt/calling:Calling|
+
+    * |:library/unittest.mock.txt/deleting-attributes:Deleting Attributes|
+
+    * |:library/unittest.mock.txt/mock-names-and-the-name-attribute:Mock names and the name attribute|
+
+    * |:library/unittest.mock.txt/attaching-mocks-as-attributes:Attaching Mocks as Attributes|
+
+  * |:library/unittest.mock.txt/the-patchers:The patchers|
+
+    * |:library/unittest.mock.txt/patch:patch|
+
+    * |:library/unittest.mock.txt/patch-object:patch.object|
+
+    * |:library/unittest.mock.txt/patch-dict:patch.dict|
+
+    * |:library/unittest.mock.txt/patch-multiple:patch.multiple|
+
+    * |:library/unittest.mock.txt/patch-methods-start-and-stop:patch methods: start and stop|
+
+    * |:library/unittest.mock.txt/patch-builtins:patch builtins|
+
+    * |:library/unittest.mock.txt/test-prefix:TEST_PREFIX|
+
+    * |:library/unittest.mock.txt/nesting-patch-decorators:Nesting Patch Decorators|
+
+    * |:library/unittest.mock.txt/where-to-patch:Where to patch|
+
+    * |:library/unittest.mock.txt/patching-descriptors-and-proxy-objects:Patching Descriptors and Proxy Objects|
+
+  * |:library/unittest.mock.txt/magicmock-and-magic-method-support:MagicMock and magic method support|
+
+    * |:library/unittest.mock.txt/mocking-magic-methods:Mocking Magic Methods|
+
+    * |:library/unittest.mock.txt/magic-mock:Magic Mock|
+
+  * |:library/unittest.mock.txt/helpers:Helpers|
+
+    * |:library/unittest.mock.txt/sentinel:sentinel|
+
+    * |:library/unittest.mock.txt/default:DEFAULT|
+
+    * |:library/unittest.mock.txt/call:call|
+
+    * |:library/unittest.mock.txt/create-autospec:create_autospec|
+
+    * |:library/unittest.mock.txt/any:ANY|
+
+    * |:library/unittest.mock.txt/filter-dir:FILTER_DIR|
+
+    * |:library/unittest.mock.txt/mock-open:mock_open|
+
+    * |:library/unittest.mock.txt/autospeccing:Autospeccing|
+
+    * |:library/unittest.mock.txt/sealing-mocks:Sealing mocks|
+
+* |:library/unittest.mock-examples.txt:unittest.mock — getting started|
+
+  * |:library/unittest.mock-examples.txt/using-mock:Using Mock|
+
+    * |:library/unittest.mock-examples.txt/mock-patching-methods:Mock Patching Methods|
+
+    * |:library/unittest.mock-examples.txt/mock-for-method-calls-on-an-object:Mock for Method Calls on an Object|
+
+    * |:library/unittest.mock-examples.txt/mocking-classes:Mocking Classes|
+
+    * |:library/unittest.mock-examples.txt/naming-your-mocks:Naming your mocks|
+
+    * |:library/unittest.mock-examples.txt/tracking-all-calls:Tracking all Calls|
+
+    * |:library/unittest.mock-examples.txt/setting-return-values-and-attributes:Setting Return Values and Attributes|
+
+    * |:library/unittest.mock-examples.txt/raising-exceptions-with-mocks:Raising exceptions with mocks|
+
+    * |:library/unittest.mock-examples.txt/side-effect-functions-and-iterables:Side effect functions and iterables|
+
+    * |:library/unittest.mock-examples.txt/mocking-asynchronous-iterators:Mocking asynchronous iterators|
+
+    * |:library/unittest.mock-examples.txt/mocking-asynchronous-context-manager:Mocking asynchronous context manager|
+
+    * |:library/unittest.mock-examples.txt/creating-a-mock-from-an-existing-object:Creating a Mock from an Existing Object|
+
+  * |:library/unittest.mock-examples.txt/patch-decorators:Patch Decorators|
+
+  * |:library/unittest.mock-examples.txt/further-examples:Further Examples|
+
+    * |:library/unittest.mock-examples.txt/mocking-chained-calls:Mocking chained calls|
+
+    * |:library/unittest.mock-examples.txt/partial-mocking:Partial mocking|
+
+    * |:library/unittest.mock-examples.txt/mocking-a-generator-method:Mocking a Generator Method|
+
+    * |:library/unittest.mock-examples.txt/applying-the-same-patch-to-every-test-method:Applying the same patch to every test method|
+
+    * |:library/unittest.mock-examples.txt/mocking-unbound-methods:Mocking Unbound Methods|
+
+    * |:library/unittest.mock-examples.txt/checking-multiple-calls-with-mock:Checking multiple calls with mock|
+
+    * |:library/unittest.mock-examples.txt/coping-with-mutable-arguments:Coping with mutable arguments|
+
+    * |:library/unittest.mock-examples.txt/nesting-patches:Nesting Patches|
+
+    * |:library/unittest.mock-examples.txt/mocking-a-dictionary-with-magicmock:Mocking a dictionary with MagicMock|
+
+    * |:library/unittest.mock-examples.txt/mock-subclasses-and-their-attributes:Mock subclasses and their attributes|
+
+    * |:library/unittest.mock-examples.txt/mocking-imports-with-patch-dict:Mocking imports with patch.dict|
+
+    * |:library/unittest.mock-examples.txt/tracking-order-of-calls-and-less-verbose-call-assertions:Tracking order of calls and less verbose call assertions|
+
+    * |:library/unittest.mock-examples.txt/more-complex-argument-matching:More complex argument matching|
+
+* |:library/2to3.txt:2to3 - Automated Python 2 to 3 code translation|
+
+  * |:library/2to3.txt/using-2to3:Using 2to3|
+
+  * |:library/2to3.txt/fixers:Fixers|
+
+  * |:library/2to3.txt/module-lib2to3:lib2to3 - 2to3’s library|
+
+* |:library/test.txt:test — Regression tests package for Python|
+
+  * |:library/test.txt/writing-unit-tests-for-the-test-package:Writing Unit Tests for the test package|
+
+  * |:library/test.txt/running-tests-using-the-command-line-interface:Running tests using the command-line interface|
+
+* |:library/test.txt/module-test.support:test.support — Utilities for the Python test suite|
+
+* |:library/test.txt/module-test.support.script_helper:test.support.script_helper — Utilities for the Python execution tests|
+
+See also the Python development mode: the |:using/cmdline.txt/cmdoption-X:-X| "dev" option and *|index-0:⚓|*
+|:using/cmdline.txt/envvar-PYTHONDEVMODE:PYTHONDEVMODE| environment variable.
+
+
+

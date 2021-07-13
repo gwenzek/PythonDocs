@@ -1,0 +1,327 @@
+%hyperhelp title="Subprocesses" date="2021-07-11"
+*|subprocesses:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/asyncio/subprocess.py:Lib/asyncio/subprocess.py|, |:github.com/python/cpython/tree/3.8/Lib/asyncio/base_subprocess.py:Lib/asyncio/base_subprocess.py|
+
+======================================================================
+
+This section describes high-level async/await asyncio APIs to create and manage
+subprocesses.
+
+*|asyncio-example-subprocess-shell:⚓|*
+
+Here’s an example of how asyncio can run a shell command and obtain its result:
+
+```rst
+import asyncio
+
+async def run(cmd):
+    proc = await asyncio.create_subprocess_shell(
+        cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE)
+
+    stdout, stderr = await proc.communicate()
+
+    print(f'[{cmd!r} exited with {proc.returncode}]')
+    if stdout:
+        print(f'[stdout]\n{stdout.decode()}')
+    if stderr:
+        print(f'[stderr]\n{stderr.decode()}')
+
+asyncio.run(run('ls /zzz'))
+```
+
+will print:
+
+```rst
+['ls /zzz' exited with 1]
+[stderr]
+ls: /zzz: No such file or directory
+```
+
+Because all asyncio subprocess functions are asynchronous and asyncio provides
+many tools to work with such functions, it is easy to execute and monitor
+multiple subprocesses in parallel.  It is indeed trivial to modify the above
+example to run several commands simultaneously:
+
+```rst
+async def main():
+    await asyncio.gather(
+        run('ls /zzz'),
+        run('sleep 1; echo "hello"'))
+
+asyncio.run(main())
+```
+
+See also the |:examples:Examples| subsection.
+
+# creating-subprocesses:Creating Subprocesses
+
+*asyncio.create_subprocess_exec:coroutine asyncio.create_subprocess_exec(program, *args, stdin=None, stdout=None, stderr=None, loop=None, limit=None, **kwds)*
+
+   Create a subprocess.
+
+   The *limit* argument sets the buffer limit for |:library/asyncio-stream.txt/asyncio.StreamReader:StreamReader| wrappers for "
+   Process.stdout" and "Process.stderr" (if |:library/subprocess.txt/subprocess.PIPE:subprocess.PIPE| is passed to *stdout*
+   and *stderr* arguments).
+
+   Return a |:asyncio.asyncio.subprocess.Process:Process| instance.
+
+   See the documentation of |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_exec:loop.subprocess_exec()| for other parameters.
+
+   Deprecated since version 3.8, will be removed in version 3.10: The *loop*
+   parameter.
+
+*asyncio.create_subprocess_shell:coroutine asyncio.create_subprocess_shell(cmd, stdin=None, stdout=None, stderr=None, loop=None, limit=None, **kwds)*
+
+   Run the *cmd* shell command.
+
+   The *limit* argument sets the buffer limit for |:library/asyncio-stream.txt/asyncio.StreamReader:StreamReader| wrappers for "
+   Process.stdout" and "Process.stderr" (if |:library/subprocess.txt/subprocess.PIPE:subprocess.PIPE| is passed to *stdout*
+   and *stderr* arguments).
+
+   Return a |:asyncio.asyncio.subprocess.Process:Process| instance.
+
+   See the documentation of |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_shell:loop.subprocess_shell()| for other parameters.
+
+   Important:
+
+     It is the application’s responsibility to ensure that all whitespace and special
+     characters are quoted appropriately to avoid |:en.wikipedia.org/wiki/Shell_injection#Shell_injection:shell injection|*|shell-
+     injection:⚓|*  vulnerabilities. The |:library/shlex.txt/shlex.quote:shlex.quote()| function can be used to
+     properly escape whitespace and special shell characters in strings that are
+     going to be used to construct shell commands.
+
+   Deprecated since version 3.8, will be removed in version 3.10: The *loop*
+   parameter.
+
+Note:
+
+  Subprocesses are available for Windows if a |:library/asyncio-eventloop.txt/asyncio.ProactorEventLoop:ProactorEventLoop| is used. See
+  |:library/asyncio-platforms.txt/asyncio-windows-subprocess:Subprocess Support on Windows| for details.
+
+See also:
+
+  asyncio also has the following *low-level* APIs to work with subprocesses:
+  |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_exec:loop.subprocess_exec()|, |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_shell:loop.subprocess_shell()|, |:library/asyncio-eventloop.txt/asyncio.loop.connect_read_pipe:loop.connect_read_pipe()|,
+  |:library/asyncio-eventloop.txt/asyncio.loop.connect_write_pipe:loop.connect_write_pipe()|, as well as the |:library/asyncio-protocol.txt/asyncio-subprocess-transports:Subprocess Transports| and
+  |:library/asyncio-protocol.txt/asyncio-subprocess-protocols:Subprocess Protocols|.
+
+# constants:Constants
+
+*asyncio.asyncio.subprocess.PIPE:asyncio.subprocess.PIPE*
+
+   Can be passed to the *stdin*, *stdout* or *stderr* parameters.
+
+   If *PIPE* is passed to *stdin* argument, the |:asyncio.asyncio.subprocess.Process.stdin:Process.stdin| attribute will
+   point to a |:library/asyncio-stream.txt/asyncio.StreamWriter:StreamWriter| instance.
+
+   If *PIPE* is passed to *stdout* or *stderr* arguments, the |:asyncio.asyncio.subprocess.Process.stdout:Process.stdout| and
+   |:asyncio.asyncio.subprocess.Process.stderr:Process.stderr| attributes will point to |:library/asyncio-stream.txt/asyncio.StreamReader:StreamReader| instances.
+
+*asyncio.asyncio.subprocess.STDOUT:asyncio.subprocess.STDOUT*
+
+   Special value that can be used as the *stderr* argument and indicates that
+   standard error should be redirected into standard output.
+
+*asyncio.asyncio.subprocess.DEVNULL:asyncio.subprocess.DEVNULL*
+
+   Special value that can be used as the *stdin*, *stdout* or *stderr* argument to
+   process creation functions.  It indicates that the special file |:library/os.txt/os.devnull:os.devnull|
+   will be used for the corresponding subprocess stream.
+
+# interacting-with-subprocesses:Interacting with Subprocesses
+
+Both |:asyncio.create_subprocess_exec:create_subprocess_exec()| and |:asyncio.create_subprocess_shell:create_subprocess_shell()| functions return
+instances of the *Process* class.  *Process* is a high-level wrapper that allows
+communicating with subprocesses and watching for their completion.
+
+*asyncio.asyncio.subprocess.Process:class asyncio.subprocess.Process*
+
+   An object that wraps OS processes created by the |:asyncio.create_subprocess_exec:create_subprocess_exec()| and
+   |:asyncio.create_subprocess_shell:create_subprocess_shell()| functions.
+
+   This class is designed to have a similar API to the |:library/subprocess.txt/subprocess.Popen:subprocess.Popen| class,
+   but there are some notable differences:
+
+   * unlike Popen, Process instances do not have an equivalent to the |:library/subprocess.txt/subprocess.Popen.poll:poll()|
+     method;
+
+   * the |:asyncio.asyncio.subprocess.Process.communicate:communicate()| and |:asyncio.asyncio.subprocess.Process.wait:wait()| methods don’t have a *timeout* parameter: use
+     the |:library/asyncio-task.txt/asyncio.wait_for:wait_for()| function;
+
+   * the |:asyncio.asyncio.subprocess.Process.wait:Process.wait()| method is asynchronous, whereas |:library/subprocess.txt/subprocess.Popen.wait:subprocess.Popen.wait()|
+     method is implemented as a blocking busy loop;
+
+   * the *universal_newlines* parameter is not supported.
+
+   This class is |:library/asyncio-dev.txt/asyncio-multithreading:not thread safe|.
+
+   See also the |:asyncio-subprocess-threads:Subprocess and Threads| section.
+
+   *asyncio.asyncio.subprocess.Process.wait:coroutine wait()*
+
+      Wait for the child process to terminate.
+
+      Set and return the |:asyncio.asyncio.subprocess.Process.returncode:returncode| attribute.
+
+      Note:
+
+        This method can deadlock when using "stdout=PIPE" or "stderr=PIPE" and the child
+        process generates so much output that it blocks waiting for the OS pipe buffer
+        to accept more data. Use the |:asyncio.asyncio.subprocess.Process.communicate:communicate()| method when using pipes to avoid
+        this condition.
+
+   *asyncio.asyncio.subprocess.Process.communicate:coroutine communicate(input=None)*
+
+      Interact with process:
+
+      1. send data to *stdin* (if *input* is not "None");
+
+      2. read data from *stdout* and *stderr*, until EOF is reached;
+
+      3. wait for process to terminate.
+
+      The optional *input* argument is the data (|:library/stdtypes.txt/bytes:bytes| object) that will be sent to
+      the child process.
+
+      Return a tuple "(stdout_data, stderr_data)".
+
+      If either |:library/exceptions.txt/BrokenPipeError:BrokenPipeError| or |:library/exceptions.txt/ConnectionResetError:ConnectionResetError| exception is raised when
+      writing *input* into *stdin*, the exception is ignored.  This condition occurs
+      when the process exits before all data are written into *stdin*.
+
+      If it is desired to send data to the process’ *stdin*, the process needs to be
+      created with "stdin=PIPE".  Similarly, to get anything other than "None" in the
+      result tuple, the process has to be created with "stdout=PIPE" and/or "
+      stderr=PIPE" arguments.
+
+      Note, that the data read is buffered in memory, so do not use this method if the
+      data size is large or unlimited.
+
+   *asyncio.asyncio.subprocess.Process.send_signal:send_signal(signal)*
+
+      Sends the signal *signal* to the child process.
+
+      Note:
+
+        On Windows, "SIGTERM" is an alias for |:asyncio.asyncio.subprocess.Process.terminate:terminate()|. "CTRL_C_EVENT" and "
+        CTRL_BREAK_EVENT" can be sent to processes started with a *creationflags*
+        parameter which includes "CREATE_NEW_PROCESS_GROUP".
+
+   *asyncio.asyncio.subprocess.Process.terminate:terminate()*
+
+      Stop the child process.
+
+      On POSIX systems this method sends |:library/signal.txt/signal.SIGTERM:signal.SIGTERM| to the child process.
+
+      On Windows the Win32 API function "TerminateProcess()" is called to stop the
+      child process.
+
+   *asyncio.asyncio.subprocess.Process.kill:kill()*
+
+      Kill the child.
+
+      On POSIX systems this method sends "SIGKILL" to the child process.
+
+      On Windows this method is an alias for |:asyncio.asyncio.subprocess.Process.terminate:terminate()|.
+
+   *asyncio.asyncio.subprocess.Process.stdin:stdin*
+
+      Standard input stream (|:library/asyncio-stream.txt/asyncio.StreamWriter:StreamWriter|) or "None" if the process was created with
+      "stdin=None".
+
+   *asyncio.asyncio.subprocess.Process.stdout:stdout*
+
+      Standard output stream (|:library/asyncio-stream.txt/asyncio.StreamReader:StreamReader|) or "None" if the process was created
+      with "stdout=None".
+
+   *asyncio.asyncio.subprocess.Process.stderr:stderr*
+
+      Standard error stream (|:library/asyncio-stream.txt/asyncio.StreamReader:StreamReader|) or "None" if the process was created with
+      "stderr=None".
+
+   Warning:
+
+     Use the |:asyncio.asyncio.subprocess.Process.communicate:communicate()| method rather than |:asyncio.asyncio.subprocess.Process.stdin:process.stdin.write()|,
+     |:asyncio.asyncio.subprocess.Process.stdout:await process.stdout.read()| or |:asyncio.asyncio.subprocess.Process.stderr:await process.stderr.read|. This avoids
+     deadlocks due to streams pausing reading or writing and blocking the child
+     process.
+
+   *asyncio.asyncio.subprocess.Process.pid:pid*
+
+      Process identification number (PID).
+
+      Note that for processes created by the |:asyncio.create_subprocess_shell:create_subprocess_shell()| function,
+      this attribute is the PID of the spawned shell.
+
+   *asyncio.asyncio.subprocess.Process.returncode:returncode*
+
+      Return code of the process when it exits.
+
+      A "None" value indicates that the process has not terminated yet.
+
+      A negative value "-N" indicates that the child was terminated by signal "N"
+      (POSIX only).
+
+## subprocess-and-threads:Subprocess and Threads
+
+Standard asyncio event loop supports running subprocesses from different threads
+by default.
+
+On Windows subprocesses are provided by |:library/asyncio-eventloop.txt/asyncio.ProactorEventLoop:ProactorEventLoop| only (default),
+|:library/asyncio-eventloop.txt/asyncio.SelectorEventLoop:SelectorEventLoop| has no subprocess support.
+
+On UNIX *child watchers* are used for subprocess finish waiting, see
+|:library/asyncio-policy.txt/asyncio-watchers:Process Watchers| for more info.
+
+Changed in version 3.8: UNIX switched to use |:library/asyncio-policy.txt/asyncio.ThreadedChildWatcher:ThreadedChildWatcher| for spawning
+subprocesses from different threads without any limitation.Spawning a subprocess
+with *inactive* current child watcher raises |:library/exceptions.txt/RuntimeError:RuntimeError|.
+
+Note that alternative event loop implementations might have own limitations;
+please refer to their documentation.
+
+See also:
+
+  The |:library/asyncio-dev.txt/asyncio-multithreading:Concurrency and multithreading in asyncio| section.
+
+## examples:Examples
+
+An example using the |:asyncio.asyncio.subprocess.Process:Process| class to control a subprocess and the
+|:library/asyncio-stream.txt/asyncio.StreamReader:StreamReader| class to read from its standard output.
+
+*|asyncio-example-create-subprocess-exec:⚓|*
+
+The subprocess is created by the |:asyncio.create_subprocess_exec:create_subprocess_exec()| function:
+
+```rst
+import asyncio
+import sys
+
+async def get_date():
+    code = 'import datetime; print(datetime.datetime.now())'
+
+    # Create the subprocess; redirect the standard output
+    # into a pipe.
+    proc = await asyncio.create_subprocess_exec(
+        sys.executable, '-c', code,
+        stdout=asyncio.subprocess.PIPE)
+
+    # Read one line of output.
+    data = await proc.stdout.readline()
+    line = data.decode('ascii').rstrip()
+
+    # Wait for the subprocess exit.
+    await proc.wait()
+    return line
+
+date = asyncio.run(get_date())
+print(f"Current date: {date}")
+```
+
+See also the |:library/asyncio-protocol.txt/asyncio-example-subprocess-proto:same example| written using low-level APIs.
+
+
+

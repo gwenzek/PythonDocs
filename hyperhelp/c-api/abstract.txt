@@ -1,0 +1,50 @@
+%hyperhelp title="Abstract Objects Layer" date="2021-07-11"
+*|abstract-objects-layer:⚓|*
+
+The functions in this chapter interact with Python objects regardless of their
+type, or with wide classes of object types (e.g. all numerical types, or all
+sequence types).  When used on object types for which they do not apply, they
+will raise a Python exception.
+
+It is not possible to use these functions on objects that are not properly
+initialized, such as a list object that has been created by |:c-api/list.txt/c.PyList_New:PyList_New()|, but
+whose items have not been set to some non-"NULL" value yet.
+
+* |:c-api/object.txt:Object Protocol|
+
+* |:c-api/number.txt:Number Protocol|
+
+* |:c-api/sequence.txt:Sequence Protocol|
+
+* |:c-api/mapping.txt:Mapping Protocol|
+
+* |:c-api/iter.txt:Iterator Protocol|
+
+* |:c-api/buffer.txt:Buffer Protocol|
+
+  * |:c-api/buffer.txt/buffer-structure:Buffer structure|
+
+  * |:c-api/buffer.txt/buffer-request-types:Buffer request types|
+
+    * |:c-api/buffer.txt/request-independent-fields:request-independent fields|
+
+    * |:c-api/buffer.txt/readonly-format:readonly, format|
+
+    * |:c-api/buffer.txt/shape-strides-suboffsets:shape, strides, suboffsets|
+
+    * |:c-api/buffer.txt/contiguity-requests:contiguity requests|
+
+    * |:c-api/buffer.txt/compound-requests:compound requests|
+
+  * |:c-api/buffer.txt/complex-arrays:Complex arrays|
+
+    * |:c-api/buffer.txt/numpy-style-shape-and-strides:NumPy-style: shape and strides|
+
+    * |:c-api/buffer.txt/pil-style-shape-strides-and-suboffsets:PIL-style: shape, strides and suboffsets|
+
+  * |:c-api/buffer.txt/buffer-related-functions:Buffer-related functions|
+
+* |:c-api/objbuffer.txt:Old Buffer Protocol|
+
+
+

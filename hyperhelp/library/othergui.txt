@@ -1,0 +1,51 @@
+%hyperhelp title="Other Graphical User Interface Packages" date="2021-07-11"
+*|other-graphical-user-interface-packages:⚓|*
+
+Major cross-platform (Windows, Mac OS X, Unix-like) GUI toolkits are available
+for Python:
+
+See also:
+
+  |:wiki.gnome.org/Projects/PyGObject:PyGObject|*|pygobject:⚓|*
+     PyGObject provides introspection bindings for C libraries using |:developer.gnome.org/gobject/stable:GObject|
+     *|gobject:⚓|* .  One of these libraries is the |:www.gtk.org:GTK+ 3|*|gtk-3:⚓|*  widget set.
+     GTK+ comes with many more widgets than Tkinter provides.  An online
+     |:python-gtk-3-tutorial.readthedocs.io:Python GTK+ 3 Tutorial|*|python-gtk-3-tutorial:⚓|*  is available.
+
+  |:www.pygtk.org:PyGTK|*|pygtk:⚓|*
+     PyGTK provides bindings for an older version of the library, GTK+ 2.  It
+     provides an object oriented interface that is slightly higher level than the C
+     one.  There are also bindings to |:www.gnome.org:GNOME|*|gnome:⚓|* .  An online |:www.pygtk.org/pygtk2tutorial/index.html:tutorial|
+     *|tutorial:⚓|*  is available.
+
+  |:riverbankcomputing.com/software/pyqt/intro:PyQt|*|pyqt:⚓|*
+     PyQt is a *sip*-wrapped binding to the Qt toolkit.  Qt is an extensive C++ GUI
+     application development framework that is available for Unix, Windows and Mac OS
+     X. *sip* is a tool for generating bindings for C++ libraries as Python classes,
+     and is specifically designed for Python.
+
+  |:doc.qt.io/qtforpython:PySide2|*|pyside2:⚓|*
+     Also known as the Qt for Python project, PySide2 is a newer binding to the Qt
+     toolkit. It is provided by The Qt Company and aims to provide a complete port of
+     PySide to Qt 5. Compared to PyQt, its licensing scheme is friendlier to non-open
+     source applications.
+
+  |:www.wxpython.org:wxPython|*|wxpython:⚓|*
+     wxPython is a cross-platform GUI toolkit for Python that is built around the
+     popular |:www.wxwidgets.org:wxWidgets|*|wxwidgets:⚓|*  (formerly wxWindows) C++ toolkit.  It
+     provides a native look and feel for applications on Windows, Mac OS X, and Unix
+     systems by using each platform’s native widgets where ever possible, (GTK+ on
+     Unix-like systems).  In addition to an extensive set of widgets, wxPython
+     provides classes for online documentation and context sensitive help, printing,
+     HTML viewing, low-level device context drawing, drag and drop, system clipboard
+     access, an XML-based resource format and more, including an ever growing library
+     of user-contributed modules.
+
+PyGTK, PyQt, PySide2, and wxPython, all have a modern look and feel and more
+widgets than Tkinter. In addition, there are many other GUI toolkits for Python,
+both cross-platform, and platform-specific. See the |:wiki.python.org/moin/GuiProgramming:GUI Programming|*|gui-
+programming:⚓|*  page in the Python Wiki for a much more complete list, and also
+for links to documents where the different GUI toolkits are compared.
+
+
+

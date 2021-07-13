@@ -1,0 +1,202 @@
+%hyperhelp title="Distributing Python Modules (Legacy version)" date="2021-07-11"
+*|distributing-python-modules-legacy-version:⚓|*
+
+Authors:
+   Greg Ward, Anthony Baxter
+
+Email:
+   distutils-sig@python.org
+
+See also:
+
+  |:distributing/index.txt/distributing-index:Distributing Python Modules|
+     The up to date module distribution documentations
+
+Note:
+
+  This document is being retained solely until the "setuptools" documentation at
+  |:setuptools.readthedocs.io/en/latest/setuptools.html:https://setuptools.readthedocs.io/en/latest/setuptools.html| independently
+  covers all of the relevant information currently included here.
+
+Note:
+
+  This guide only covers the basic tools for building and distributing extensions
+  that are provided as part of this version of Python. Third party tools offer
+  easier to use and more secure alternatives. Refer to the
+  |:packaging.python.org/guides/tool-recommendations:quick
+recommendations section| in the Python Packaging User Guide for more
+  information.
+
+This document describes the Python Distribution Utilities (“Distutils”) from the
+module developer’s point of view, describing the underlying capabilities that "
+setuptools" builds on to allow Python developers to make Python modules and
+extensions readily available to a wider audience.
+
+* |:distutils/introduction.txt:An Introduction to Distutils|
+
+  * |:distutils/introduction.txt/concepts-terminology:Concepts & Terminology|
+
+  * |:distutils/introduction.txt/a-simple-example:A Simple Example|
+
+  * |:distutils/introduction.txt/general-python-terminology:General Python terminology|
+
+  * |:distutils/introduction.txt/distutils-specific-terminology:Distutils-specific terminology|
+
+* |:distutils/setupscript.txt:Writing the Setup Script|
+
+  * |:distutils/setupscript.txt/listing-whole-packages:Listing whole packages|
+
+  * |:distutils/setupscript.txt/listing-individual-modules:Listing individual modules|
+
+  * |:distutils/setupscript.txt/describing-extension-modules:Describing extension modules|
+
+  * |:distutils/setupscript.txt/relationships-between-distributions-and-packages:Relationships between Distributions and Packages|
+
+  * |:distutils/setupscript.txt/installing-scripts:Installing Scripts|
+
+  * |:distutils/setupscript.txt/installing-package-data:Installing Package Data|
+
+  * |:distutils/setupscript.txt/installing-additional-files:Installing Additional Files|
+
+  * |:distutils/setupscript.txt/additional-meta-data:Additional meta-data|
+
+  * |:distutils/setupscript.txt/debugging-the-setup-script:Debugging the setup script|
+
+* |:distutils/configfile.txt:Writing the Setup Configuration File|
+
+* |:distutils/sourcedist.txt:Creating a Source Distribution|
+
+  * |:distutils/sourcedist.txt/specifying-the-files-to-distribute:Specifying the files to distribute|
+
+  * |:distutils/sourcedist.txt/manifest-related-options:Manifest-related options|
+
+* |:distutils/builtdist.txt:Creating Built Distributions|
+
+  * |:distutils/builtdist.txt/creating-rpm-packages:Creating RPM packages|
+
+  * |:distutils/builtdist.txt/creating-windows-installers:Creating Windows Installers|
+
+  * |:distutils/builtdist.txt/cross-compiling-on-windows:Cross-compiling on Windows|
+
+  * |:distutils/builtdist.txt/vista-user-access-control-uac:Vista User Access Control (UAC)|
+
+* |:distutils/examples.txt:Distutils Examples|
+
+  * |:distutils/examples.txt/pure-python-distribution-by-module:Pure Python distribution (by module)|
+
+  * |:distutils/examples.txt/pure-python-distribution-by-package:Pure Python distribution (by package)|
+
+  * |:distutils/examples.txt/single-extension-module:Single extension module|
+
+  * |:distutils/examples.txt/checking-a-package:Checking a package|
+
+  * |:distutils/examples.txt/reading-the-metadata:Reading the metadata|
+
+* |:distutils/extending.txt:Extending Distutils|
+
+  * |:distutils/extending.txt/integrating-new-commands:Integrating new commands|
+
+  * |:distutils/extending.txt/adding-new-distribution-types:Adding new distribution types|
+
+* |:distutils/commandref.txt:Command Reference|
+
+  * |:distutils/commandref.txt/installing-modules-the-install-command-family:Installing modules: the install command family|
+
+  * |:distutils/commandref.txt/creating-a-source-distribution-the-sdist-command:Creating a source distribution: the sdist command|
+
+* |:distutils/apiref.txt:API Reference|
+
+  * |:distutils/apiref.txt/module-distutils.core:distutils.core — Core Distutils functionality|
+
+  * |:distutils/apiref.txt/module-distutils.ccompiler:distutils.ccompiler — CCompiler base class|
+
+  * |:distutils/apiref.txt/module-distutils.unixccompiler:distutils.unixccompiler — Unix C Compiler|
+
+  * |:distutils/apiref.txt/module-distutils.msvccompiler:distutils.msvccompiler — Microsoft Compiler|
+
+  * |:distutils/apiref.txt/module-distutils.bcppcompiler:distutils.bcppcompiler — Borland Compiler|
+
+  * |:distutils/apiref.txt/module-distutils.cygwinccompiler:distutils.cygwincompiler — Cygwin Compiler|
+
+  * |:distutils/apiref.txt/module-distutils.archive_util:distutils.archive_util —  Archiving utilities|
+
+  * |:distutils/apiref.txt/module-distutils.dep_util:distutils.dep_util — Dependency checking|
+
+  * |:distutils/apiref.txt/module-distutils.dir_util:distutils.dir_util — Directory tree operations|
+
+  * |:distutils/apiref.txt/module-distutils.file_util:distutils.file_util — Single file operations|
+
+  * |:distutils/apiref.txt/module-distutils.util:distutils.util — Miscellaneous other utility functions|
+
+  * |:distutils/apiref.txt/module-distutils.dist:distutils.dist — The Distribution class|
+
+  * |:distutils/apiref.txt/module-distutils.extension:distutils.extension — The Extension class|
+
+  * |:distutils/apiref.txt/module-distutils.debug:distutils.debug — Distutils debug mode|
+
+  * |:distutils/apiref.txt/module-distutils.errors:distutils.errors — Distutils exceptions|
+
+  * |:distutils/apiref.txt/module-distutils.fancy_getopt:distutils.fancy_getopt — Wrapper around the standard getopt module|
+
+  * |:distutils/apiref.txt/module-distutils.filelist:distutils.filelist — The FileList class|
+
+  * |:distutils/apiref.txt/module-distutils.log:distutils.log — Simple PEP 282-style logging|
+
+  * |:distutils/apiref.txt/module-distutils.spawn:distutils.spawn — Spawn a sub-process|
+
+  * |:distutils/apiref.txt/module-distutils.sysconfig:distutils.sysconfig — System configuration information|
+
+  * |:distutils/apiref.txt/module-distutils.text_file:distutils.text_file — The TextFile class|
+
+  * |:distutils/apiref.txt/module-distutils.version:distutils.version — Version number classes|
+
+  * |:distutils/apiref.txt/module-distutils.cmd:distutils.cmd — Abstract base class for Distutils commands|
+
+  * |:distutils/apiref.txt/creating-a-new-distutils-command:Creating a new Distutils command|
+
+  * |:distutils/apiref.txt/module-distutils.command:distutils.command — Individual Distutils commands|
+
+  * |:distutils/apiref.txt/module-distutils.command.bdist:distutils.command.bdist — Build a binary installer|
+
+  * |:distutils/apiref.txt/module-distutils.command.bdist_packager:distutils.command.bdist_packager — Abstract base class for packagers|
+
+  * |:distutils/apiref.txt/module-distutils.command.bdist_dumb:distutils.command.bdist_dumb — Build a “dumb” installer|
+
+  * |:distutils/apiref.txt/module-distutils.command.bdist_msi:distutils.command.bdist_msi — Build a Microsoft Installer binary package|
+
+  * |:distutils/apiref.txt/module-distutils.command.bdist_rpm:distutils.command.bdist_rpm — Build a binary distribution as a Redhat RPM and SRPM|
+
+  * |:distutils/apiref.txt/module-distutils.command.bdist_wininst:distutils.command.bdist_wininst — Build a Windows installer|
+
+  * |:distutils/apiref.txt/module-distutils.command.sdist:distutils.command.sdist — Build a source distribution|
+
+  * |:distutils/apiref.txt/module-distutils.command.build:distutils.command.build — Build all files of a package|
+
+  * |:distutils/apiref.txt/module-distutils.command.build_clib:distutils.command.build_clib — Build any C libraries in a package|
+
+  * |:distutils/apiref.txt/module-distutils.command.build_ext:distutils.command.build_ext — Build any extensions in a package|
+
+  * |:distutils/apiref.txt/module-distutils.command.build_py:distutils.command.build_py — Build the .py/.pyc files of a package|
+
+  * |:distutils/apiref.txt/module-distutils.command.build_scripts:distutils.command.build_scripts — Build the scripts of a package|
+
+  * |:distutils/apiref.txt/module-distutils.command.clean:distutils.command.clean — Clean a package build area|
+
+  * |:distutils/apiref.txt/module-distutils.command.config:distutils.command.config — Perform package configuration|
+
+  * |:distutils/apiref.txt/module-distutils.command.install:distutils.command.install — Install a package|
+
+  * |:distutils/apiref.txt/module-distutils.command.install_data:distutils.command.install_data — Install data files from a package|
+
+  * |:distutils/apiref.txt/module-distutils.command.install_headers:distutils.command.install_headers — Install C/C++ header files from a package|
+
+  * |:distutils/apiref.txt/module-distutils.command.install_lib:distutils.command.install_lib — Install library files from a package|
+
+  * |:distutils/apiref.txt/module-distutils.command.install_scripts:distutils.command.install_scripts — Install script files from a package|
+
+  * |:distutils/apiref.txt/module-distutils.command.register:distutils.command.register — Register a module with the Python Package Index|
+
+  * |:distutils/apiref.txt/module-distutils.command.check:distutils.command.check — Check the meta-data of a package|
+
+
+

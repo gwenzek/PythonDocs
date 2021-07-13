@@ -1,0 +1,176 @@
+%hyperhelp title="High-level API Index" date="2021-07-11"
+*|high-level-api-index:⚓|*
+
+This page lists all high-level async/await enabled asyncio APIs.
+
+# tasks:Tasks
+
+Utilities to run asyncio programs, create Tasks, and await on multiple things
+with timeouts.
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-task.txt/asyncio.run:run()|      | Create event loop, run a coroutine, close the      |
+|                                                    | loop.                                              |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | Start an asyncio Task.                             |
+| task.txt/asyncio.create_task:create_task()|        |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-                         | Sleep for a number of seconds.                     |
+| task.txt/asyncio.sleep:sleep()|                    |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-                         | Schedule and wait for things concurrently.         |
+| task.txt/asyncio.gather:gather()|                  |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-                         | Run with a timeout.                                |
+| task.txt/asyncio.wait_for:wait_for()|              |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-                         | Shield from cancellation.                          |
+| task.txt/asyncio.shield:shield()|                  |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-                         | Monitor for completion.                            |
+| task.txt/asyncio.wait:wait()|                      |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | Return the current Task.                           |
+| task.txt/asyncio.current_task:current_task()|      |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | Return all tasks for an event loop.                |
+| task.txt/asyncio.all_tasks:all_tasks()|            |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-task.txt/asyncio.Task:Task|      | Task object.                                       |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-task.txt/asyncio.run_coroutine_  | Schedule a coroutine from another OS thread.       |
+| threadsafe:run_coroutine_threadsafe()|             |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "for in" |:library/asyncio-                        | Monitor for completion with a "for" loop.          |
+| task.txt/asyncio.as_completed:as_completed()|      |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Examples ]-
+
+* |:library/asyncio-task.txt/asyncio-example-gather:Using asyncio.gather() to run things in parallel|.
+
+* |:library/asyncio-task.txt/asyncio-example-waitfor:Using asyncio.wait_for() to enforce a timeout|.
+
+* |:library/asyncio-task.txt/asyncio-example-task-cancel:Cancellation|.
+
+* |:library/asyncio-task.txt/asyncio-example-sleep:Using asyncio.sleep()|.
+
+* See also the main |:library/asyncio-task.txt/coroutine:Tasks documentation page|.
+
+# queues:Queues
+
+Queues should be used to distribute work amongst multiple asyncio Tasks,
+implement connection pools, and pub/sub patterns.
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-queue.txt/asyncio.Queue:Queue|   | A FIFO queue.                                      |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | A priority queue.                                  |
+| queue.txt/asyncio.PriorityQueue:PriorityQueue|     |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | A LIFO queue.                                      |
+| queue.txt/asyncio.LifoQueue:LifoQueue|             |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Examples ]-
+
+* |:library/asyncio-queue.txt/asyncio-example-queue-dist:Using asyncio.Queue to distribute workload between several
+Tasks|.
+
+* See also the |:library/asyncio-queue.txt/asyncio-queues:Queues documentation page|.
+
+# subprocesses:Subprocesses
+
+Utilities to spawn subprocesses and run shell commands.
+
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-subprocess.txt/asyncio.  | Create a subprocess.                               |
+| create_subprocess_exec:create_subprocess_exec()|   |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-subprocess.txt/asyncio.  | Run a shell command.                               |
+| create_subprocess_shell:create_subprocess_shell()| |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Examples ]-
+
+* |:library/asyncio-subprocess.txt/asyncio-example-subprocess-shell:Executing a shell command|.
+
+* See also the |:library/asyncio-subprocess.txt/asyncio-subprocess:subprocess APIs| documentation.
+
+# streams:Streams
+
+High-level APIs to work with network IO.
+
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-stream.txt/asyncio.open  | Establish a TCP connection.                        |
+| _connection:open_connection()|                     |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-stream.txt/asyncio.open  | Establish a Unix socket connection.                |
+| _unix_connection:open_unix_connection()|           |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-                         | Start a TCP server.                                |
+| stream.txt/asyncio.start_server:start_server()|    |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-stream.txt/asyncio.star  | Start a Unix socket server.                        |
+| t_unix_server:start_unix_server()|                 |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | High-level async/await object to receive network   |
+| stream.txt/asyncio.StreamReader:StreamReader|      | data.                                              |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | High-level async/await object to send network      |
+| stream.txt/asyncio.StreamWriter:StreamWriter|      | data.                                              |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Examples ]-
+
+* |:library/asyncio-stream.txt/asyncio-example-stream:Example TCP client|.
+
+* See also the |:library/asyncio-stream.txt/asyncio-streams:streams APIs| documentation.
+
+# synchronization:Synchronization
+
+Threading-like synchronization primitives that can be used in Tasks.
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-sync.txt/asyncio.Lock:Lock|      | A mutex lock.                                      |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-sync.txt/asyncio.Event:Event|    | An event object.                                   |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | A condition object.                                |
+| sync.txt/asyncio.Condition:Condition|              |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | A semaphore.                                       |
+| sync.txt/asyncio.Semaphore:Semaphore|              |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-sync.txt/asyncio.BoundedSemapho  | A bounded semaphore.                               |
+| re:BoundedSemaphore|                               |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Examples ]-
+
+* |:library/asyncio-sync.txt/asyncio-example-sync-event:Using asyncio.Event|.
+
+* See also the documentation of asyncio |:library/asyncio-sync.txt/asyncio-sync:synchronization primitives|.
+
+# exceptions:Exceptions
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-exceptions.txt/asyncio.TimeoutE  | Raised on timeout by functions like |:library      |
+| rror:asyncio.TimeoutError|                         | /asyncio-task.txt/asyncio.wait_for:wait_for()|.    |
+|                                                    | Keep in mind that " asyncio.TimeoutError" is       |
+|                                                    | *unrelated* to the built-in |:library/exceptions.  |
+|                                                    | txt/TimeoutError:TimeoutError| exception.          |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-exceptions.txt/asyncio.Cancelle  | Raised when a Task is cancelled. See also          |
+| dError:asyncio.CancelledError|                     | |:library/asyncio-                                 |
+|                                                    | task.txt/asyncio.Task.cancel:Task.cancel()|.       |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Examples ]-
+
+* |:library/asyncio-task.txt/asyncio-example-task-cancel:Handling CancelledError to run code on cancellation request|.
+
+* See also the full list of |:library/asyncio-exceptions.txt/asyncio-exceptions:asyncio-specific exceptions|.
+
+
+

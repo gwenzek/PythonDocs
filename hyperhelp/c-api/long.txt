@@ -1,0 +1,296 @@
+%hyperhelp title="Integer Objects" date="2021-07-11"
+*|integer-objects:⚓|*
+
+*|index-0:⚓|*
+
+All integers are implemented as “long” integer objects of arbitrary size.
+
+On error, most "PyLong_As*" APIs return "(return type)-1" which cannot be
+distinguished from a number.  Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+*c.PyLongObject:type PyLongObject
+*
+
+   This subtype of |:c-api/structures.txt/c.PyObject:PyObject| represents a Python integer object.
+
+*c.PyLong_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyLong_Type
+*
+
+   This instance of |:c-api/type.txt/c.PyTypeObject:PyTypeObject| represents the Python integer type. This is the
+   same object as |:library/functions.txt/int:int| in the Python layer.
+
+*c.PyLong_Check:int PyLong_Check(PyObject *p)
+*
+
+   Return true if its argument is a |:c.PyLongObject:PyLongObject| or a subtype of |:c.PyLongObject:PyLongObject|.
+
+*c.PyLong_CheckExact:int PyLong_CheckExact(PyObject *p)
+*
+
+   Return true if its argument is a |:c.PyLongObject:PyLongObject|, but not a subtype of
+   |:c.PyLongObject:PyLongObject|.
+
+*c.PyLong_FromLong:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromLong(long v)
+*
+    *Return value: New reference.*
+
+   Return a new |:c.PyLongObject:PyLongObject| object from *v*, or "NULL" on failure.
+
+   The current implementation keeps an array of integer objects for all integers
+   between "-5" and "256", when you create an int in that range you actually just
+   get back a reference to the existing object. So it should be possible to change
+   the value of "1".  I suspect the behaviour of Python in this case is undefined.
+   :-)
+
+*c.PyLong_FromUnsignedLong:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromUnsignedLong(unsigned long v)
+*
+    *Return value: New reference.*
+
+   Return a new |:c.PyLongObject:PyLongObject| object from a C *unsigned long*, or "NULL" on
+   failure.
+
+*c.PyLong_FromSsize_t:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromSsize_t(Py_ssize_t v)
+*
+    *Return value: New reference.*
+
+   Return a new |:c.PyLongObject:PyLongObject| object from a C "Py_ssize_t", or "NULL" on failure.
+
+*c.PyLong_FromSize_t:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromSize_t(size_t v)
+*
+    *Return value: New reference.*
+
+   Return a new |:c.PyLongObject:PyLongObject| object from a C "size_t", or "NULL" on failure.
+
+*c.PyLong_FromLongLong:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromLongLong(long long v)
+*
+    *Return value: New reference.*
+
+   Return a new |:c.PyLongObject:PyLongObject| object from a C *long long*, or "NULL" on failure.
+
+*c.PyLong_FromUnsignedLongLong:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromUnsignedLongLong(unsigned long long v)
+*
+    *Return value: New reference.*
+
+   Return a new |:c.PyLongObject:PyLongObject| object from a C *unsigned long long*, or "NULL" on
+   failure.
+
+*c.PyLong_FromDouble:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromDouble(double v)
+*
+    *Return value: New reference.*
+
+   Return a new |:c.PyLongObject:PyLongObject| object from the integer part of *v*, or "NULL" on
+   failure.
+
+*c.PyLong_FromString:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromString(const char *str, char **pend, int base)
+*
+    *Return value: New reference.*
+
+   Return a new |:c.PyLongObject:PyLongObject| based on the string value in *str*, which is
+   interpreted according to the radix in *base*.  If *pend* is non-"NULL", **pend*
+   will point to the first character in *str* which follows the representation of
+   the number.  If *base* is "0", *str* is interpreted using the |:reference/lexical_analysis.txt/integers:Integer literals|
+   definition; in this case, leading zeros in a non-zero decimal number raises a
+   |:library/exceptions.txt/ValueError:ValueError|. If *base* is not "0", it must be between "2" and "36", inclusive.
+   Leading spaces and single underscores after a base specifier and between digits
+   are ignored.  If there are no digits, |:library/exceptions.txt/ValueError:ValueError| will be raised.
+
+*c.PyLong_FromUnicode:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromUnicode(Py_UNICODE *u, Py_ssize_t length, int base)
+*
+    *Return value: New reference.*
+
+   Convert a sequence of Unicode digits to a Python integer value.
+
+   Deprecated since version 3.3, will be removed in version 3.10: Part of the old-
+   style |:c-api/unicode.txt/c.Py_UNICODE:Py_UNICODE| API; please migrate to using |:c.PyLong_FromUnicodeObject:PyLong_FromUnicodeObject()|.
+
+*c.PyLong_FromUnicodeObject:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromUnicodeObject(PyObject *u, int base)
+*
+    *Return value: New reference.*
+
+   Convert a sequence of Unicode digits in the string *u* to a Python integer
+   value.
+
+   New in version 3.3.
+
+*c.PyLong_FromVoidPtr:|:c-api/structures.txt/c.PyObject:PyObject| *PyLong_FromVoidPtr(void *p)
+*
+    *Return value: New reference.*
+
+   Create a Python integer from the pointer *p*. The pointer value can be retrieved
+   from the resulting value using |:c.PyLong_AsVoidPtr:PyLong_AsVoidPtr()|.
+
+*c.PyLong_AsLong:long PyLong_AsLong(PyObject *obj)
+*
+    *|index-1:⚓|*
+
+   Return a C *long* representation of *obj*.  If *obj* is not an instance of
+   |:c.PyLongObject:PyLongObject|, first call its "__index__()" or "__int__()" method (if present)
+   to convert it to a |:c.PyLongObject:PyLongObject|.
+
+   Raise |:library/exceptions.txt/OverflowError:OverflowError| if the value of *obj* is out of range for a *long*.
+
+   Returns "-1" on error.  Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+   Changed in version 3.8: Use "__index__()" if available.
+
+   Deprecated since version 3.8: Using "__int__()" is deprecated.
+
+*c.PyLong_AsLongAndOverflow:long PyLong_AsLongAndOverflow(PyObject *obj, int *overflow)
+*
+
+   Return a C *long* representation of *obj*.  If *obj* is not an instance of
+   |:c.PyLongObject:PyLongObject|, first call its "__index__()" or "__int__()" method (if present)
+   to convert it to a |:c.PyLongObject:PyLongObject|.
+
+   If the value of *obj* is greater than "LONG_MAX" or less than "LONG_MIN", set *
+   *overflow* to "1" or "-1", respectively, and return "-1"; otherwise, set *
+   *overflow* to "0".  If any other exception occurs set **overflow* to "0" and
+   return "-1" as usual.
+
+   Returns "-1" on error.  Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+   Changed in version 3.8: Use "__index__()" if available.
+
+   Deprecated since version 3.8: Using "__int__()" is deprecated.
+
+*c.PyLong_AsLongLong:long long PyLong_AsLongLong(PyObject *obj)
+*
+    *|index-2:⚓|*
+
+   Return a C *long long* representation of *obj*.  If *obj* is not an instance of
+   |:c.PyLongObject:PyLongObject|, first call its "__index__()" or "__int__()" method (if present)
+   to convert it to a |:c.PyLongObject:PyLongObject|.
+
+   Raise |:library/exceptions.txt/OverflowError:OverflowError| if the value of *obj* is out of range for a *long long*.
+
+   Returns "-1" on error.  Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+   Changed in version 3.8: Use "__index__()" if available.
+
+   Deprecated since version 3.8: Using "__int__()" is deprecated.
+
+*c.PyLong_AsLongLongAndOverflow:long long PyLong_AsLongLongAndOverflow(PyObject *obj, int *overflow)
+*
+
+   Return a C *long long* representation of *obj*.  If *obj* is not an instance of
+   |:c.PyLongObject:PyLongObject|, first call its "__index__()" or "__int__()" method (if present)
+   to convert it to a |:c.PyLongObject:PyLongObject|.
+
+   If the value of *obj* is greater than "PY_LLONG_MAX" or less than "PY_LLONG_MIN"
+   , set **overflow* to "1" or "-1", respectively, and return "-1"; otherwise, set
+   **overflow* to "0".  If any other exception occurs set **overflow* to "0" and
+   return "-1" as usual.
+
+   Returns "-1" on error.  Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+   New in version 3.2.
+
+   Changed in version 3.8: Use "__index__()" if available.
+
+   Deprecated since version 3.8: Using "__int__()" is deprecated.
+
+*c.PyLong_AsSsize_t:Py_ssize_t PyLong_AsSsize_t(PyObject *pylong)
+*
+    *|index-3:⚓|*
+
+   Return a C "Py_ssize_t" representation of *pylong*.  *pylong* must be an
+   instance of |:c.PyLongObject:PyLongObject|.
+
+   Raise |:library/exceptions.txt/OverflowError:OverflowError| if the value of *pylong* is out of range for a "Py_ssize_t
+   ".
+
+   Returns "-1" on error.  Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+*c.PyLong_AsUnsignedLong:unsigned long PyLong_AsUnsignedLong(PyObject *pylong)
+*
+    *|index-4:⚓|*
+
+   Return a C *unsigned long* representation of *pylong*.  *pylong* must be an
+   instance of |:c.PyLongObject:PyLongObject|.
+
+   Raise |:library/exceptions.txt/OverflowError:OverflowError| if the value of *pylong* is out of range for a *unsigned
+   long*.
+
+   Returns "(unsigned long)-1" on error. Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+*c.PyLong_AsSize_t:size_t PyLong_AsSize_t(PyObject *pylong)
+*
+    *|index-5:⚓|*
+
+   Return a C "size_t" representation of *pylong*.  *pylong* must be an instance of
+   |:c.PyLongObject:PyLongObject|.
+
+   Raise |:library/exceptions.txt/OverflowError:OverflowError| if the value of *pylong* is out of range for a "size_t".
+
+   Returns "(size_t)-1" on error. Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+*c.PyLong_AsUnsignedLongLong:unsigned long long PyLong_AsUnsignedLongLong(PyObject *pylong)
+*
+    *|index-6:⚓|*
+
+   Return a C *unsigned long long* representation of *pylong*.  *pylong* must be an
+   instance of |:c.PyLongObject:PyLongObject|.
+
+   Raise |:library/exceptions.txt/OverflowError:OverflowError| if the value of *pylong* is out of range for an *unsigned
+   long long*.
+
+   Returns "(unsigned long long)-1" on error. Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to
+   disambiguate.
+
+   Changed in version 3.1: A negative *pylong* now raises |:library/exceptions.txt/OverflowError:OverflowError|, not
+   |:library/exceptions.txt/TypeError:TypeError|.
+
+*c.PyLong_AsUnsignedLongMask:unsigned long PyLong_AsUnsignedLongMask(PyObject *obj)
+*
+
+   Return a C *unsigned long* representation of *obj*.  If *obj* is not an instance
+   of |:c.PyLongObject:PyLongObject|, first call its "__index__()" or "__int__()" method (if
+   present) to convert it to a |:c.PyLongObject:PyLongObject|.
+
+   If the value of *obj* is out of range for an *unsigned long*, return the
+   reduction of that value modulo "ULONG_MAX + 1".
+
+   Returns "(unsigned long)-1" on error.  Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+   Changed in version 3.8: Use "__index__()" if available.
+
+   Deprecated since version 3.8: Using "__int__()" is deprecated.
+
+*c.PyLong_AsUnsignedLongLongMask:unsigned long long PyLong_AsUnsignedLongLongMask(PyObject *obj)
+*
+
+   Return a C *unsigned long long* representation of *obj*.  If *obj* is not an
+   instance of |:c.PyLongObject:PyLongObject|, first call its "__index__()" or "__int__()" method
+   (if present) to convert it to a |:c.PyLongObject:PyLongObject|.
+
+   If the value of *obj* is out of range for an *unsigned long long*, return the
+   reduction of that value modulo "PY_ULLONG_MAX + 1".
+
+   Returns "(unsigned long long)-1" on error.  Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to
+   disambiguate.
+
+   Changed in version 3.8: Use "__index__()" if available.
+
+   Deprecated since version 3.8: Using "__int__()" is deprecated.
+
+*c.PyLong_AsDouble:double PyLong_AsDouble(PyObject *pylong)
+*
+
+   Return a C *double* representation of *pylong*.  *pylong* must be an instance of
+   |:c.PyLongObject:PyLongObject|.
+
+   Raise |:library/exceptions.txt/OverflowError:OverflowError| if the value of *pylong* is out of range for a *double*.
+
+   Returns "-1.0" on error.  Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+*c.PyLong_AsVoidPtr:void *PyLong_AsVoidPtr(PyObject *pylong)
+*
+
+   Convert a Python integer *pylong* to a C *void* pointer. If *pylong* cannot be
+   converted, an |:library/exceptions.txt/OverflowError:OverflowError| will be raised.  This is only assured to produce a
+   usable *void* pointer for values created with |:c.PyLong_FromVoidPtr:PyLong_FromVoidPtr()|.
+
+   Returns "NULL" on error.  Use |:c-api/exceptions.txt/c.PyErr_Occurred:PyErr_Occurred()| to disambiguate.
+
+
+

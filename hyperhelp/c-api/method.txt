@@ -1,0 +1,98 @@
+%hyperhelp title="Instance Method Objects" date="2021-07-11"
+*|instance-method-objects:⚓|*
+
+*|index-0:⚓|*
+
+An instance method is a wrapper for a |:c-api/structures.txt/c.PyCFunction:PyCFunction| and the new way to bind a
+|:c-api/structures.txt/c.PyCFunction:PyCFunction| to a class object. It replaces the former call "PyMethod_New(func,
+NULL, class)".
+
+*c.PyInstanceMethod_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyInstanceMethod_Type
+*
+
+   This instance of |:c-api/type.txt/c.PyTypeObject:PyTypeObject| represents the Python instance method type. It
+   is not exposed to Python programs.
+
+*c.PyInstanceMethod_Check:int PyInstanceMethod_Check(PyObject *o)
+*
+
+   Return true if *o* is an instance method object (has type
+   |:c.PyInstanceMethod_Type:PyInstanceMethod_Type|).  The parameter must not be "NULL".
+
+*c.PyInstanceMethod_New:|:c-api/structures.txt/c.PyObject:PyObject| *PyInstanceMethod_New(PyObject *func)
+*
+    *Return value: New reference.*
+
+   Return a new instance method object, with *func* being any callable object *func
+   * is the function that will be called when the instance method is called.
+
+*c.PyInstanceMethod_Function:|:c-api/structures.txt/c.PyObject:PyObject| *PyInstanceMethod_Function(PyObject *im)
+*
+    *Return value: Borrowed reference.*
+
+   Return the function object associated with the instance method *im*.
+
+*c.PyInstanceMethod_GET_FUNCTION:|:c-api/structures.txt/c.PyObject:PyObject| *PyInstanceMethod_GET_FUNCTION(PyObject *im)
+*
+    *Return value: Borrowed reference.*
+
+   Macro version of |:c.PyInstanceMethod_Function:PyInstanceMethod_Function()| which avoids error checking.
+
+*|method-objects:⚓|*  method-objects:Method Objects*|index-1:⚓|*
+
+Methods are bound function objects. Methods are always bound to an instance of a
+user-defined class. Unbound methods (methods bound to a class object) are no
+longer available.
+
+*c.PyMethod_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyMethod_Type
+*
+    *|index-2:⚓|*
+
+   This instance of |:c-api/type.txt/c.PyTypeObject:PyTypeObject| represents the Python method type.  This is
+   exposed to Python programs as "types.MethodType".
+
+*c.PyMethod_Check:int PyMethod_Check(PyObject *o)
+*
+
+   Return true if *o* is a method object (has type |:c.PyMethod_Type:PyMethod_Type|).  The parameter
+   must not be "NULL".
+
+*c.PyMethod_New:|:c-api/structures.txt/c.PyObject:PyObject| *PyMethod_New(PyObject *func, PyObject *self)
+*
+    *Return value: New reference.*
+
+   Return a new method object, with *func* being any callable object and *self* the
+   instance the method should be bound. *func* is the function that will be called
+   when the method is called. *self* must not be "NULL".
+
+*c.PyMethod_Function:|:c-api/structures.txt/c.PyObject:PyObject| *PyMethod_Function(PyObject *meth)
+*
+    *Return value: Borrowed reference.*
+
+   Return the function object associated with the method *meth*.
+
+*c.PyMethod_GET_FUNCTION:|:c-api/structures.txt/c.PyObject:PyObject| *PyMethod_GET_FUNCTION(PyObject *meth)
+*
+    *Return value: Borrowed reference.*
+
+   Macro version of |:c.PyMethod_Function:PyMethod_Function()| which avoids error checking.
+
+*c.PyMethod_Self:|:c-api/structures.txt/c.PyObject:PyObject| *PyMethod_Self(PyObject *meth)
+*
+    *Return value: Borrowed reference.*
+
+   Return the instance associated with the method *meth*.
+
+*c.PyMethod_GET_SELF:|:c-api/structures.txt/c.PyObject:PyObject| *PyMethod_GET_SELF(PyObject *meth)
+*
+    *Return value: Borrowed reference.*
+
+   Macro version of |:c.PyMethod_Self:PyMethod_Self()| which avoids error checking.
+
+*c.PyMethod_ClearFreeList:int PyMethod_ClearFreeList()
+*
+
+   Clear the free list. Return the total number of freed items.
+
+
+

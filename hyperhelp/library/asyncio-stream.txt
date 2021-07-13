@@ -1,0 +1,429 @@
+%hyperhelp title="Streams" date="2021-07-11"
+*|streams:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/asyncio/streams.py:Lib/asyncio/streams.py|
+
+======================================================================
+
+Streams are high-level async/await-ready primitives to work with network
+connections.  Streams allow sending and receiving data without using callbacks
+or low-level protocols and transports.
+
+*|asyncio-example-stream:⚓|*
+
+Here is an example of a TCP echo client written using asyncio streams:
+
+```rst
+import asyncio
+
+async def tcp_echo_client(message):
+    reader, writer = await asyncio.open_connection(
+        '127.0.0.1', 8888)
+
+    print(f'Send: {message!r}')
+    writer.write(message.encode())
+    await writer.drain()
+
+    data = await reader.read(100)
+    print(f'Received: {data.decode()!r}')
+
+    print('Close the connection')
+    writer.close()
+    await writer.wait_closed()
+
+asyncio.run(tcp_echo_client('Hello World!'))
+```
+
+See also the |:examples:Examples| section below.
+
+-[ Stream Functions ]-
+
+The following top-level asyncio functions can be used to create and work with
+streams:
+
+*asyncio.open_connection:coroutine asyncio.open_connection(host=None, port=None, *, loop=None, limit=None, ssl=None, family=0, proto=0, flags=0, sock=None, local_addr=None, server_hostname=None, ssl_handshake_timeout=None)*
+
+   Establish a network connection and return a pair of "(reader, writer)" objects.
+
+   The returned *reader* and *writer* objects are instances of |:asyncio.StreamReader:StreamReader| and
+   |:asyncio.StreamWriter:StreamWriter| classes.
+
+   The *loop* argument is optional and can always be determined automatically when
+   this function is awaited from a coroutine.
+
+   *limit* determines the buffer size limit used by the returned |:asyncio.StreamReader:StreamReader|
+   instance.  By default the *limit* is set to 64 KiB.
+
+   The rest of the arguments are passed directly to |:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()|.
+
+   New in version 3.7: The *ssl_handshake_timeout* parameter.
+
+*asyncio.start_server:coroutine asyncio.start_server(client_connected_cb, host=None, port=None, *, loop=None, limit=None, family=socket.AF_UNSPEC, flags=socket.AI_PASSIVE, sock=None, backlog=100, ssl=None, reuse_address=None, reuse_port=None, ssl_handshake_timeout=None, start_serving=True)*
+
+   Start a socket server.
+
+   The *client_connected_cb* callback is called whenever a new client connection is
+   established.  It receives a "(reader, writer)" pair as two arguments, instances
+   of the |:asyncio.StreamReader:StreamReader| and |:asyncio.StreamWriter:StreamWriter| classes.
+
+   *client_connected_cb* can be a plain callable or a |:library/asyncio-task.txt/coroutine:coroutine function|; if it
+   is a coroutine function, it will be automatically scheduled as a |:library/asyncio-task.txt/asyncio.Task:Task|.
+
+   The *loop* argument is optional and can always be determined automatically when
+   this method is awaited from a coroutine.
+
+   *limit* determines the buffer size limit used by the returned |:asyncio.StreamReader:StreamReader|
+   instance.  By default the *limit* is set to 64 KiB.
+
+   The rest of the arguments are passed directly to |:library/asyncio-eventloop.txt/asyncio.loop.create_server:loop.create_server()|.
+
+   New in version 3.7: The *ssl_handshake_timeout* and *start_serving* parameters.
+
+-[ Unix Sockets ]-
+
+*asyncio.open_unix_connection:coroutine asyncio.open_unix_connection(path=None, *, loop=None, limit=None, ssl=None, sock=None, server_hostname=None, ssl_handshake_timeout=None)*
+
+   Establish a Unix socket connection and return a pair of "(reader, writer)".
+
+   Similar to |:asyncio.open_connection:open_connection()| but operates on Unix sockets.
+
+   See also the documentation of |:library/asyncio-eventloop.txt/asyncio.loop.create_unix_connection:loop.create_unix_connection()|.
+
+   |:library/intro.txt/availability:Availability|: Unix.
+
+   New in version 3.7: The *ssl_handshake_timeout* parameter.
+
+   Changed in version 3.7: The *path* parameter can now be a |:glossary.txt/term-path-like-object:path-like object|
+
+*asyncio.start_unix_server:coroutine asyncio.start_unix_server(client_connected_cb, path=None, *, loop=None, limit=None, sock=None, backlog=100, ssl=None, ssl_handshake_timeout=None, start_serving=True)*
+
+   Start a Unix socket server.
+
+   Similar to |:asyncio.start_server:start_server()| but works with Unix sockets.
+
+   See also the documentation of |:library/asyncio-eventloop.txt/asyncio.loop.create_unix_server:loop.create_unix_server()|.
+
+   |:library/intro.txt/availability:Availability|: Unix.
+
+   New in version 3.7: The *ssl_handshake_timeout* and *start_serving* parameters.
+
+   Changed in version 3.7: The *path* parameter can now be a |:glossary.txt/term-path-like-object:path-like object|.
+
+# streamreader:StreamReader
+
+*asyncio.StreamReader:class asyncio.StreamReader*
+
+   Represents a reader object that provides APIs to read data from the IO stream.
+
+   It is not recommended to instantiate *StreamReader* objects directly; use
+   |:asyncio.open_connection:open_connection()| and |:asyncio.start_server:start_server()| instead.
+
+   *asyncio.StreamReader.read:coroutine read(n=- 1)*
+
+      Read up to *n* bytes.  If *n* is not provided, or set to "-1", read until EOF
+      and return all read bytes.
+
+      If EOF was received and the internal buffer is empty, return an empty "bytes"
+      object.
+
+   *asyncio.StreamReader.readline:coroutine readline()*
+
+      Read one line, where “line” is a sequence of bytes ending with "\n".
+
+      If EOF is received and "\n" was not found, the method returns partially read
+      data.
+
+      If EOF is received and the internal buffer is empty, return an empty "bytes"
+      object.
+
+   *asyncio.StreamReader.readexactly:coroutine readexactly(n)*
+
+      Read exactly *n* bytes.
+
+      Raise an |:library/asyncio-exceptions.txt/asyncio.IncompleteReadError:IncompleteReadError| if EOF is reached before *n* can be read.  Use
+      the |:library/asyncio-exceptions.txt/asyncio.IncompleteReadError.partial:IncompleteReadError.partial| attribute to get the partially read data.
+
+   *asyncio.StreamReader.readuntil:coroutine readuntil(separator=b'\\n')*
+
+      Read data from the stream until *separator* is found.
+
+      On success, the data and separator will be removed from the internal buffer
+      (consumed). Returned data will include the separator at the end.
+
+      If the amount of data read exceeds the configured stream limit, a
+      |:library/asyncio-exceptions.txt/asyncio.LimitOverrunError:LimitOverrunError| exception is raised, and the data is left in the internal
+      buffer and can be read again.
+
+      If EOF is reached before the complete separator is found, an
+      |:library/asyncio-exceptions.txt/asyncio.IncompleteReadError:IncompleteReadError| exception is raised, and the internal buffer is reset.
+      The |:library/asyncio-exceptions.txt/asyncio.IncompleteReadError.partial:IncompleteReadError.partial| attribute may contain a portion of the
+      separator.
+
+      New in version 3.5.2.
+
+   *asyncio.StreamReader.at_eof:at_eof()*
+
+      Return "True" if the buffer is empty and "feed_eof()" was called.
+
+# streamwriter:StreamWriter
+
+*asyncio.StreamWriter:class asyncio.StreamWriter*
+
+   Represents a writer object that provides APIs to write data to the IO stream.
+
+   It is not recommended to instantiate *StreamWriter* objects directly; use
+   |:asyncio.open_connection:open_connection()| and |:asyncio.start_server:start_server()| instead.
+
+   *asyncio.StreamWriter.write:write(data)*
+
+      The method attempts to write the *data* to the underlying socket immediately. If
+      that fails, the data is queued in an internal write buffer until it can be sent.
+
+      The method should be used along with the "drain()" method:
+
+```rst
+stream.write(data)
+await stream.drain()
+```
+
+   *asyncio.StreamWriter.writelines:writelines(data)*
+
+      The method writes a list (or any iterable) of bytes to the underlying socket
+      immediately. If that fails, the data is queued in an internal write buffer until
+      it can be sent.
+
+      The method should be used along with the "drain()" method:
+
+```rst
+stream.writelines(lines)
+await stream.drain()
+```
+
+   *asyncio.StreamWriter.close:close()*
+
+      The method closes the stream and the underlying socket.
+
+      The method should be used along with the "wait_closed()" method:
+
+```rst
+stream.close()
+await stream.wait_closed()
+```
+
+   *asyncio.StreamWriter.can_write_eof:can_write_eof()*
+
+      Return "True" if the underlying transport supports the |:asyncio.StreamWriter.write_eof:write_eof()| method, "
+      False" otherwise.
+
+   *asyncio.StreamWriter.write_eof:write_eof()*
+
+      Close the write end of the stream after the buffered write data is flushed.
+
+   *asyncio.StreamWriter.transport:transport*
+
+      Return the underlying asyncio transport.
+
+   *asyncio.StreamWriter.get_extra_info:get_extra_info(name, default=None)*
+
+      Access optional transport information; see |:library/asyncio-protocol.txt/asyncio.BaseTransport.get_extra_info:BaseTransport.get_extra_info()| for
+      details.
+
+   *asyncio.StreamWriter.drain:coroutine drain()*
+
+      Wait until it is appropriate to resume writing to the stream. Example:
+
+```rst
+writer.write(data)
+await writer.drain()
+```
+
+      This is a flow control method that interacts with the underlying IO write
+      buffer.  When the size of the buffer reaches the high watermark, *drain()*
+      blocks until the size of the buffer is drained down to the low watermark and
+      writing can be resumed.  When there is nothing to wait for, the |:asyncio.StreamWriter.drain:drain()|
+      returns immediately.
+
+   *asyncio.StreamWriter.is_closing:is_closing()*
+
+      Return "True" if the stream is closed or in the process of being closed.
+
+      New in version 3.7.
+
+   *asyncio.StreamWriter.wait_closed:coroutine wait_closed()*
+
+      Wait until the stream is closed.
+
+      Should be called after |:asyncio.StreamWriter.close:close()| to wait until the underlying connection is
+      closed.
+
+      New in version 3.7.
+
+# examples:Examples## tcp-echo-client-using-streams:TCP echo client using
+streams
+
+TCP echo client using the |:asyncio.open_connection:asyncio.open_connection()| function:
+
+```rst
+import asyncio
+
+async def tcp_echo_client(message):
+    reader, writer = await asyncio.open_connection(
+        '127.0.0.1', 8888)
+
+    print(f'Send: {message!r}')
+    writer.write(message.encode())
+
+    data = await reader.read(100)
+    print(f'Received: {data.decode()!r}')
+
+    print('Close the connection')
+    writer.close()
+
+asyncio.run(tcp_echo_client('Hello World!'))
+```
+
+See also:
+
+  The |:library/asyncio-protocol.txt/asyncio-example-tcp-echo-client-protocol:TCP echo client protocol| example uses the low-level
+  |:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()| method.
+
+*|asyncio-tcp-echo-server-streams:⚓|* ## tcp-echo-server-using-streams:TCP echo
+server using streams
+
+TCP echo server using the |:asyncio.start_server:asyncio.start_server()| function:
+
+```rst
+import asyncio
+
+async def handle_echo(reader, writer):
+    data = await reader.read(100)
+    message = data.decode()
+    addr = writer.get_extra_info('peername')
+
+    print(f"Received {message!r} from {addr!r}")
+
+    print(f"Send: {message!r}")
+    writer.write(data)
+    await writer.drain()
+
+    print("Close the connection")
+    writer.close()
+
+async def main():
+    server = await asyncio.start_server(
+        handle_echo, '127.0.0.1', 8888)
+
+    addr = server.sockets[0].getsockname()
+    print(f'Serving on {addr}')
+
+    async with server:
+        await server.serve_forever()
+
+asyncio.run(main())
+```
+
+See also:
+
+  The |:library/asyncio-protocol.txt/asyncio-example-tcp-echo-server-protocol:TCP echo server protocol| example uses the |:library/asyncio-eventloop.txt/asyncio.loop.create_server:loop.create_server()| method.
+
+## get-http-headers:Get HTTP headers
+
+Simple example querying HTTP headers of the URL passed on the command line:
+
+```rst
+import asyncio
+import urllib.parse
+import sys
+
+async def print_http_headers(url):
+    url = urllib.parse.urlsplit(url)
+    if url.scheme == 'https':
+        reader, writer = await asyncio.open_connection(
+            url.hostname, 443, ssl=True)
+    else:
+        reader, writer = await asyncio.open_connection(
+            url.hostname, 80)
+
+    query = (
+        f"HEAD {url.path or '/'} HTTP/1.0\r\n"
+        f"Host: {url.hostname}\r\n"
+        f"\r\n"
+    )
+
+    writer.write(query.encode('latin-1'))
+    while True:
+        line = await reader.readline()
+        if not line:
+            break
+
+        line = line.decode('latin1').rstrip()
+        if line:
+            print(f'HTTP header> {line}')
+
+    # Ignore the body, close the socket
+    writer.close()
+
+url = sys.argv[1]
+asyncio.run(print_http_headers(url))
+```
+
+Usage:
+
+```rst
+python example.py http://example.com/path/page.html
+```
+
+or with HTTPS:
+
+```rst
+python example.py https://example.com/path/page.html
+```
+
+*|asyncio-example-create-connection-streams:⚓|* ## register-an-open-socket-to-
+wait-for-data-using-streams:Register an open socket to wait for data using
+streams
+
+Coroutine waiting until a socket receives data using the |:asyncio.open_connection:open_connection()|
+function:
+
+```rst
+import asyncio
+import socket
+
+async def wait_for_data():
+    # Get a reference to the current event loop because
+    # we want to access low-level APIs.
+    loop = asyncio.get_running_loop()
+
+    # Create a pair of connected sockets.
+    rsock, wsock = socket.socketpair()
+
+    # Register the open socket to wait for data.
+    reader, writer = await asyncio.open_connection(sock=rsock)
+
+    # Simulate the reception of data from the network
+    loop.call_soon(wsock.send, 'abc'.encode())
+
+    # Wait for data
+    data = await reader.read(100)
+
+    # Got data, we are done: close the socket
+    print("Received:", data.decode())
+    writer.close()
+
+    # Close the second socket
+    wsock.close()
+
+asyncio.run(wait_for_data())
+```
+
+See also:
+
+  The |:library/asyncio-protocol.txt/asyncio-example-create-connection:register an open socket to wait for data using a protocol| example uses a
+  low-level protocol and the |:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()| method.
+
+  The |:library/asyncio-eventloop.txt/asyncio-example-watch-fd:watch a file descriptor for read events| example uses the low-level
+  |:library/asyncio-eventloop.txt/asyncio.loop.add_reader:loop.add_reader()| method to watch a file descriptor.
+
+
+

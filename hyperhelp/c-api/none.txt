@@ -1,0 +1,24 @@
+%hyperhelp title="The " date="2021-07-11"
+*|the-none-object:⚓|*
+
+*|index-0:⚓|*
+
+Note that the |:c-api/type.txt/c.PyTypeObject:PyTypeObject| for "None" is not directly exposed in the Python/C
+API.  Since "None" is a singleton, testing for object identity (using "==" in C)
+is sufficient. There is no "PyNone_Check()" function for the same reason.
+
+*c.Py_None:|:c-api/structures.txt/c.PyObject:PyObject| *Py_None
+*
+
+   The Python "None" object, denoting lack of value.  This object has no methods.
+   It needs to be treated just like any other object with respect to reference
+   counts.
+
+*c.Py_RETURN_NONE:Py_RETURN_NONE
+*
+
+   Properly handle returning |:c.Py_None:Py_None| from within a C function (that is, increment
+   the reference count of "None" and return it.)
+
+
+

@@ -1,0 +1,61 @@
+%hyperhelp title="Unix Specific Services" date="2021-07-11"
+*|unix-specific-services:⚓|*
+
+The modules described in this chapter provide interfaces to features that are
+unique to the Unix operating system, or in some cases to some or many variants
+of it.  Here’s an overview:
+
+* |:library/posix.txt:posix — The most common POSIX system calls|
+
+  * |:library/posix.txt/large-file-support:Large File Support|
+
+  * |:library/posix.txt/notable-module-contents:Notable Module Contents|
+
+* |:library/pwd.txt:pwd — The password database|
+
+* |:library/spwd.txt:spwd — The shadow password database|
+
+* |:library/grp.txt:grp — The group database|
+
+* |:library/crypt.txt:crypt — Function to check Unix passwords|
+
+  * |:library/crypt.txt/hashing-methods:Hashing Methods|
+
+  * |:library/crypt.txt/module-attributes:Module Attributes|
+
+  * |:library/crypt.txt/module-functions:Module Functions|
+
+  * |:library/crypt.txt/examples:Examples|
+
+* |:library/termios.txt:termios — POSIX style tty control|
+
+  * |:library/termios.txt/example:Example|
+
+* |:library/tty.txt:tty — Terminal control functions|
+
+* |:library/pty.txt:pty — Pseudo-terminal utilities|
+
+  * |:library/pty.txt/example:Example|
+
+* |:library/fcntl.txt:fcntl — The fcntl and ioctl system calls|
+
+* |:library/pipes.txt:pipes — Interface to shell pipelines|
+
+  * |:library/pipes.txt/template-objects:Template Objects|
+
+* |:library/resource.txt:resource — Resource usage information|
+
+  * |:library/resource.txt/resource-limits:Resource Limits|
+
+  * |:library/resource.txt/resource-usage:Resource Usage|
+
+* |:library/nis.txt:nis — Interface to Sun’s NIS (Yellow Pages)|
+
+* |:library/syslog.txt:syslog — Unix syslog library routines|
+
+  * |:library/syslog.txt/examples:Examples|
+
+    * |:library/syslog.txt/simple-example:Simple example|
+
+
+

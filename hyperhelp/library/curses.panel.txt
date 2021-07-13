@@ -1,0 +1,93 @@
+%hyperhelp title="curses.panel" date="2021-07-11"
+*|module-curses.panel:⚓|*
+
+======================================================================
+
+Panels are windows with the added feature of depth, so they can be stacked on
+top of each other, and only the visible portions of each window will be
+displayed.  Panels can be added, moved up or down in the stack, and removed.
+
+# functions:Functions
+
+The module |:module-curses.panel:curses.panel| defines the following functions:
+
+*curses.panel.bottom_panel:curses.panel.bottom_panel()*
+
+   Returns the bottom panel in the panel stack.
+
+*curses.panel.new_panel:curses.panel.new_panel(win)*
+
+   Returns a panel object, associating it with the given window *win*. Be aware
+   that you need to keep the returned panel object referenced explicitly.  If you
+   don’t, the panel object is garbage collected and removed from the panel stack.
+
+*curses.panel.top_panel:curses.panel.top_panel()*
+
+   Returns the top panel in the panel stack.
+
+*curses.panel.update_panels:curses.panel.update_panels()*
+
+   Updates the virtual screen after changes in the panel stack. This does not call
+   |:library/curses.txt/curses.doupdate:curses.doupdate()|, so you’ll have to do this yourself.
+
+*|curses-panel-objects:⚓|* # panel-objects:Panel Objects
+
+Panel objects, as returned by |:curses.panel.new_panel:new_panel()| above, are windows with a stacking
+order. There’s always a window associated with a panel which determines the
+content, while the panel methods are responsible for the window’s depth in the
+panel stack.
+
+Panel objects have the following methods:
+
+*curses.panel.Panel.above:Panel.above()*
+
+   Returns the panel above the current panel.
+
+*curses.panel.Panel.below:Panel.below()*
+
+   Returns the panel below the current panel.
+
+*curses.panel.Panel.bottom:Panel.bottom()*
+
+   Push the panel to the bottom of the stack.
+
+*curses.panel.Panel.hidden:Panel.hidden()*
+
+   Returns "True" if the panel is hidden (not visible), "False" otherwise.
+
+*curses.panel.Panel.hide:Panel.hide()*
+
+   Hide the panel. This does not delete the object, it just makes the window on
+   screen invisible.
+
+*curses.panel.Panel.move:Panel.move(y, x)*
+
+   Move the panel to the screen coordinates "(y, x)".
+
+*curses.panel.Panel.replace:Panel.replace(win)*
+
+   Change the window associated with the panel to the window *win*.
+
+*curses.panel.Panel.set_userptr:Panel.set_userptr(obj)*
+
+   Set the panel’s user pointer to *obj*. This is used to associate an arbitrary
+   piece of data with the panel, and can be any Python object.
+
+*curses.panel.Panel.show:Panel.show()*
+
+   Display the panel (which might have been hidden).
+
+*curses.panel.Panel.top:Panel.top()*
+
+   Push panel to the top of the stack.
+
+*curses.panel.Panel.userptr:Panel.userptr()*
+
+   Returns the user pointer for the panel.  This might be any Python object.
+
+*curses.panel.Panel.window:Panel.window()*
+
+   Returns the window object associated with the panel.
+
+
+

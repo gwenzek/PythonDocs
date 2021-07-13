@@ -1,0 +1,204 @@
+%hyperhelp title="numbers" date="2021-07-11"
+*|module-numbers:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/numbers.py:Lib/numbers.py|
+
+======================================================================
+
+The |:module-numbers:numbers| module (*|index-0:⚓|* |:www.python.org/dev/peps/pep-3141:PEP 3141|) defines a hierarchy of numeric
+|:glossary.txt/term-abstract-base-class:abstract base classes| which progressively define more operations.  None of the
+types defined in this module can be instantiated.
+
+*numbers.Number:class numbers.Number*
+
+   The root of the numeric hierarchy. If you just want to check if an argument *x*
+   is a number, without caring what kind, use "isinstance(x, Number)".
+
+# the-numeric-tower:The numeric tower
+
+*numbers.Complex:class numbers.Complex*
+
+   Subclasses of this type describe complex numbers and include the operations that
+   work on the built-in |:library/functions.txt/complex:complex| type. These are: conversions to |:library/functions.txt/complex:complex| and
+   |:library/functions.txt/bool:bool|, |:numbers.Complex.real:real|, |:numbers.Complex.imag:imag|, "+", "-", "*", "/", |:library/functions.txt/abs:abs()|, |:numbers.Complex.conjugate:conjugate()|, "==", and "
+   !=". All except "-" and "!=" are abstract.
+
+   *numbers.Complex.real:real*
+
+      Abstract. Retrieves the real component of this number.
+
+   *numbers.Complex.imag:imag*
+
+      Abstract. Retrieves the imaginary component of this number.
+
+   *numbers.Complex.conjugate:abstractmethod conjugate()*
+
+      Abstract. Returns the complex conjugate. For example, "(1+3j).conjugate() ==
+      (1-3j)".
+
+*numbers.Real:class numbers.Real*
+
+   To |:numbers.Complex:Complex|, |:numbers.Real:Real| adds the operations that work on real numbers.
+
+   In short, those are: a conversion to |:library/functions.txt/float:float|, |:library/math.txt/math.trunc:math.trunc()|, |:library/functions.txt/round:round()|,
+   |:library/math.txt/math.floor:math.floor()|, |:library/math.txt/math.ceil:math.ceil()|, |:library/functions.txt/divmod:divmod()|, "//", "%", "<", "<=", ">", and ">=".
+
+   Real also provides defaults for |:library/functions.txt/complex:complex()|, |:numbers.Complex.real:real|, |:numbers.Complex.imag:imag|, and |:numbers.Complex.conjugate:conjugate()|.
+
+*numbers.Rational:class numbers.Rational*
+
+   Subtypes |:numbers.Real:Real| and adds |:numbers.Rational.numerator:numerator| and |:numbers.Rational.denominator:denominator| properties, which should
+   be in lowest terms. With these, it provides a default for |:library/functions.txt/float:float()|.
+
+   *numbers.Rational.numerator:numerator*
+
+      Abstract.
+
+   *numbers.Rational.denominator:denominator*
+
+      Abstract.
+
+*numbers.Integral:class numbers.Integral*
+
+   Subtypes |:numbers.Rational:Rational| and adds a conversion to |:library/functions.txt/int:int|.  Provides defaults for
+   |:library/functions.txt/float:float()|, |:numbers.Rational.numerator:numerator|, and |:numbers.Rational.denominator:denominator|.  Adds abstract methods for "**" and
+   bit-string operations: "<<", ">>", "&", "^", "|", "~".
+
+# notes-for-type-implementors:Notes for type implementors
+
+Implementors should be careful to make equal numbers equal and hash them to the
+same values. This may be subtle if there are two different extensions of the
+real numbers. For example, |:library/fractions.txt/fractions.Fraction:fractions.Fraction| implements |:library/functions.txt/hash:hash()| as follows:
+
+```rst
+def __hash__(self):
+    if self.denominator == 1:
+        # Get integers right.
+        return hash(self.numerator)
+    # Expensive check, but definitely correct.
+    if self == float(self):
+        return hash(float(self))
+    else:
+        # Use tuple's hash to avoid a high collision rate on
+        # simple fractions.
+        return hash((self.numerator, self.denominator))
+```
+
+## adding-more-numeric-abcs:Adding More Numeric ABCs
+
+There are, of course, more possible ABCs for numbers, and this would be a poor
+hierarchy if it precluded the possibility of adding those. You can add "MyFoo"
+between |:numbers.Complex:Complex| and |:numbers.Real:Real| with:
+
+```rst
+class MyFoo(Complex): ...
+MyFoo.register(Real)
+```
+
+*|implementing-the-arithmetic-operations:⚓|* ## implementing-the-arithmetic-
+operations:Implementing the arithmetic operations
+
+We want to implement the arithmetic operations so that mixed-mode operations
+either call an implementation whose author knew about the types of both
+arguments, or convert both to the nearest built in type and do the operation
+there. For subtypes of |:numbers.Integral:Integral|, this means that "__add__()" and "__radd__()"
+should be defined as:
+
+```rst
+class MyIntegral(Integral):
+
+    def __add__(self, other):
+        if isinstance(other, MyIntegral):
+            return do_my_adding_stuff(self, other)
+        elif isinstance(other, OtherTypeIKnowAbout):
+            return do_my_other_adding_stuff(self, other)
+        else:
+            return NotImplemented
+
+    def __radd__(self, other):
+        if isinstance(other, MyIntegral):
+            return do_my_adding_stuff(other, self)
+        elif isinstance(other, OtherTypeIKnowAbout):
+            return do_my_other_adding_stuff(other, self)
+        elif isinstance(other, Integral):
+            return int(other) + int(self)
+        elif isinstance(other, Real):
+            return float(other) + float(self)
+        elif isinstance(other, Complex):
+            return complex(other) + complex(self)
+        else:
+            return NotImplemented
+```
+
+There are 5 different cases for a mixed-type operation on subclasses of
+|:numbers.Complex:Complex|. I’ll refer to all of the above code that doesn’t refer to "MyIntegral
+" and "OtherTypeIKnowAbout" as “boilerplate”. "a" will be an instance of "A",
+which is a subtype of |:numbers.Complex:Complex| ("a : A <: Complex"), and "b : B <: Complex".
+I’ll consider "a + b":
+
+   1. If "A" defines an "__add__()" which accepts "b", all is well.
+
+   2. If "A" falls back to the boilerplate code, and it were to return a value from "
+      __add__()", we’d miss the possibility that "B" defines a more intelligent "
+      __radd__()", so the boilerplate should return |:library/constants.txt/NotImplemented:NotImplemented| from "__add__()".
+      (Or "A" may not implement "__add__()" at all.)
+
+   3. Then "B"’s "__radd__()" gets a chance. If it accepts "a", all is well.
+
+   4. If it falls back to the boilerplate, there are no more possible methods to try,
+      so this is where the default implementation should live.
+
+   5. If "B <: A", Python tries "B.__radd__" before "A.__add__". This is ok, because
+      it was implemented with knowledge of "A", so it can handle those instances
+      before delegating to |:numbers.Complex:Complex|.
+
+If "A <: Complex" and "B <: Real" without sharing any other knowledge, then the
+appropriate shared operation is the one involving the built in |:library/functions.txt/complex:complex|, and
+both "__radd__()" s land there, so "a+b == b+a".
+
+Because most of the operations on any given type will be very similar, it can be
+useful to define a helper function which generates the forward and reverse
+instances of any given operator. For example, |:library/fractions.txt/fractions.Fraction:fractions.Fraction| uses:
+
+```rst
+def _operator_fallbacks(monomorphic_operator, fallback_operator):
+    def forward(a, b):
+        if isinstance(b, (int, Fraction)):
+            return monomorphic_operator(a, b)
+        elif isinstance(b, float):
+            return fallback_operator(float(a), b)
+        elif isinstance(b, complex):
+            return fallback_operator(complex(a), b)
+        else:
+            return NotImplemented
+    forward.__name__ = '__' + fallback_operator.__name__ + '__'
+    forward.__doc__ = monomorphic_operator.__doc__
+
+    def reverse(b, a):
+        if isinstance(a, Rational):
+            # Includes ints.
+            return monomorphic_operator(a, b)
+        elif isinstance(a, numbers.Real):
+            return fallback_operator(float(a), float(b))
+        elif isinstance(a, numbers.Complex):
+            return fallback_operator(complex(a), complex(b))
+        else:
+            return NotImplemented
+    reverse.__name__ = '__r' + fallback_operator.__name__ + '__'
+    reverse.__doc__ = monomorphic_operator.__doc__
+
+    return forward, reverse
+
+def _add(a, b):
+    """a + b"""
+    return Fraction(a.numerator * b.denominator +
+                    b.numerator * a.denominator,
+                    a.denominator * b.denominator)
+
+__add__, __radd__ = _operator_fallbacks(_add, operator.add)
+
+# ...
+```
+
+
+

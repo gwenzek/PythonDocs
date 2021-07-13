@@ -1,0 +1,98 @@
+%hyperhelp title="Text Processing Services" date="2021-07-11"
+*|text-processing-services:⚓|*
+
+*|stringservices:⚓|*
+
+The modules described in this chapter provide a wide range of string
+manipulation operations and other text processing services.
+
+The |:library/codecs.txt/module-codecs:codecs| module described under |:library/binary.txt/binaryservices:Binary Data Services| is also highly
+relevant to text processing. In addition, see the documentation for Python’s
+built-in string type in |:library/stdtypes.txt/textseq:Text Sequence Type — str|.
+
+* |:library/string.txt:string — Common string operations|
+
+  * |:library/string.txt/string-constants:String constants|
+
+  * |:library/string.txt/custom-string-formatting:Custom String Formatting|
+
+  * |:library/string.txt/format-string-syntax:Format String Syntax|
+
+    * |:library/string.txt/format-specification-mini-language:Format Specification Mini-Language|
+
+    * |:library/string.txt/format-examples:Format examples|
+
+  * |:library/string.txt/template-strings:Template strings|
+
+  * |:library/string.txt/helper-functions:Helper functions|
+
+* |:library/re.txt:re — Regular expression operations|
+
+  * |:library/re.txt/regular-expression-syntax:Regular Expression Syntax|
+
+  * |:library/re.txt/module-contents:Module Contents|
+
+  * |:library/re.txt/regular-expression-objects:Regular Expression Objects|
+
+  * |:library/re.txt/match-objects:Match Objects|
+
+  * |:library/re.txt/regular-expression-examples:Regular Expression Examples|
+
+    * |:library/re.txt/checking-for-a-pair:Checking for a Pair|
+
+    * |:library/re.txt/simulating-scanf:Simulating scanf()|
+
+    * |:library/re.txt/search-vs-match:search() vs. match()|
+
+    * |:library/re.txt/making-a-phonebook:Making a Phonebook|
+
+    * |:library/re.txt/text-munging:Text Munging|
+
+    * |:library/re.txt/finding-all-adverbs:Finding all Adverbs|
+
+    * |:library/re.txt/finding-all-adverbs-and-their-positions:Finding all Adverbs and their Positions|
+
+    * |:library/re.txt/raw-string-notation:Raw String Notation|
+
+    * |:library/re.txt/writing-a-tokenizer:Writing a Tokenizer|
+
+* |:library/difflib.txt:difflib — Helpers for computing deltas|
+
+  * |:library/difflib.txt/sequencematcher-objects:SequenceMatcher Objects|
+
+  * |:library/difflib.txt/sequencematcher-examples:SequenceMatcher Examples|
+
+  * |:library/difflib.txt/differ-objects:Differ Objects|
+
+  * |:library/difflib.txt/differ-example:Differ Example|
+
+  * |:library/difflib.txt/a-command-line-interface-to-difflib:A command-line interface to difflib|
+
+* |:library/textwrap.txt:textwrap — Text wrapping and filling|
+
+* |:library/unicodedata.txt:unicodedata — Unicode Database|
+
+* |:library/stringprep.txt:stringprep — Internet String Preparation|
+
+* |:library/readline.txt:readline — GNU readline interface|
+
+  * |:library/readline.txt/init-file:Init file|
+
+  * |:library/readline.txt/line-buffer:Line buffer|
+
+  * |:library/readline.txt/history-file:History file|
+
+  * |:library/readline.txt/history-list:History list|
+
+  * |:library/readline.txt/startup-hooks:Startup hooks|
+
+  * |:library/readline.txt/completion:Completion|
+
+  * |:library/readline.txt/example:Example|
+
+* |:library/rlcompleter.txt:rlcompleter — Completion function for GNU readline|
+
+  * |:library/rlcompleter.txt/completer-objects:Completer Objects|
+
+
+

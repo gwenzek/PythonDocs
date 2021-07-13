@@ -1,0 +1,73 @@
+%hyperhelp title="Binary Data Services" date="2021-07-11"
+*|binary-data-services:⚓|*
+
+The modules described in this chapter provide some basic services operations for
+manipulation of binary data. Other operations on binary data, specifically in
+relation to file formats and network protocols, are described in the relevant
+sections.
+
+Some libraries described under |:library/text.txt/textservices:Text Processing Services| also work with either
+ASCII-compatible binary formats (for example, |:library/re.txt/module-re:re|) or all binary data (for
+example, |:library/difflib.txt/module-difflib:difflib|).
+
+In addition, see the documentation for Python’s built-in binary data types in
+|:library/stdtypes.txt/binaryseq:Binary Sequence Types — bytes, bytearray, memoryview|.
+
+* |:library/struct.txt:struct — Interpret bytes as packed binary data|
+
+  * |:library/struct.txt/functions-and-exceptions:Functions and Exceptions|
+
+  * |:library/struct.txt/format-strings:Format Strings|
+
+    * |:library/struct.txt/byte-order-size-and-alignment:Byte Order, Size, and Alignment|
+
+    * |:library/struct.txt/format-characters:Format Characters|
+
+    * |:library/struct.txt/examples:Examples|
+
+  * |:library/struct.txt/classes:Classes|
+
+* |:library/codecs.txt:codecs — Codec registry and base classes|
+
+  * |:library/codecs.txt/codec-base-classes:Codec Base Classes|
+
+    * |:library/codecs.txt/error-handlers:Error Handlers|
+
+    * |:library/codecs.txt/stateless-encoding-and-decoding:Stateless Encoding and Decoding|
+
+    * |:library/codecs.txt/incremental-encoding-and-decoding:Incremental Encoding and Decoding|
+
+      * |:library/codecs.txt/incrementalencoder-objects:IncrementalEncoder Objects|
+
+      * |:library/codecs.txt/incrementaldecoder-objects:IncrementalDecoder Objects|
+
+    * |:library/codecs.txt/stream-encoding-and-decoding:Stream Encoding and Decoding|
+
+      * |:library/codecs.txt/streamwriter-objects:StreamWriter Objects|
+
+      * |:library/codecs.txt/streamreader-objects:StreamReader Objects|
+
+      * |:library/codecs.txt/streamreaderwriter-objects:StreamReaderWriter Objects|
+
+      * |:library/codecs.txt/streamrecoder-objects:StreamRecoder Objects|
+
+  * |:library/codecs.txt/encodings-and-unicode:Encodings and Unicode|
+
+  * |:library/codecs.txt/standard-encodings:Standard Encodings|
+
+  * |:library/codecs.txt/python-specific-encodings:Python Specific Encodings|
+
+    * |:library/codecs.txt/text-encodings:Text Encodings|
+
+    * |:library/codecs.txt/binary-transforms:Binary Transforms|
+
+    * |:library/codecs.txt/text-transforms:Text Transforms|
+
+  * |:library/codecs.txt/module-encodings.idna:encodings.idna — Internationalized Domain Names in Applications|
+
+  * |:library/codecs.txt/module-encodings.mbcs:encodings.mbcs — Windows ANSI codepage|
+
+  * |:library/codecs.txt/module-encodings.utf_8_sig:encodings.utf_8_sig — UTF-8 codec with BOM signature|
+
+
+

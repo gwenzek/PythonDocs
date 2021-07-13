@@ -1,0 +1,78 @@
+c-api/init#sub-interpreter-support - c-api/init.txt
+c-api/memory#default-memory-allocators - c-api/memory.txt
+c-api/typeobj#sub-slots - c-api/typeobj.txt
+c-api/typeobj#id5 - whatsnew/3.6.txt, c-api/typeobj.txt, library/tkinter.ttk.txt, reference/lexical_analysis.txt, whatsnew/3.7.txt, howto/urllib2.txt, library/threading.txt
+c-api/typeobj#heap-types - c-api/typeobj.txt
+c-api/typeobj#id4 - library/xml.etree.elementtree.txt, whatsnew/3.6.txt, library/tkinter.ttk.txt, reference/lexical_analysis.txt, library/winreg.txt, whatsnew/3.7.txt, library/threading.txt, using/windows.txt
+faq/gui#tkinter - whatsnew/3.8.txt, whatsnew/3.6.txt, library/tk.txt, whatsnew/3.7.txt, whatsnew/3.5.txt
+faq/gui#qt - faq/gui.txt, howto/logging-cookbook.txt
+howto/clinic#default-values - howto/clinic.txt, library/optparse.txt
+howto/descriptor#abstract - c-api/abstract.txt, howto/descriptor.txt
+howto/descriptor#invoking-descriptors - reference/datamodel.txt, howto/descriptor.txt
+howto/logging#useful-handlers - howto/logging.txt
+howto/regex#the-backslash-plague - howto/regex.txt
+library/argparse#allow-abbrev - library/argparse.txt
+library/functions#type - library/functions.txt, library/argparse.txt
+library/argparse#default - library/unittest.mock.txt, library/argparse.txt
+library/functions#help - library/functions.txt, library/argparse.txt
+library/ast#abstract-grammar - library/ast.txt
+library/asyncio-eventloop#event-loop-methods - library/asyncio-llapi-index.txt, library/asyncio-eventloop.txt
+library/asyncio-eventloop#server-objects - library/asyncio-eventloop.txt, library/socketserver.txt
+library/asyncio-subprocess#examples - c-api/typeobj.txt, library/crypt.txt, library/pickle.txt, library/tracemalloc.txt, reference/expressions.txt, library/asyncio-subprocess.txt, library/timeit.txt, library/urllib.request.txt, library/struct.txt, library/hashlib.txt, howto/instrumentation.txt, library/selectors.txt, library/lzma.txt, library/mailbox.txt, library/zipapp.txt, library/asyncio-eventloop.txt, library/asyncio-protocol.txt, library/csv.txt, library/zipimport.txt, library/asyncio-stream.txt, library/html.parser.txt, library/imp.txt, library/http.client.txt, library/ssl.txt, library/tokenize.txt, library/tempfile.txt, c-api/memory.txt, library/importlib.txt, library/tarfile.txt, library/socketserver.txt, library/asyncio-queue.txt, library/http.cookiejar.txt, library/plistlib.txt, library/wsgiref.txt, library/syslog.txt, library/multiprocessing.txt
+library/asyncio-protocol#transports - library/asyncio-llapi-index.txt, library/asyncio-protocol.txt
+library/asyncio-protocol#protocols - library/asyncio-llapi-index.txt, library/asyncio-protocol.txt
+library/asyncio-task#coroutines - reference/compound_stmts.txt, reference/datamodel.txt, library/asyncio-task.txt
+library/dis#opcode-collections - library/dis.txt
+library/enum#functional-api - library/enum.txt, library/importlib.metadata.txt
+library/functions#any - library/unittest.mock.txt, library/functions.txt
+library/functions#object - library/functions.txt, c-api/object.txt
+library/functions#filter - library/functions.txt, library/logging.txt, library/tracemalloc.txt
+library/functions#callable - library/typing.txt, library/functions.txt
+library/hashlib#module-hashlib - library/hashlib.txt, whatsnew/2.5.txt
+library/hashlib#constants - library/ssl.txt, library/hashlib.txt, library/math.txt, library/winreg.txt, library/asyncio-subprocess.txt, library/socket.txt, library/datetime.txt, library/decimal.txt, library/cmath.txt, library/curses.txt
+library/idle#completions - library/idle.txt
+library/idle#calltips - library/idle.txt
+library/idle#code-context - library/idle.txt
+library/logging#logrecord-attributes - library/logging.txt
+library/pathlib#pure-paths - library/pathlib.txt
+library/pathlib#concrete-paths - library/pathlib.txt
+library/pickle#comparison-with-json - library/pickle.txt
+library/re#match-objects - library/re.txt
+library/re#search-vs-match - library/re.txt
+library/select#kqueue-objects - library/select.txt
+library/select#kevent-objects - library/select.txt
+library/shutil#shutil-archiving-example - library/shutil.txt
+library/signal#signals-and-threads - library/signal.txt
+library/socket#socket-objects - library/socket.txt
+library/stdtypes#dict - reference/expressions.txt, library/stdtypes.txt
+library/stdtypes#set - reference/expressions.txt, library/stdtypes.txt
+library/stdtypes#string-methods - whatsnew/2.0.txt, library/stdtypes.txt
+library/stdtypes#old-string-formatting - library/stdtypes.txt, tutorial/inputoutput.txt
+library/struct#format-characters - library/struct.txt
+library/subprocess#security-considerations - library/ssl.txt, library/subprocess.txt
+library/tarfile#tarinfo-objects - library/tarfile.txt
+library/timeit#python-interface - library/timeit.txt
+library/tkinter.ttk#layouts - library/tkinter.ttk.txt
+library/typing#generics - library/typing.txt
+library/unittest#signal-handling - library/unittest.txt, c-api/exceptions.txt
+library/unittest#command-line-options - library/zipfile.txt, library/gzip.txt, library/unittest.txt, library/json.txt, library/pickletools.txt, library/tarfile.txt
+library/unittest.mock#where-to-patch - library/unittest.mock.txt
+library/unittest.mock#id6 - whatsnew/3.6.txt, library/tkinter.ttk.txt, whatsnew/3.7.txt, reference/lexical_analysis.txt, library/threading.txt
+library/unittest.mock#test-prefix - library/unittest.mock.txt
+library/winreg#access-rights - library/winreg.txt
+library/winreg#value-types - library/winreg.txt
+library/wsgiref#module-wsgiref - library/wsgiref.txt, whatsnew/2.5.txt
+library/zipfile#path-objects - library/zipfile.txt
+library/zipfile#zipinfo-objects - library/zipfile.txt
+reference/datamodel#coroutine-objects - reference/datamodel.txt, c-api/coro.txt
+reference/datamodel#descriptors - reference/datamodel.txt, whatsnew/2.2.txt
+reference/expressions#calls - reference/expressions.txt
+reference/expressions#asynchronous-generator-functions - reference/expressions.txt
+reference/expressions#is-not - reference/expressions.txt
+reference/expressions#comparisons - howto/ipaddress.txt, library/enum.txt, reference/expressions.txt, library/stdtypes.txt
+reference/expressions#lambda - reference/expressions.txt
+reference/lexical_analysis#encodings - reference/lexical_analysis.txt, whatsnew/3.6.txt, howto/unicode.txt
+whatsnew/3.3#importlib - whatsnew/3.6.txt, whatsnew/3.7.txt, whatsnew/3.4.txt, reference/import.txt, whatsnew/3.5.txt, whatsnew/3.3.txt
+whatsnew/3.3#build-and-c-api-changes - whatsnew/3.8.txt, whatsnew/3.6.txt, whatsnew/2.3.txt, whatsnew/2.7.txt, whatsnew/3.0.txt, whatsnew/3.2.txt, whatsnew/2.6.txt, whatsnew/3.5.txt, whatsnew/2.4.txt, whatsnew/3.3.txt, whatsnew/2.5.txt, whatsnew/3.1.txt
+whatsnew/3.7#whatsnew37-asyncio-deprecated - whatsnew/3.7.txt
+whatsnew/3.7#platform-support-removals - whatsnew/3.7.txt

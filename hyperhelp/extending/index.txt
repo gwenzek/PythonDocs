@@ -1,0 +1,135 @@
+%hyperhelp title="Extending and Embedding the Python Interpreter" date="2021-07-11"
+*|extending-and-embedding-the-python-interpreter:⚓|*
+
+This document describes how to write modules in C or C++ to extend the Python
+interpreter with new modules.  Those modules can not only define new functions
+but also new object types and their methods.  The document also describes how to
+embed the Python interpreter in another application, for use as an extension
+language.  Finally, it shows how to compile and link extension modules so that
+they can be loaded dynamically (at run time) into the interpreter, if the
+underlying operating system supports this feature.
+
+This document assumes basic knowledge about Python.  For an informal
+introduction to the language, see |:tutorial/index.txt/tutorial-index:The Python Tutorial|.
+|:reference/index.txt/reference-index:The Python Language Reference| gives a more formal definition of the language.
+|:library/index.txt/library-index:The Python Standard Library| documents the existing object types, functions and
+modules (both built-in and written in Python) that give the language its wide
+application range.
+
+For a detailed description of the whole Python/C API, see the separate
+|:c-api/index.txt/c-api-index:Python/C API Reference Manual|.
+
+# recommended-third-party-tools:Recommended third party tools
+
+This guide only covers the basic tools for creating extensions provided as part
+of this version of CPython. Third party tools like |:cython.org:Cython|*|cython:⚓|* , |:cffi.readthedocs.io:cffi|
+*|cffi:⚓|* , |:www.swig.org:SWIG|*|swig:⚓|*  and |:numba.pydata.org:Numba|*|numba:⚓|*  offer both simpler and
+more sophisticated approaches to creating C and C++ extensions for Python.
+
+See also:
+
+  |:packaging.python.org/guides/packaging-binary-extensions:Python Packaging User Guide: Binary Extensions|*|python-packaging-user-guide-binary-extensions:⚓|*
+     The Python Packaging User Guide not only covers several available tools that
+     simplify the creation of binary extensions, but also discusses the various
+     reasons why creating an extension module may be desirable in the first place.
+
+# creating-extensions-without-third-party-tools:Creating extensions without
+third party tools
+
+This section of the guide covers creating C and C++ extensions without
+assistance from third party tools. It is intended primarily for creators of
+those tools, rather than being a recommended way to create your own C
+extensions.
+
+* |:extending/extending.txt:Extending Python with C or C++|
+
+  * |:extending/extending.txt/a-simple-example:A Simple Example|
+
+  * |:extending/extending.txt/intermezzo-errors-and-exceptions:Intermezzo: Errors and Exceptions|
+
+  * |:extending/extending.txt/back-to-the-example:Back to the Example|
+
+  * |:extending/extending.txt/the-module-s-method-table-and-initialization-function:The Module’s Method Table and Initialization Function|
+
+  * |:extending/extending.txt/compilation-and-linkage:Compilation and Linkage|
+
+  * |:extending/extending.txt/calling-python-functions-from-c:Calling Python Functions from C|
+
+  * |:extending/extending.txt/extracting-parameters-in-extension-functions:Extracting Parameters in Extension Functions|
+
+  * |:extending/extending.txt/keyword-parameters-for-extension-functions:Keyword Parameters for Extension Functions|
+
+  * |:extending/extending.txt/building-arbitrary-values:Building Arbitrary Values|
+
+  * |:extending/extending.txt/reference-counts:Reference Counts|
+
+  * |:extending/extending.txt/writing-extensions-in-c:Writing Extensions in C++|
+
+  * |:extending/extending.txt/providing-a-c-api-for-an-extension-module:Providing a C API for an Extension Module|
+
+* |:extending/newtypes_tutorial.txt:Defining Extension Types: Tutorial|
+
+  * |:extending/newtypes_tutorial.txt/the-basics:The Basics|
+
+  * |:extending/newtypes_tutorial.txt/adding-data-and-methods-to-the-basic-example:Adding data and methods to the Basic example|
+
+  * |:extending/newtypes_tutorial.txt/providing-finer-control-over-data-attributes:Providing finer control over data attributes|
+
+  * |:extending/newtypes_tutorial.txt/supporting-cyclic-garbage-collection:Supporting cyclic garbage collection|
+
+  * |:extending/newtypes_tutorial.txt/subclassing-other-types:Subclassing other types|
+
+* |:extending/newtypes.txt:Defining Extension Types: Assorted Topics|
+
+  * |:extending/newtypes.txt/finalization-and-de-allocation:Finalization and De-allocation|
+
+  * |:extending/newtypes.txt/object-presentation:Object Presentation|
+
+  * |:extending/newtypes.txt/attribute-management:Attribute Management|
+
+  * |:extending/newtypes.txt/object-comparison:Object Comparison|
+
+  * |:extending/newtypes.txt/abstract-protocol-support:Abstract Protocol Support|
+
+  * |:extending/newtypes.txt/weak-reference-support:Weak Reference Support|
+
+  * |:extending/newtypes.txt/more-suggestions:More Suggestions|
+
+* |:extending/building.txt:Building C and C++ Extensions|
+
+  * |:extending/building.txt/building-c-and-c-extensions-with-distutils:Building C and C++ Extensions with distutils|
+
+  * |:extending/building.txt/distributing-your-extension-modules:Distributing your extension modules|
+
+* |:extending/windows.txt:Building C and C++ Extensions on Windows|
+
+  * |:extending/windows.txt/a-cookbook-approach:A Cookbook Approach|
+
+  * |:extending/windows.txt/differences-between-unix-and-windows:Differences Between Unix and Windows|
+
+  * |:extending/windows.txt/using-dlls-in-practice:Using DLLs in Practice|
+
+# embedding-the-cpython-runtime-in-a-larger-application:Embedding the CPython
+runtime in a larger application
+
+Sometimes, rather than creating an extension that runs inside the Python
+interpreter as the main application, it is desirable to instead embed the
+CPython runtime inside a larger application. This section covers some of the
+details involved in doing that successfully.
+
+* |:extending/embedding.txt:Embedding Python in Another Application|
+
+  * |:extending/embedding.txt/very-high-level-embedding:Very High Level Embedding|
+
+  * |:extending/embedding.txt/beyond-very-high-level-embedding-an-overview:Beyond Very High Level Embedding: An overview|
+
+  * |:extending/embedding.txt/pure-embedding:Pure Embedding|
+
+  * |:extending/embedding.txt/extending-embedded-python:Extending Embedded Python|
+
+  * |:extending/embedding.txt/embedding-python-in-c:Embedding Python in C++|
+
+  * |:extending/embedding.txt/compiling-and-linking-under-unix-like-systems:Compiling and Linking under Unix-like systems|
+
+
+

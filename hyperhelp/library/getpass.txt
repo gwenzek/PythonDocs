@@ -1,0 +1,43 @@
+%hyperhelp title="getpass" date="2021-07-11"
+*|module-getpass:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/getpass.py:Lib/getpass.py|
+
+======================================================================
+
+The |:module-getpass:getpass| module provides two functions:
+
+*getpass.getpass:getpass.getpass(prompt='Password: ', stream=None)*
+
+   Prompt the user for a password without echoing.  The user is prompted using the
+   string *prompt*, which defaults to "'Password: '".  On Unix, the prompt is
+   written to the file-like object *stream* using the replace error handler if
+   needed.  *stream* defaults to the controlling terminal ("/dev/tty") or if that
+   is unavailable to "sys.stderr" (this argument is ignored on Windows).
+
+   If echo free input is unavailable getpass() falls back to printing a warning
+   message to *stream* and reading from "sys.stdin" and issuing a |:getpass.GetPassWarning:GetPassWarning|.
+
+   Note:
+
+     If you call getpass from within IDLE, the input may be done in the terminal you
+     launched IDLE from rather than the idle window itself.
+
+*getpass.GetPassWarning:exception getpass.GetPassWarning*
+
+   A |:library/exceptions.txt/UserWarning:UserWarning| subclass issued when password input may be echoed.
+
+*getpass.getuser:getpass.getuser()*
+
+   Return the “login name” of the user.
+
+   This function checks the environment variables *|index-0:⚓|* "LOGNAME",
+   *|index-1:⚓|* "USER", *|index-2:⚓|* "LNAME" and *|index-3:⚓|* "USERNAME", in
+   order, and returns the value of the first one which is set to a non-empty
+   string.  If none are set, the login name from the password database is returned
+   on systems which support the |:library/pwd.txt/module-pwd:pwd| module, otherwise, an exception is raised.
+
+   In general, this function should be preferred over |:library/os.txt/os.getlogin:os.getlogin()|.
+
+
+

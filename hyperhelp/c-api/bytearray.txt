@@ -1,0 +1,84 @@
+%hyperhelp title="Byte Array Objects" date="2021-07-11"
+*|byte-array-objects:⚓|*
+
+*|index-0:⚓|*
+
+*c.PyByteArrayObject:type PyByteArrayObject
+*
+
+   This subtype of |:c-api/structures.txt/c.PyObject:PyObject| represents a Python bytearray object.
+
+*c.PyByteArray_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyByteArray_Type
+*
+
+   This instance of |:c-api/type.txt/c.PyTypeObject:PyTypeObject| represents the Python bytearray type; it is the
+   same object as |:library/stdtypes.txt/bytearray:bytearray| in the Python layer.
+
+# type-check-macros:Type check macros
+
+*c.PyByteArray_Check:int PyByteArray_Check(PyObject *o)
+*
+
+   Return true if the object *o* is a bytearray object or an instance of a subtype
+   of the bytearray type.
+
+*c.PyByteArray_CheckExact:int PyByteArray_CheckExact(PyObject *o)
+*
+
+   Return true if the object *o* is a bytearray object, but not an instance of a
+   subtype of the bytearray type.
+
+# direct-api-functions:Direct API functions
+
+*c.PyByteArray_FromObject:|:c-api/structures.txt/c.PyObject:PyObject| *PyByteArray_FromObject(PyObject *o)
+*
+    *Return value: New reference.*
+
+   Return a new bytearray object from any object, *o*, that implements the
+   |:c-api/buffer.txt/bufferobjects:buffer protocol|.
+
+*c.PyByteArray_FromStringAndSize:|:c-api/structures.txt/c.PyObject:PyObject| *PyByteArray_FromStringAndSize(const char *string, Py_ssize_t len)
+*
+    *Return value: New reference.*
+
+   Create a new bytearray object from *string* and its length, *len*.  On failure,
+   "NULL" is returned.
+
+*c.PyByteArray_Concat:|:c-api/structures.txt/c.PyObject:PyObject| *PyByteArray_Concat(PyObject *a, PyObject *b)
+*
+    *Return value: New reference.*
+
+   Concat bytearrays *a* and *b* and return a new bytearray with the result.
+
+*c.PyByteArray_Size:Py_ssize_t PyByteArray_Size(PyObject *bytearray)
+*
+
+   Return the size of *bytearray* after checking for a "NULL" pointer.
+
+*c.PyByteArray_AsString:char *PyByteArray_AsString(PyObject *bytearray)
+*
+
+   Return the contents of *bytearray* as a char array after checking for a "NULL"
+   pointer.  The returned array always has an extra null byte appended.
+
+*c.PyByteArray_Resize:int PyByteArray_Resize(PyObject *bytearray, Py_ssize_t len)
+*
+
+   Resize the internal buffer of *bytearray* to *len*.
+
+# macros:Macros
+
+These macros trade safety for speed and they don’t check pointers.
+
+*c.PyByteArray_AS_STRING:char *PyByteArray_AS_STRING(PyObject *bytearray)
+*
+
+   Macro version of |:c.PyByteArray_AsString:PyByteArray_AsString()|.
+
+*c.PyByteArray_GET_SIZE:Py_ssize_t PyByteArray_GET_SIZE(PyObject *bytearray)
+*
+
+   Macro version of |:c.PyByteArray_Size:PyByteArray_Size()|.
+
+
+

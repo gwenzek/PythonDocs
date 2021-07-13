@@ -1,0 +1,19 @@
+%hyperhelp title="urllib" date="2021-07-11"
+*|module-urllib:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/urllib:Lib/urllib/|
+
+======================================================================
+
+"urllib" is a package that collects several modules for working with URLs:
+
+* |:library/urllib.request.txt/module-urllib.request:urllib.request| for opening and reading URLs
+
+* |:library/urllib.error.txt/module-urllib.error:urllib.error| containing the exceptions raised by |:library/urllib.request.txt/module-urllib.request:urllib.request|
+
+* |:library/urllib.parse.txt/module-urllib.parse:urllib.parse| for parsing URLs
+
+* |:library/urllib.robotparser.txt/module-urllib.robotparser:urllib.robotparser| for parsing "robots.txt" files
+
+
+

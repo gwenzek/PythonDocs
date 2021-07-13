@@ -1,0 +1,57 @@
+%hyperhelp title="Code Objects" date="2021-07-11"
+*|code-objects:⚓|*
+
+*|codeobjects:⚓|*
+
+Code objects are a low-level detail of the CPython implementation. Each one
+represents a chunk of executable code that hasn’t yet been bound into a
+function.
+
+*c.PyCodeObject:type PyCodeObject
+*
+
+   The C structure of the objects used to describe code objects.  The fields of
+   this type are subject to change at any time.
+
+*c.PyCode_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyCode_Type
+*
+
+   This is an instance of |:c-api/type.txt/c.PyTypeObject:PyTypeObject| representing the Python |:library/code.txt/module-code:code| type.
+
+*c.PyCode_Check:int PyCode_Check(PyObject *co)
+*
+
+   Return true if *co* is a |:library/code.txt/module-code:code| object.
+
+*c.PyCode_GetNumFree:int PyCode_GetNumFree(PyCodeObject *co)
+*
+
+   Return the number of free variables in *co*.
+
+*c.PyCode_New:|:c.PyCodeObject:PyCodeObject| *PyCode_New(int argcount, int kwonlyargcount, int nlocals, int stacksize, int flags, PyObject *code, PyObject *consts, PyObject *names, PyObject *varnames, PyObject *freevars, PyObject *cellvars, PyObject *filename, PyObject *name, int firstlineno, PyObject *lnotab)
+*
+    *Return value: New reference.*
+
+   Return a new code object.  If you need a dummy code object to create a frame,
+   use |:c.PyCode_NewEmpty:PyCode_NewEmpty()| instead.  Calling |:c.PyCode_New:PyCode_New()| directly can bind you
+   to a precise Python version since the definition of the bytecode changes often.
+
+*c.PyCode_NewWithPosOnlyArgs:|:c.PyCodeObject:PyCodeObject| *PyCode_NewWithPosOnlyArgs(int argcount, int posonlyargcount, int kwonlyargcount, int nlocals, int stacksize, int flags, PyObject *code, PyObject *consts, PyObject *names, PyObject *varnames, PyObject *freevars, PyObject *cellvars, PyObject *filename, PyObject *name, int firstlineno, PyObject *lnotab)
+*
+    *Return value: New reference.*
+
+   Similar to |:c.PyCode_New:PyCode_New()|, but with an extra “posonlyargcount” for positional-
+   only arguments.
+
+   New in version 3.8.
+
+*c.PyCode_NewEmpty:|:c.PyCodeObject:PyCodeObject| *PyCode_NewEmpty(const char *filename, const char *funcname, int firstlineno)
+*
+    *Return value: New reference.*
+
+   Return a new empty code object with the specified filename, function name, and
+   first line number.  It is illegal to |:library/functions.txt/exec:exec()| or |:library/functions.txt/eval:eval()| the resulting code
+   object.
+
+
+

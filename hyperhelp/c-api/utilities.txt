@@ -1,0 +1,43 @@
+%hyperhelp title="Utilities" date="2021-07-11"
+*|utilities:⚓|*
+
+The functions in this chapter perform various utility tasks, ranging from
+helping C code be more portable across platforms, using Python modules from C,
+and parsing function arguments and constructing Python values from C values.
+
+* |:c-api/sys.txt:Operating System Utilities|
+
+* |:c-api/sys.txt/system-functions:System Functions|
+
+* |:c-api/sys.txt/process-control:Process Control|
+
+* |:c-api/import.txt:Importing Modules|
+
+* |:c-api/marshal.txt:Data marshalling support|
+
+* |:c-api/arg.txt:Parsing arguments and building values|
+
+  * |:c-api/arg.txt/parsing-arguments:Parsing arguments|
+
+    * |:c-api/arg.txt/strings-and-buffers:Strings and buffers|
+
+    * |:c-api/arg.txt/numbers:Numbers|
+
+    * |:c-api/arg.txt/other-objects:Other objects|
+
+    * |:c-api/arg.txt/api-functions:API Functions|
+
+  * |:c-api/arg.txt/building-values:Building values|
+
+* |:c-api/conversion.txt:String conversion and formatting|
+
+* |:c-api/reflection.txt:Reflection|
+
+* |:c-api/codec.txt:Codec registry and support functions|
+
+  * |:c-api/codec.txt/codec-lookup-api:Codec lookup API|
+
+  * |:c-api/codec.txt/registry-api-for-unicode-encoding-error-handlers:Registry API for Unicode encoding error handlers|
+
+
+

@@ -1,0 +1,107 @@
+%hyperhelp title="Data Persistence" date="2021-07-11"
+*|data-persistence:⚓|*
+
+The modules described in this chapter support storing Python data in a
+persistent form on disk.  The |:library/pickle.txt/module-pickle:pickle| and |:library/marshal.txt/module-marshal:marshal| modules can turn many
+Python data types into a stream of bytes and then recreate the objects from the
+bytes.  The various DBM-related modules support a family of hash-based file
+formats that store a mapping of strings to other strings.
+
+The list of modules described in this chapter is:
+
+* |:library/pickle.txt:pickle — Python object serialization|
+
+  * |:library/pickle.txt/relationship-to-other-python-modules:Relationship to other Python modules|
+
+    * |:library/pickle.txt/comparison-with-marshal:Comparison with marshal|
+
+    * |:library/pickle.txt/comparison-with-json:Comparison with json|
+
+  * |:library/pickle.txt/data-stream-format:Data stream format|
+
+  * |:library/pickle.txt/module-interface:Module Interface|
+
+  * |:library/pickle.txt/what-can-be-pickled-and-unpickled:What can be pickled and unpickled?|
+
+  * |:library/pickle.txt/pickling-class-instances:Pickling Class Instances|
+
+    * |:library/pickle.txt/persistence-of-external-objects:Persistence of External Objects|
+
+    * |:library/pickle.txt/dispatch-tables:Dispatch Tables|
+
+    * |:library/pickle.txt/handling-stateful-objects:Handling Stateful Objects|
+
+  * |:library/pickle.txt/custom-reduction-for-types-functions-and-other-objects:Custom Reduction for Types, Functions, and Other Objects|
+
+  * |:library/pickle.txt/out-of-band-buffers:Out-of-band Buffers|
+
+    * |:library/pickle.txt/provider-api:Provider API|
+
+    * |:library/pickle.txt/consumer-api:Consumer API|
+
+    * |:library/pickle.txt/example:Example|
+
+  * |:library/pickle.txt/restricting-globals:Restricting Globals|
+
+  * |:library/pickle.txt/performance:Performance|
+
+  * |:library/pickle.txt/examples:Examples|
+
+* |:library/copyreg.txt:copyreg — Register pickle support functions|
+
+  * |:library/copyreg.txt/example:Example|
+
+* |:library/shelve.txt:shelve — Python object persistence|
+
+  * |:library/shelve.txt/restrictions:Restrictions|
+
+  * |:library/shelve.txt/example:Example|
+
+* |:library/marshal.txt:marshal — Internal Python object serialization|
+
+* |:library/dbm.txt:dbm — Interfaces to Unix “databases”|
+
+  * |:library/dbm.txt/module-dbm.gnu:dbm.gnu — GNU’s reinterpretation of dbm|
+
+  * |:library/dbm.txt/module-dbm.ndbm:dbm.ndbm — Interface based on ndbm|
+
+  * |:library/dbm.txt/module-dbm.dumb:dbm.dumb — Portable DBM implementation|
+
+* |:library/sqlite3.txt:sqlite3 — DB-API 2.0 interface for SQLite databases|
+
+  * |:library/sqlite3.txt/module-functions-and-constants:Module functions and constants|
+
+  * |:library/sqlite3.txt/connection-objects:Connection Objects|
+
+  * |:library/sqlite3.txt/cursor-objects:Cursor Objects|
+
+  * |:library/sqlite3.txt/row-objects:Row Objects|
+
+  * |:library/sqlite3.txt/exceptions:Exceptions|
+
+  * |:library/sqlite3.txt/sqlite-and-python-types:SQLite and Python types|
+
+    * |:library/sqlite3.txt/introduction:Introduction|
+
+    * |:library/sqlite3.txt/using-adapters-to-store-additional-python-types-in-sqlite-databases:Using adapters to store additional Python types in SQLite databases|
+
+      * |:library/sqlite3.txt/letting-your-object-adapt-itself:Letting your object adapt itself|
+
+      * |:library/sqlite3.txt/registering-an-adapter-callable:Registering an adapter callable|
+
+    * |:library/sqlite3.txt/converting-sqlite-values-to-custom-python-types:Converting SQLite values to custom Python types|
+
+    * |:library/sqlite3.txt/default-adapters-and-converters:Default adapters and converters|
+
+  * |:library/sqlite3.txt/controlling-transactions:Controlling Transactions|
+
+  * |:library/sqlite3.txt/using-sqlite3-efficiently:Using sqlite3 efficiently|
+
+    * |:library/sqlite3.txt/using-shortcut-methods:Using shortcut methods|
+
+    * |:library/sqlite3.txt/accessing-columns-by-name-instead-of-by-index:Accessing columns by name instead of by index|
+
+    * |:library/sqlite3.txt/using-the-connection-as-a-context-manager:Using the connection as a context manager|
+
+
+

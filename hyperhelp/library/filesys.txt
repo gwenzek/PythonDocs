@@ -1,0 +1,83 @@
+%hyperhelp title="File and Directory Access" date="2021-07-11"
+*|file-and-directory-access:⚓|*
+
+The modules described in this chapter deal with disk files and directories.  For
+example, there are modules for reading the properties of files, manipulating
+paths in a portable way, and creating temporary files.  The full list of modules
+in this chapter is:
+
+* |:library/pathlib.txt:pathlib — Object-oriented filesystem paths|
+
+  * |:library/pathlib.txt/basic-use:Basic use|
+
+  * |:library/pathlib.txt/pure-paths:Pure paths|
+
+    * |:library/pathlib.txt/general-properties:General properties|
+
+    * |:library/pathlib.txt/operators:Operators|
+
+    * |:library/pathlib.txt/accessing-individual-parts:Accessing individual parts|
+
+    * |:library/pathlib.txt/methods-and-properties:Methods and properties|
+
+  * |:library/pathlib.txt/concrete-paths:Concrete paths|
+
+    * |:library/pathlib.txt/methods:Methods|
+
+  * |:library/pathlib.txt/correspondence-to-tools-in-the-os-module:Correspondence to tools in the os module|
+
+* |:library/os.path.txt:os.path — Common pathname manipulations|
+
+* |:library/fileinput.txt:fileinput — Iterate over lines from multiple input streams|
+
+* |:library/stat.txt:stat — Interpreting stat() results|
+
+* |:library/filecmp.txt:filecmp — File and Directory Comparisons|
+
+  * |:library/filecmp.txt/the-dircmp-class:The dircmp class|
+
+* |:library/tempfile.txt:tempfile — Generate temporary files and directories|
+
+  * |:library/tempfile.txt/examples:Examples|
+
+  * |:library/tempfile.txt/deprecated-functions-and-variables:Deprecated functions and variables|
+
+* |:library/glob.txt:glob — Unix style pathname pattern expansion|
+
+* |:library/fnmatch.txt:fnmatch — Unix filename pattern matching|
+
+* |:library/linecache.txt:linecache — Random access to text lines|
+
+* |:library/shutil.txt:shutil — High-level file operations|
+
+  * |:library/shutil.txt/directory-and-files-operations:Directory and files operations|
+
+    * |:library/shutil.txt/platform-dependent-efficient-copy-operations:Platform-dependent efficient copy operations|
+
+    * |:library/shutil.txt/copytree-example:copytree example|
+
+    * |:library/shutil.txt/rmtree-example:rmtree example|
+
+  * |:library/shutil.txt/archiving-operations:Archiving operations|
+
+    * |:library/shutil.txt/archiving-example:Archiving example|
+
+    * |:library/shutil.txt/archiving-example-with-base-dir:Archiving example with base_dir|
+
+  * |:library/shutil.txt/querying-the-size-of-the-output-terminal:Querying the size of the output terminal|
+
+See also:
+
+  Module |:library/os.txt/module-os:os|
+     Operating system interfaces, including functions to work with files at a lower
+     level than Python |:glossary.txt/term-file-object:file objects|.
+
+  Module |:library/io.txt/module-io:io|
+     Python’s built-in I/O library, including both abstract classes and some concrete
+     classes such as file I/O.
+
+  Built-in function |:library/functions.txt/open:open()|
+     The standard way to open files for reading and writing with Python.
+
+
+

@@ -1,0 +1,13 @@
+%hyperhelp title="Editors and IDEs" date="2021-07-11"
+*|editors-and-ides:⚓|*
+
+There are a number of IDEs that support Python programming language. Many
+editors and IDEs provide syntax highlighting, debugging tools, and *|index-0:⚓|*
+|:www.python.org/dev/peps/pep-0008:PEP 8| checks.
+
+Please go to |:wiki.python.org/moin/PythonEditors:Python Editors|*|python-editors:⚓|*  and
+|:wiki.python.org/moin/IntegratedDevelopmentEnvironments:Integrated Development Environments|*|integrated-development-environments:⚓|* 
+for a comprehensive list.
+
+
+

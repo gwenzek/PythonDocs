@@ -1,0 +1,137 @@
+%hyperhelp title="Python Runtime Services" date="2021-07-11"
+*|python-runtime-services:⚓|*
+
+The modules described in this chapter provide a wide range of services related
+to the Python interpreter and its interaction with its environment.  Here’s an
+overview:
+
+* |:library/sys.txt:sys — System-specific parameters and functions|
+
+* |:library/sysconfig.txt:sysconfig — Provide access to Python’s configuration information|
+
+  * |:library/sysconfig.txt/configuration-variables:Configuration variables|
+
+  * |:library/sysconfig.txt/installation-paths:Installation paths|
+
+  * |:library/sysconfig.txt/other-functions:Other functions|
+
+  * |:library/sysconfig.txt/using-sysconfig-as-a-script:Using sysconfig as a script|
+
+* |:library/builtins.txt:builtins — Built-in objects|
+
+* |:library/__main__.txt:__main__ — Top-level script environment|
+
+* |:library/warnings.txt:warnings — Warning control|
+
+  * |:library/warnings.txt/warning-categories:Warning Categories|
+
+  * |:library/warnings.txt/the-warnings-filter:The Warnings Filter|
+
+    * |:library/warnings.txt/describing-warning-filters:Describing Warning Filters|
+
+    * |:library/warnings.txt/default-warning-filter:Default Warning Filter|
+
+    * |:library/warnings.txt/overriding-the-default-filter:Overriding the default filter|
+
+  * |:library/warnings.txt/temporarily-suppressing-warnings:Temporarily Suppressing Warnings|
+
+  * |:library/warnings.txt/testing-warnings:Testing Warnings|
+
+  * |:library/warnings.txt/updating-code-for-new-versions-of-dependencies:Updating Code For New Versions of Dependencies|
+
+  * |:library/warnings.txt/available-functions:Available Functions|
+
+  * |:library/warnings.txt/available-context-managers:Available Context Managers|
+
+* |:library/dataclasses.txt:dataclasses — Data Classes|
+
+  * |:library/dataclasses.txt/module-level-decorators-classes-and-functions:Module-level decorators, classes, and functions|
+
+  * |:library/dataclasses.txt/post-init-processing:Post-init processing|
+
+  * |:library/dataclasses.txt/class-variables:Class variables|
+
+  * |:library/dataclasses.txt/init-only-variables:Init-only variables|
+
+  * |:library/dataclasses.txt/frozen-instances:Frozen instances|
+
+  * |:library/dataclasses.txt/inheritance:Inheritance|
+
+  * |:library/dataclasses.txt/default-factory-functions:Default factory functions|
+
+  * |:library/dataclasses.txt/mutable-default-values:Mutable default values|
+
+  * |:library/dataclasses.txt/exceptions:Exceptions|
+
+* |:library/contextlib.txt:contextlib — Utilities for with-statement contexts|
+
+  * |:library/contextlib.txt/utilities:Utilities|
+
+  * |:library/contextlib.txt/examples-and-recipes:Examples and Recipes|
+
+    * |:library/contextlib.txt/supporting-a-variable-number-of-context-managers:Supporting a variable number of context managers|
+
+    * |:library/contextlib.txt/catching-exceptions-from-enter-methods:Catching exceptions from __enter__ methods|
+
+    * |:library/contextlib.txt/cleaning-up-in-an-enter-implementation:Cleaning up in an __enter__ implementation|
+
+    * |:library/contextlib.txt/replacing-any-use-of-try-finally-and-flag-variables:Replacing any use of try-finally and flag variables|
+
+    * |:library/contextlib.txt/using-a-context-manager-as-a-function-decorator:Using a context manager as a function decorator|
+
+  * |:library/contextlib.txt/single-use-reusable-and-reentrant-context-managers:Single use, reusable and reentrant context managers|
+
+    * |:library/contextlib.txt/reentrant-context-managers:Reentrant context managers|
+
+    * |:library/contextlib.txt/reusable-context-managers:Reusable context managers|
+
+* |:library/abc.txt:abc — Abstract Base Classes|
+
+* |:library/atexit.txt:atexit — Exit handlers|
+
+  * |:library/atexit.txt/atexit-example:atexit Example|
+
+* |:library/traceback.txt:traceback — Print or retrieve a stack traceback|
+
+  * |:library/traceback.txt/tracebackexception-objects:TracebackException Objects|
+
+  * |:library/traceback.txt/stacksummary-objects:StackSummary Objects|
+
+  * |:library/traceback.txt/framesummary-objects:FrameSummary Objects|
+
+  * |:library/traceback.txt/traceback-examples:Traceback Examples|
+
+* |:library/__future__.txt:__future__ — Future statement definitions|
+
+* |:library/gc.txt:gc — Garbage Collector interface|
+
+* |:library/inspect.txt:inspect — Inspect live objects|
+
+  * |:library/inspect.txt/types-and-members:Types and members|
+
+  * |:library/inspect.txt/retrieving-source-code:Retrieving source code|
+
+  * |:library/inspect.txt/introspecting-callables-with-the-signature-object:Introspecting callables with the Signature object|
+
+  * |:library/inspect.txt/classes-and-functions:Classes and functions|
+
+  * |:library/inspect.txt/the-interpreter-stack:The interpreter stack|
+
+  * |:library/inspect.txt/fetching-attributes-statically:Fetching attributes statically|
+
+  * |:library/inspect.txt/current-state-of-generators-and-coroutines:Current State of Generators and Coroutines|
+
+  * |:library/inspect.txt/code-objects-bit-flags:Code Objects Bit Flags|
+
+  * |:library/inspect.txt/command-line-interface:Command Line Interface|
+
+* |:library/site.txt:site — Site-specific configuration hook|
+
+  * |:library/site.txt/readline-configuration:Readline configuration|
+
+  * |:library/site.txt/module-contents:Module contents|
+
+  * |:library/site.txt/command-line-interface:Command Line Interface|
+
+
+

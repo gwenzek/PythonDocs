@@ -1,0 +1,21 @@
+%hyperhelp title="Python Frequently Asked Questions" date="2021-07-11"
+*|python-frequently-asked-questions:⚓|*
+
+* |:faq/general.txt:General Python FAQ|
+
+* |:faq/programming.txt:Programming FAQ|
+
+* |:faq/design.txt:Design and History FAQ|
+
+* |:faq/library.txt:Library and Extension FAQ|
+
+* |:faq/extending.txt:Extending/Embedding FAQ|
+
+* |:faq/windows.txt:Python on Windows FAQ|
+
+* |:faq/gui.txt:Graphic User Interface FAQ|
+
+* |:faq/installed.txt:“Why is Python Installed on my Computer?” FAQ|
+
+
+

@@ -1,0 +1,120 @@
+%hyperhelp title="Internet Data Handling" date="2021-07-11"
+*|internet-data-handling:⚓|*
+
+This chapter describes modules which support handling data formats commonly used
+on the Internet.
+
+* |:library/email.txt:email — An email and MIME handling package|
+
+  * |:library/email.message.txt:email.message: Representing an email message|
+
+  * |:library/email.parser.txt:email.parser: Parsing email messages|
+
+    * |:library/email.parser.txt/feedparser-api:FeedParser API|
+
+    * |:library/email.parser.txt/parser-api:Parser API|
+
+    * |:library/email.parser.txt/additional-notes:Additional notes|
+
+  * |:library/email.generator.txt:email.generator: Generating MIME documents|
+
+  * |:library/email.policy.txt:email.policy: Policy Objects|
+
+  * |:library/email.errors.txt:email.errors: Exception and Defect classes|
+
+  * |:library/email.headerregistry.txt:email.headerregistry: Custom Header Objects|
+
+  * |:library/email.contentmanager.txt:email.contentmanager: Managing MIME Content|
+
+    * |:library/email.contentmanager.txt/content-manager-instances:Content Manager Instances|
+
+  * |:library/email.examples.txt:email: Examples|
+
+  * |:library/email.compat32-message.txt:email.message.Message: Representing an email message using the compat32 API|
+
+  * |:library/email.mime.txt:email.mime: Creating email and MIME objects from scratch|
+
+  * |:library/email.header.txt:email.header: Internationalized headers|
+
+  * |:library/email.charset.txt:email.charset: Representing character sets|
+
+  * |:library/email.encoders.txt:email.encoders: Encoders|
+
+  * |:library/email.utils.txt:email.utils: Miscellaneous utilities|
+
+  * |:library/email.iterators.txt:email.iterators: Iterators|
+
+* |:library/json.txt:json — JSON encoder and decoder|
+
+  * |:library/json.txt/basic-usage:Basic Usage|
+
+  * |:library/json.txt/encoders-and-decoders:Encoders and Decoders|
+
+  * |:library/json.txt/exceptions:Exceptions|
+
+  * |:library/json.txt/standard-compliance-and-interoperability:Standard Compliance and Interoperability|
+
+    * |:library/json.txt/character-encodings:Character Encodings|
+
+    * |:library/json.txt/infinite-and-nan-number-values:Infinite and NaN Number Values|
+
+    * |:library/json.txt/repeated-names-within-an-object:Repeated Names Within an Object|
+
+    * |:library/json.txt/top-level-non-object-non-array-values:Top-level Non-Object, Non-Array Values|
+
+    * |:library/json.txt/implementation-limitations:Implementation Limitations|
+
+  * |:library/json.txt/module-json.tool:Command Line Interface|
+
+    * |:library/json.txt/command-line-options:Command line options|
+
+* |:library/mailcap.txt:mailcap — Mailcap file handling|
+
+* |:library/mailbox.txt:mailbox — Manipulate mailboxes in various formats|
+
+  * |:library/mailbox.txt/mailbox-objects:Mailbox objects|
+
+    * |:library/mailbox.txt/maildir:Maildir|
+
+    * |:library/mailbox.txt/mbox:mbox|
+
+    * |:library/mailbox.txt/mh:MH|
+
+    * |:library/mailbox.txt/babyl:Babyl|
+
+    * |:library/mailbox.txt/mmdf:MMDF|
+
+  * |:library/mailbox.txt/message-objects:Message objects|
+
+    * |:library/mailbox.txt/maildirmessage:MaildirMessage|
+
+    * |:library/mailbox.txt/mboxmessage:mboxMessage|
+
+    * |:library/mailbox.txt/mhmessage:MHMessage|
+
+    * |:library/mailbox.txt/babylmessage:BabylMessage|
+
+    * |:library/mailbox.txt/mmdfmessage:MMDFMessage|
+
+  * |:library/mailbox.txt/exceptions:Exceptions|
+
+  * |:library/mailbox.txt/examples:Examples|
+
+* |:library/mimetypes.txt:mimetypes — Map filenames to MIME types|
+
+  * |:library/mimetypes.txt/mimetypes-objects:MimeTypes Objects|
+
+* |:library/base64.txt:base64 — Base16, Base32, Base64, Base85 Data Encodings|
+
+* |:library/binhex.txt:binhex — Encode and decode binhex4 files|
+
+  * |:library/binhex.txt/notes:Notes|
+
+* |:library/binascii.txt:binascii — Convert between binary and ASCII|
+
+* |:library/quopri.txt:quopri — Encode and decode MIME quoted-printable data|
+
+* |:library/uu.txt:uu — Encode and decode uuencode files|
+
+
+

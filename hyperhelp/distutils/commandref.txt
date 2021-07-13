@@ -1,0 +1,63 @@
+%hyperhelp title="Command Reference" date="2021-07-11"
+*|command-reference:⚓|*
+
+Note:
+
+  This document is being retained solely until the "setuptools" documentation at
+  |:setuptools.readthedocs.io/en/latest/setuptools.html:https://setuptools.readthedocs.io/en/latest/setuptools.html| independently
+  covers all of the relevant information currently included here.
+
+# installing-modules-the-install-command-family:Installing modules: the *install
+* command family
+
+The install command ensures that the build commands have been run and then runs
+the subcommands *install_lib*, *install_data* and *install_scripts*.
+
+## install-data:*install_data*
+
+This command installs all data files provided with the distribution.
+
+*|install-scripts-cmd:⚓|* ## install-scripts:*install_scripts*
+
+This command installs all (Python) scripts in the distribution.
+
+*|sdist-cmd:⚓|* # creating-a-source-distribution-the-sdist-command:Creating a
+source distribution: the *sdist* command
+
+The manifest template commands are:
+
++---------------------------------------------+-------------------------------------------------+
+| Command                                     | Description                                     |
+|=============================================|=================================================|
+| *include pat1 pat2 ...*                     | include all files matching any of the listed    |
+|                                             | patterns                                        |
++---------------------------------------------+-------------------------------------------------+
+| *exclude pat1 pat2 ...*                     | exclude all files matching any of the listed    |
+|                                             | patterns                                        |
++---------------------------------------------+-------------------------------------------------+
+| *recursive-include dir pat1 pat2 ...*       | include all files under *dir* matching any of   |
+|                                             | the listed patterns                             |
++---------------------------------------------+-------------------------------------------------+
+| *recursive-exclude dir pat1 pat2 ...*       | exclude all files under *dir* matching any of   |
+|                                             | the listed patterns                             |
++---------------------------------------------+-------------------------------------------------+
+| *global-include pat1 pat2 ...*              | include all files anywhere in the source tree   |
+|                                             | matching — & any of the listed patterns         |
++---------------------------------------------+-------------------------------------------------+
+| *global-exclude pat1 pat2 ...*              | exclude all files anywhere in the source tree   |
+|                                             | matching — & any of the listed patterns         |
++---------------------------------------------+-------------------------------------------------+
+| *prune dir*                                 | exclude all files under *dir*                   |
++---------------------------------------------+-------------------------------------------------+
+| *graft dir*                                 | include all files under *dir*                   |
++---------------------------------------------+-------------------------------------------------+
+
+The patterns here are Unix-style “glob” patterns: "*" matches any sequence of
+regular filename characters, "?" matches any single regular filename character,
+and "[range]" matches any of the characters in *range* (e.g., "a-z", "a-zA-Z", "
+a-f0-9_.").  The definition of “regular filename character” is platform-
+specific: on Unix it is anything except slash; on Windows anything except
+backslash or colon.
+
+
+

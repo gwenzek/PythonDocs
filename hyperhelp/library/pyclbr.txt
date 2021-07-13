@@ -1,0 +1,123 @@
+%hyperhelp title="pyclbr" date="2021-07-11"
+*|module-pyclbr:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/pyclbr.py:Lib/pyclbr.py|
+
+======================================================================
+
+The |:module-pyclbr:pyclbr| module provides limited information about the functions, classes,
+and methods defined in a Python-coded module.  The information is sufficient to
+implement a module browser.  The information is extracted from the Python source
+code rather than by importing the module, so this module is safe to use with
+untrusted code. This restriction makes it impossible to use this module with
+modules not implemented in Python, including all standard and optional extension
+modules.
+
+*pyclbr.readmodule:pyclbr.readmodule(module, path=None)*
+
+   Return a dictionary mapping module-level class names to class descriptors.  If
+   possible, descriptors for imported base classes are included.  Parameter *module
+   * is a string with the name of the module to read; it may be the name of a
+   module within a package.  If given, *path* is a sequence of directory paths
+   prepended to "sys.path", which is used to locate the module source code.
+
+   This function is the original interface and is only kept for back compatibility.
+   It returns a filtered version of the following.
+
+*pyclbr.readmodule_ex:pyclbr.readmodule_ex(module, path=None)*
+
+   Return a dictionary-based tree containing a function or class descriptors for
+   each function and class defined in the module with a "def" or "class" statement.
+   The returned dictionary maps module-level function and class names to their
+   descriptors.  Nested objects are entered into the children dictionary of their
+   parent.  As with readmodule, *module* names the module to be read and *path* is
+   prepended to sys.path.  If the module being read is a package, the returned
+   dictionary has a key "'__path__'" whose value is a list containing the package
+   search path.
+
+New in version 3.7: Descriptors for nested definitions.  They are accessed
+through the new children attribute.  Each has a new parent attribute.
+
+The descriptors returned by these functions are instances of Function and Class
+classes.  Users are not expected to create instances of these classes.
+
+# function-objects:Function Objects
+
+Class "Function" instances describe functions defined by def statements.  They
+have the following attributes:
+
+*pyclbr.Function.file:Function.file*
+
+   Name of the file in which the function is defined.
+
+*pyclbr.Function.module:Function.module*
+
+   The name of the module defining the function described.
+
+*pyclbr.Function.name:Function.name*
+
+   The name of the function.
+
+*pyclbr.Function.lineno:Function.lineno*
+
+   The line number in the file where the definition starts.
+
+*pyclbr.Function.parent:Function.parent*
+
+   For top-level functions, None.  For nested functions, the parent.
+
+   New in version 3.7.
+
+*pyclbr.Function.children:Function.children*
+
+   A dictionary mapping names to descriptors for nested functions and classes.
+
+   New in version 3.7.
+
+*|pyclbr-class-objects:⚓|* # class-objects:Class Objects
+
+Class "Class" instances describe classes defined by class statements.  They have
+the same attributes as Functions and two more.
+
+*pyclbr.Class.file:Class.file*
+
+   Name of the file in which the class is defined.
+
+*pyclbr.Class.module:Class.module*
+
+   The name of the module defining the class described.
+
+*pyclbr.Class.name:Class.name*
+
+   The name of the class.
+
+*pyclbr.Class.lineno:Class.lineno*
+
+   The line number in the file where the definition starts.
+
+*pyclbr.Class.parent:Class.parent*
+
+   For top-level classes, None.  For nested classes, the parent.
+
+   New in version 3.7.
+
+*pyclbr.Class.children:Class.children*
+
+   A dictionary mapping names to descriptors for nested functions and classes.
+
+   New in version 3.7.
+
+*pyclbr.Class.super:Class.super*
+
+   A list of "Class" objects which describe the immediate base classes of the class
+   being described.  Classes which are named as superclasses but which are not
+   discoverable by |:pyclbr.readmodule_ex:readmodule_ex()| are listed as a string with the class name
+   instead of as "Class" objects.
+
+*pyclbr.Class.methods:Class.methods*
+
+   A dictionary mapping method names to line numbers.  This can be derived from the
+   newer children dictionary, but remains for back-compatibility.
+
+
+

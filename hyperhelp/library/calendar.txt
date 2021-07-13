@@ -1,0 +1,373 @@
+%hyperhelp title="calendar" date="2021-07-11"
+*|module-calendar:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/calendar.py:Lib/calendar.py|
+
+======================================================================
+
+This module allows you to output calendars like the Unix *cal* program, and
+provides additional useful functions related to the calendar. By default, these
+calendars have Monday as the first day of the week, and Sunday as the last (the
+European convention). Use |:calendar.setfirstweekday:setfirstweekday()| to set the first day of the week
+to Sunday (6) or to any other weekday.  Parameters that specify dates are given
+as integers. For related functionality, see also the |:library/datetime.txt/module-datetime:datetime| and |:library/time.txt/module-time:time|
+modules.
+
+The functions and classes defined in this module use an idealized calendar, the
+current Gregorian calendar extended indefinitely in both directions.  This
+matches the definition of the “proleptic Gregorian” calendar in Dershowitz and
+Reingold’s book “Calendrical Calculations”, where it’s the base calendar for all
+computations.  Zero and negative years are interpreted as prescribed by the ISO
+8601 standard.  Year 0 is 1 BC, year -1 is 2 BC, and so on.
+
+*calendar.Calendar:class calendar.Calendar(firstweekday=0)*
+
+   Creates a |:calendar.Calendar:Calendar| object. *firstweekday* is an integer specifying the first
+   day of the week. "0" is Monday (the default), "6" is Sunday.
+
+   A |:calendar.Calendar:Calendar| object provides several methods that can be used for preparing the
+   calendar data for formatting. This class doesn’t do any formatting itself. This
+   is the job of subclasses.
+
+   |:calendar.Calendar:Calendar| instances have the following methods:
+
+   *calendar.Calendar.iterweekdays:iterweekdays()*
+
+      Return an iterator for the week day numbers that will be used for one week.  The
+      first value from the iterator will be the same as the value of the
+      |:calendar.firstweekday:firstweekday| property.
+
+   *calendar.Calendar.itermonthdates:itermonthdates(year, month)*
+
+      Return an iterator for the month *month* (1–12) in the year *year*. This
+      iterator will return all days (as |:library/datetime.txt/datetime.date:datetime.date| objects) for the month and all
+      days before the start of the month or after the end of the month that are
+      required to get a complete week.
+
+   *calendar.Calendar.itermonthdays:itermonthdays(year, month)*
+
+      Return an iterator for the month *month* in the year *year* similar to
+      |:calendar.Calendar.itermonthdates:itermonthdates()|, but not restricted by the |:library/datetime.txt/datetime.date:datetime.date| range. Days
+      returned will simply be day of the month numbers.  For the days outside of the
+      specified month, the day number is "0".
+
+   *calendar.Calendar.itermonthdays2:itermonthdays2(year, month)*
+
+      Return an iterator for the month *month* in the year *year* similar to
+      |:calendar.Calendar.itermonthdates:itermonthdates()|, but not restricted by the |:library/datetime.txt/datetime.date:datetime.date| range. Days
+      returned will be tuples consisting of a day of the month number and a week day
+      number.
+
+   *calendar.Calendar.itermonthdays3:itermonthdays3(year, month)*
+
+      Return an iterator for the month *month* in the year *year* similar to
+      |:calendar.Calendar.itermonthdates:itermonthdates()|, but not restricted by the |:library/datetime.txt/datetime.date:datetime.date| range. Days
+      returned will be tuples consisting of a year, a month and a day of the month
+      numbers.
+
+      New in version 3.7.
+
+   *calendar.Calendar.itermonthdays4:itermonthdays4(year, month)*
+
+      Return an iterator for the month *month* in the year *year* similar to
+      |:calendar.Calendar.itermonthdates:itermonthdates()|, but not restricted by the |:library/datetime.txt/datetime.date:datetime.date| range. Days
+      returned will be tuples consisting of a year, a month, a day of the month, and a
+      day of the week numbers.
+
+      New in version 3.7.
+
+   *calendar.Calendar.monthdatescalendar:monthdatescalendar(year, month)*
+
+      Return a list of the weeks in the month *month* of the *year* as full weeks.
+      Weeks are lists of seven |:library/datetime.txt/datetime.date:datetime.date| objects.
+
+   *calendar.Calendar.monthdays2calendar:monthdays2calendar(year, month)*
+
+      Return a list of the weeks in the month *month* of the *year* as full weeks.
+      Weeks are lists of seven tuples of day numbers and weekday numbers.
+
+   *calendar.Calendar.monthdayscalendar:monthdayscalendar(year, month)*
+
+      Return a list of the weeks in the month *month* of the *year* as full weeks.
+      Weeks are lists of seven day numbers.
+
+   *calendar.Calendar.yeardatescalendar:yeardatescalendar(year, width=3)*
+
+      Return the data for the specified year ready for formatting. The return value is
+      a list of month rows. Each month row contains up to *width* months (defaulting
+      to 3). Each month contains between 4 and 6 weeks and each week contains 1–7
+      days. Days are |:library/datetime.txt/datetime.date:datetime.date| objects.
+
+   *calendar.Calendar.yeardays2calendar:yeardays2calendar(year, width=3)*
+
+      Return the data for the specified year ready for formatting (similar to
+      |:calendar.Calendar.yeardatescalendar:yeardatescalendar()|). Entries in the week lists are tuples of day numbers and
+      weekday numbers. Day numbers outside this month are zero.
+
+   *calendar.Calendar.yeardayscalendar:yeardayscalendar(year, width=3)*
+
+      Return the data for the specified year ready for formatting (similar to
+      |:calendar.Calendar.yeardatescalendar:yeardatescalendar()|). Entries in the week lists are day numbers. Day numbers
+      outside this month are zero.
+
+*calendar.TextCalendar:class calendar.TextCalendar(firstweekday=0)*
+
+   This class can be used to generate plain text calendars.
+
+   |:calendar.TextCalendar:TextCalendar| instances have the following methods:
+
+   *calendar.TextCalendar.formatmonth:formatmonth(theyear, themonth, w=0, l=0)*
+
+      Return a month’s calendar in a multi-line string. If *w* is provided, it
+      specifies the width of the date columns, which are centered. If *l* is given, it
+      specifies the number of lines that each week will use. Depends on the first
+      weekday as specified in the constructor or set by the |:calendar.setfirstweekday:setfirstweekday()|
+      method.
+
+   *calendar.TextCalendar.prmonth:prmonth(theyear, themonth, w=0, l=0)*
+
+      Print a month’s calendar as returned by |:calendar.TextCalendar.formatmonth:formatmonth()|.
+
+   *calendar.TextCalendar.formatyear:formatyear(theyear, w=2, l=1, c=6, m=3)*
+
+      Return a *m*-column calendar for an entire year as a multi-line string. Optional
+      parameters *w*, *l*, and *c* are for date column width, lines per week, and
+      number of spaces between month columns, respectively. Depends on the first
+      weekday as specified in the constructor or set by the |:calendar.setfirstweekday:setfirstweekday()|
+      method.  The earliest year for which a calendar can be generated is platform-
+      dependent.
+
+   *calendar.TextCalendar.pryear:pryear(theyear, w=2, l=1, c=6, m=3)*
+
+      Print the calendar for an entire year as returned by |:calendar.TextCalendar.formatyear:formatyear()|.
+
+*calendar.HTMLCalendar:class calendar.HTMLCalendar(firstweekday=0)*
+
+   This class can be used to generate HTML calendars.
+
+   "HTMLCalendar" instances have the following methods:
+
+   *calendar.HTMLCalendar.formatmonth:formatmonth(theyear, themonth, withyear=True)*
+
+      Return a month’s calendar as an HTML table. If *withyear* is true the year will
+      be included in the header, otherwise just the month name will be used.
+
+   *calendar.HTMLCalendar.formatyear:formatyear(theyear, width=3)*
+
+      Return a year’s calendar as an HTML table. *width* (defaulting to 3) specifies
+      the number of months per row.
+
+   *calendar.HTMLCalendar.formatyearpage:formatyearpage(theyear, width=3, css='calendar.css', encoding=None)*
+
+      Return a year’s calendar as a complete HTML page. *width* (defaulting to 3)
+      specifies the number of months per row. *css* is the name for the cascading
+      style sheet to be used. |:library/constants.txt/None:None| can be passed if no style sheet should be used. *
+      encoding* specifies the encoding to be used for the output (defaulting to the
+      system default encoding).
+
+   "HTMLCalendar" has the following attributes you can override to customize the
+   CSS classes used by the calendar:
+
+   *calendar.HTMLCalendar.cssclasses:cssclasses*
+
+      A list of CSS classes used for each weekday. The default class list is:
+
+```rst
+cssclasses = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+```
+
+      more styles can be added for each day:
+
+```rst
+cssclasses = ["mon text-bold", "tue", "wed", "thu", "fri", "sat", "sun red"]
+```
+
+      Note that the length of this list must be seven items.
+
+   *calendar.HTMLCalendar.cssclass_noday:cssclass_noday*
+
+      The CSS class for a weekday occurring in the previous or coming month.
+
+      New in version 3.7.
+
+   *calendar.HTMLCalendar.cssclasses_weekday_head:cssclasses_weekday_head*
+
+      A list of CSS classes used for weekday names in the header row. The default is
+      the same as |:calendar.HTMLCalendar.cssclasses:cssclasses|.
+
+      New in version 3.7.
+
+   *calendar.HTMLCalendar.cssclass_month_head:cssclass_month_head*
+
+      The month’s head CSS class (used by "formatmonthname()"). The default value is "
+      "month"".
+
+      New in version 3.7.
+
+   *calendar.HTMLCalendar.cssclass_month:cssclass_month*
+
+      The CSS class for the whole month’s table (used by |:calendar.HTMLCalendar.formatmonth:formatmonth()|). The default
+      value is ""month"".
+
+      New in version 3.7.
+
+   *calendar.HTMLCalendar.cssclass_year:cssclass_year*
+
+      The CSS class for the whole year’s table of tables (used by |:calendar.HTMLCalendar.formatyear:formatyear()|). The
+      default value is ""year"".
+
+      New in version 3.7.
+
+   *calendar.HTMLCalendar.cssclass_year_head:cssclass_year_head*
+
+      The CSS class for the table head for the whole year (used by |:calendar.HTMLCalendar.formatyear:formatyear()|).
+      The default value is ""year"".
+
+      New in version 3.7.
+
+   Note that although the naming for the above described class attributes is
+   singular (e.g. "cssclass_month" "cssclass_noday"), one can replace the single
+   CSS class with a space separated list of CSS classes, for example:
+
+```rst
+"text-bold text-red"
+```
+
+   Here is an example how "HTMLCalendar" can be customized:
+
+```rst
+class CustomHTMLCal(calendar.HTMLCalendar):
+    cssclasses = [style + " text-nowrap" for style in
+                  calendar.HTMLCalendar.cssclasses]
+    cssclass_month_head = "text-center month-head"
+    cssclass_month = "text-center month"
+    cssclass_year = "text-italic lead"
+```
+
+*calendar.LocaleTextCalendar:class calendar.LocaleTextCalendar(firstweekday=0, locale=None)*
+
+   This subclass of |:calendar.TextCalendar:TextCalendar| can be passed a locale name in the constructor
+   and will return month and weekday names in the specified locale. If this locale
+   includes an encoding all strings containing month and weekday names will be
+   returned as unicode.
+
+*calendar.LocaleHTMLCalendar:class calendar.LocaleHTMLCalendar(firstweekday=0, locale=None)*
+
+   This subclass of |:calendar.HTMLCalendar:HTMLCalendar| can be passed a locale name in the constructor
+   and will return month and weekday names in the specified locale. If this locale
+   includes an encoding all strings containing month and weekday names will be
+   returned as unicode.
+
+Note:
+
+  The "formatweekday()" and "formatmonthname()" methods of these two classes
+  temporarily change the current locale to the given *locale*.  Because the
+  current locale is a process-wide setting, they are not thread-safe.
+
+For simple text calendars this module provides the following functions.
+
+*calendar.setfirstweekday:calendar.setfirstweekday(weekday)*
+
+   Sets the weekday ("0" is Monday, "6" is Sunday) to start each week. The values "
+   MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", and "SUNDAY"
+   are provided for convenience. For example, to set the first weekday to Sunday:
+
+```rst
+import calendar
+calendar.setfirstweekday(calendar.SUNDAY)
+```
+
+*calendar.firstweekday:calendar.firstweekday()*
+
+   Returns the current setting for the weekday to start each week.
+
+*calendar.isleap:calendar.isleap(year)*
+
+   Returns |:library/constants.txt/True:True| if *year* is a leap year, otherwise |:library/constants.txt/False:False|.
+
+*calendar.leapdays:calendar.leapdays(y1, y2)*
+
+   Returns the number of leap years in the range from *y1* to *y2* (exclusive),
+   where *y1* and *y2* are years.
+
+   This function works for ranges spanning a century change.
+
+*calendar.weekday:calendar.weekday(year, month, day)*
+
+   Returns the day of the week ("0" is Monday) for *year* ("1970"–…), *month* ("1"–
+   "12"), *day* ("1"–"31").
+
+*calendar.weekheader:calendar.weekheader(n)*
+
+   Return a header containing abbreviated weekday names. *n* specifies the width in
+   characters for one weekday.
+
+*calendar.monthrange:calendar.monthrange(year, month)*
+
+   Returns weekday of first day of the month and number of days in month,  for the
+   specified *year* and *month*.
+
+*calendar.monthcalendar:calendar.monthcalendar(year, month)*
+
+   Returns a matrix representing a month’s calendar.  Each row represents a week;
+   days outside of the month are represented by zeros. Each week begins with Monday
+   unless set by |:calendar.setfirstweekday:setfirstweekday()|.
+
+*calendar.prmonth:calendar.prmonth(theyear, themonth, w=0, l=0)*
+
+   Prints a month’s calendar as returned by |:calendar.month:month()|.
+
+*calendar.month:calendar.month(theyear, themonth, w=0, l=0)*
+
+   Returns a month’s calendar in a multi-line string using the "formatmonth()" of
+   the |:calendar.TextCalendar:TextCalendar| class.
+
+*calendar.prcal:calendar.prcal(year, w=0, l=0, c=6, m=3)*
+
+   Prints the calendar for an entire year as returned by  |:module-calendar:calendar()|.
+
+*calendar.calendar:calendar.calendar(year, w=2, l=1, c=6, m=3)*
+
+   Returns a 3-column calendar for an entire year as a multi-line string using the
+   "formatyear()" of the |:calendar.TextCalendar:TextCalendar| class.
+
+*calendar.timegm:calendar.timegm(tuple)*
+
+   An unrelated but handy function that takes a time tuple such as returned by the
+   |:library/time.txt/time.gmtime:gmtime()| function in the |:library/time.txt/module-time:time| module, and returns the corresponding Unix
+   timestamp value, assuming an epoch of 1970, and the POSIX encoding.  In fact,
+   |:library/time.txt/time.gmtime:time.gmtime()| and |:calendar.timegm:timegm()| are each others’ inverse.
+
+The |:module-calendar:calendar| module exports the following data attributes:
+
+*calendar.day_name:calendar.day_name*
+
+   An array that represents the days of the week in the current locale.
+
+*calendar.day_abbr:calendar.day_abbr*
+
+   An array that represents the abbreviated days of the week in the current locale.
+
+*calendar.month_name:calendar.month_name*
+
+   An array that represents the months of the year in the current locale.  This
+   follows normal convention of January being month number 1, so it has a length of
+   13 and  "month_name[0]" is the empty string.
+
+*calendar.month_abbr:calendar.month_abbr*
+
+   An array that represents the abbreviated months of the year in the current
+   locale.  This follows normal convention of January being month number 1, so it
+   has a length of 13 and  "month_abbr[0]" is the empty string.
+
+See also:
+
+  Module |:library/datetime.txt/module-datetime:datetime|
+     Object-oriented interface to dates and times with similar functionality to the
+     |:library/time.txt/module-time:time| module.
+
+  Module |:library/time.txt/module-time:time|
+     Low-level time related functions.
+
+
+

@@ -1,0 +1,169 @@
+%hyperhelp title="Concrete Objects Layer" date="2021-07-11"
+*|concrete-objects-layer:⚓|*
+
+The functions in this chapter are specific to certain Python object types.
+Passing them an object of the wrong type is not a good idea; if you receive an
+object from a Python program and you are not sure that it has the right type,
+you must perform a type check first; for example, to check that an object is a
+dictionary, use |:c-api/dict.txt/c.PyDict_Check:PyDict_Check()|.  The chapter is structured like the “family
+tree” of Python object types.
+
+Warning:
+
+  While the functions described in this chapter carefully check the type of the
+  objects which are passed in, many of them do not check for "NULL" being passed
+  instead of a valid object.  Allowing "NULL" to be passed in can cause memory
+  access violations and immediate termination of the interpreter.
+
+# fundamental-objects:Fundamental Objects
+
+This section describes Python type objects and the singleton object "None".
+
+* |:c-api/type.txt:Type Objects|
+
+  * |:c-api/type.txt/creating-heap-allocated-types:Creating Heap-Allocated Types|
+
+* |:c-api/none.txt:The None Object|
+
+*|numericobjects:⚓|* # numeric-objects:Numeric Objects*|index-0:⚓|*
+
+* |:c-api/long.txt:Integer Objects|
+
+* |:c-api/bool.txt:Boolean Objects|
+
+* |:c-api/float.txt:Floating Point Objects|
+
+* |:c-api/complex.txt:Complex Number Objects|
+
+  * |:c-api/complex.txt/complex-numbers-as-c-structures:Complex Numbers as C Structures|
+
+  * |:c-api/complex.txt/complex-numbers-as-python-objects:Complex Numbers as Python Objects|
+
+*|sequenceobjects:⚓|* # sequence-objects:Sequence Objects*|index-1:⚓|*
+
+Generic operations on sequence objects were discussed in the previous chapter;
+this section deals with the specific kinds of sequence objects that are
+intrinsic to the Python language.
+
+* |:c-api/bytes.txt:Bytes Objects|
+
+* |:c-api/bytearray.txt:Byte Array Objects|
+
+  * |:c-api/bytearray.txt/type-check-macros:Type check macros|
+
+  * |:c-api/bytearray.txt/direct-api-functions:Direct API functions|
+
+  * |:c-api/bytearray.txt/macros:Macros|
+
+* |:c-api/unicode.txt:Unicode Objects and Codecs|
+
+  * |:c-api/unicode.txt/unicode-objects:Unicode Objects|
+
+    * |:c-api/unicode.txt/unicode-type:Unicode Type|
+
+    * |:c-api/unicode.txt/unicode-character-properties:Unicode Character Properties|
+
+    * |:c-api/unicode.txt/creating-and-accessing-unicode-strings:Creating and accessing Unicode strings|
+
+    * |:c-api/unicode.txt/deprecated-py-unicode-apis:Deprecated Py_UNICODE APIs|
+
+    * |:c-api/unicode.txt/locale-encoding:Locale Encoding|
+
+    * |:c-api/unicode.txt/file-system-encoding:File System Encoding|
+
+    * |:c-api/unicode.txt/wchar-t-support:wchar_t Support|
+
+  * |:c-api/unicode.txt/built-in-codecs:Built-in Codecs|
+
+    * |:c-api/unicode.txt/generic-codecs:Generic Codecs|
+
+    * |:c-api/unicode.txt/utf-8-codecs:UTF-8 Codecs|
+
+    * |:c-api/unicode.txt/utf-32-codecs:UTF-32 Codecs|
+
+    * |:c-api/unicode.txt/utf-16-codecs:UTF-16 Codecs|
+
+    * |:c-api/unicode.txt/utf-7-codecs:UTF-7 Codecs|
+
+    * |:c-api/unicode.txt/unicode-escape-codecs:Unicode-Escape Codecs|
+
+    * |:c-api/unicode.txt/raw-unicode-escape-codecs:Raw-Unicode-Escape Codecs|
+
+    * |:c-api/unicode.txt/latin-1-codecs:Latin-1 Codecs|
+
+    * |:c-api/unicode.txt/ascii-codecs:ASCII Codecs|
+
+    * |:c-api/unicode.txt/character-map-codecs:Character Map Codecs|
+
+    * |:c-api/unicode.txt/mbcs-codecs-for-windows:MBCS codecs for Windows|
+
+    * |:c-api/unicode.txt/methods-slots:Methods & Slots|
+
+  * |:c-api/unicode.txt/methods-and-slot-functions:Methods and Slot Functions|
+
+* |:c-api/tuple.txt:Tuple Objects|
+
+* |:c-api/tuple.txt/struct-sequence-objects:Struct Sequence Objects|
+
+* |:c-api/list.txt:List Objects|
+
+*|mapobjects:⚓|* # container-objects:Container Objects*|index-2:⚓|*
+
+* |:c-api/dict.txt:Dictionary Objects|
+
+* |:c-api/set.txt:Set Objects|
+
+*|otherobjects:⚓|* # function-objects:Function Objects
+
+* |:c-api/function.txt:Function Objects|
+
+* |:c-api/method.txt:Instance Method Objects|
+
+* |:c-api/method.txt/method-objects:Method Objects|
+
+* |:c-api/cell.txt:Cell Objects|
+
+* |:c-api/code.txt:Code Objects|
+
+# other-objects:Other Objects
+
+* |:c-api/file.txt:File Objects|
+
+* |:c-api/module.txt:Module Objects|
+
+  * |:c-api/module.txt/initializing-c-modules:Initializing C modules|
+
+    * |:c-api/module.txt/single-phase-initialization:Single-phase initialization|
+
+    * |:c-api/module.txt/multi-phase-initialization:Multi-phase initialization|
+
+    * |:c-api/module.txt/low-level-module-creation-functions:Low-level module creation functions|
+
+    * |:c-api/module.txt/support-functions:Support functions|
+
+  * |:c-api/module.txt/module-lookup:Module lookup|
+
+* |:c-api/iterator.txt:Iterator Objects|
+
+* |:c-api/descriptor.txt:Descriptor Objects|
+
+* |:c-api/slice.txt:Slice Objects|
+
+* |:c-api/slice.txt/ellipsis-object:Ellipsis Object|
+
+* |:c-api/memoryview.txt:MemoryView objects|
+
+* |:c-api/weakref.txt:Weak Reference Objects|
+
+* |:c-api/capsule.txt:Capsules|
+
+* |:c-api/gen.txt:Generator Objects|
+
+* |:c-api/coro.txt:Coroutine Objects|
+
+* |:c-api/contextvars.txt:Context Variables Objects|
+
+* |:c-api/datetime.txt:DateTime Objects|
+
+
+

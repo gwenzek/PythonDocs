@@ -1,0 +1,137 @@
+%hyperhelp title="Python Setup and Usage" date="2021-07-11"
+*|python-setup-and-usage:⚓|*
+
+This part of the documentation is devoted to general information on the setup of
+the Python environment on different platforms, the invocation of the interpreter
+and things that make working with Python easier.
+
+* |:using/cmdline.txt:Command line and environment|
+
+  * |:using/cmdline.txt/command-line:Command line|
+
+    * |:using/cmdline.txt/interface-options:Interface options|
+
+    * |:using/cmdline.txt/generic-options:Generic options|
+
+    * |:using/cmdline.txt/miscellaneous-options:Miscellaneous options|
+
+    * |:using/cmdline.txt/options-you-shouldn-t-use:Options you shouldn’t use|
+
+  * |:using/cmdline.txt/environment-variables:Environment variables|
+
+    * |:using/cmdline.txt/debug-mode-variables:Debug-mode variables|
+
+* |:using/unix.txt:Using Python on Unix platforms|
+
+  * |:using/unix.txt/getting-and-installing-the-latest-version-of-python:Getting and installing the latest version of Python|
+
+    * |:using/unix.txt/on-linux:On Linux|
+
+    * |:using/unix.txt/on-freebsd-and-openbsd:On FreeBSD and OpenBSD|
+
+    * |:using/unix.txt/on-opensolaris:On OpenSolaris|
+
+  * |:using/unix.txt/building-python:Building Python|
+
+  * |:using/unix.txt/python-related-paths-and-files:Python-related paths and files|
+
+  * |:using/unix.txt/miscellaneous:Miscellaneous|
+
+* |:using/windows.txt:Using Python on Windows|
+
+  * |:using/windows.txt/the-full-installer:The full installer|
+
+    * |:using/windows.txt/installation-steps:Installation steps|
+
+    * |:using/windows.txt/removing-the-max-path-limitation:Removing the MAX_PATH Limitation|
+
+    * |:using/windows.txt/installing-without-ui:Installing Without UI|
+
+    * |:using/windows.txt/installing-without-downloading:Installing Without Downloading|
+
+    * |:using/windows.txt/modifying-an-install:Modifying an install|
+
+  * |:using/windows.txt/the-microsoft-store-package:The Microsoft Store package|
+
+    * |:using/windows.txt/known-issues:Known Issues|
+
+  * |:using/windows.txt/the-nuget-org-packages:The nuget.org packages|
+
+  * |:using/windows.txt/the-embeddable-package:The embeddable package|
+
+    * |:using/windows.txt/python-application:Python Application|
+
+    * |:using/windows.txt/embedding-python:Embedding Python|
+
+  * |:using/windows.txt/alternative-bundles:Alternative bundles|
+
+  * |:using/windows.txt/configuring-python:Configuring Python|
+
+    * |:using/windows.txt/excursus-setting-environment-variables:Excursus: Setting environment variables|
+
+    * |:using/windows.txt/finding-the-python-executable:Finding the Python executable|
+
+  * |:using/windows.txt/utf-8-mode:UTF-8 mode|
+
+  * |:using/windows.txt/python-launcher-for-windows:Python Launcher for Windows|
+
+    * |:using/windows.txt/getting-started:Getting started|
+
+      * |:using/windows.txt/from-the-command-line:From the command-line|
+
+      * |:using/windows.txt/virtual-environments:Virtual environments|
+
+      * |:using/windows.txt/from-a-script:From a script|
+
+      * |:using/windows.txt/from-file-associations:From file associations|
+
+    * |:using/windows.txt/shebang-lines:Shebang Lines|
+
+    * |:using/windows.txt/arguments-in-shebang-lines:Arguments in shebang lines|
+
+    * |:using/windows.txt/customization:Customization|
+
+      * |:using/windows.txt/customization-via-ini-files:Customization via INI files|
+
+      * |:using/windows.txt/customizing-default-python-versions:Customizing default Python versions|
+
+    * |:using/windows.txt/diagnostics:Diagnostics|
+
+  * |:using/windows.txt/finding-modules:Finding modules|
+
+  * |:using/windows.txt/additional-modules:Additional modules|
+
+    * |:using/windows.txt/pywin32:PyWin32|
+
+    * |:using/windows.txt/cx-freeze:cx_Freeze|
+
+    * |:using/windows.txt/wconio:WConio|
+
+  * |:using/windows.txt/compiling-python-on-windows:Compiling Python on Windows|
+
+  * |:using/windows.txt/other-platforms:Other Platforms|
+
+* |:using/mac.txt:Using Python on a Macintosh|
+
+  * |:using/mac.txt/getting-and-installing-macpython:Getting and Installing MacPython|
+
+    * |:using/mac.txt/how-to-run-a-python-script:How to run a Python script|
+
+    * |:using/mac.txt/running-scripts-with-a-gui:Running scripts with a GUI|
+
+    * |:using/mac.txt/configuration:Configuration|
+
+  * |:using/mac.txt/the-ide:The IDE|
+
+  * |:using/mac.txt/installing-additional-python-packages:Installing Additional Python Packages|
+
+  * |:using/mac.txt/gui-programming-on-the-mac:GUI Programming on the Mac|
+
+  * |:using/mac.txt/distributing-python-applications-on-the-mac:Distributing Python Applications on the Mac|
+
+  * |:using/mac.txt/other-resources:Other Resources|
+
+* |:using/editors.txt:Editors and IDEs|
+
+
+

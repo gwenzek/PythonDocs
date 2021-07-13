@@ -1,0 +1,70 @@
+%hyperhelp title="Importing Modules" date="2021-07-11"
+*|importing-modules:⚓|*
+
+The modules described in this chapter provide new ways to import other Python
+modules and hooks for customizing the import process.
+
+The full list of modules described in this chapter is:
+
+* |:library/zipimport.txt:zipimport — Import modules from Zip archives|
+
+  * |:library/zipimport.txt/zipimporter-objects:zipimporter Objects|
+
+  * |:library/zipimport.txt/examples:Examples|
+
+* |:library/pkgutil.txt:pkgutil — Package extension utility|
+
+* |:library/modulefinder.txt:modulefinder — Find modules used by a script|
+
+  * |:library/modulefinder.txt/example-usage-of-modulefinder:Example usage of ModuleFinder|
+
+* |:library/runpy.txt:runpy — Locating and executing Python modules|
+
+* |:library/importlib.txt:importlib — The implementation of import|
+
+  * |:library/importlib.txt/introduction:Introduction|
+
+  * |:library/importlib.txt/functions:Functions|
+
+  * |:library/importlib.txt/module-importlib.abc:importlib.abc – Abstract base classes related to import|
+
+  * |:library/importlib.txt/module-importlib.resources:importlib.resources – Resources|
+
+  * |:library/importlib.txt/module-importlib.machinery:importlib.machinery – Importers and path hooks|
+
+  * |:library/importlib.txt/module-importlib.util:importlib.util – Utility code for importers|
+
+  * |:library/importlib.txt/examples:Examples|
+
+    * |:library/importlib.txt/importing-programmatically:Importing programmatically|
+
+    * |:library/importlib.txt/checking-if-a-module-can-be-imported:Checking if a module can be imported|
+
+    * |:library/importlib.txt/importing-a-source-file-directly:Importing a source file directly|
+
+    * |:library/importlib.txt/setting-up-an-importer:Setting up an importer|
+
+    * |:library/importlib.txt/approximating-importlib-import-module:Approximating importlib.import_module()|
+
+* |:library/importlib.metadata.txt:Using importlib.metadata|
+
+  * |:library/importlib.metadata.txt/overview:Overview|
+
+  * |:library/importlib.metadata.txt/functional-api:Functional API|
+
+    * |:library/importlib.metadata.txt/entry-points:Entry points|
+
+    * |:library/importlib.metadata.txt/distribution-metadata:Distribution metadata|
+
+    * |:library/importlib.metadata.txt/distribution-versions:Distribution versions|
+
+    * |:library/importlib.metadata.txt/distribution-files:Distribution files|
+
+    * |:library/importlib.metadata.txt/distribution-requirements:Distribution requirements|
+
+  * |:library/importlib.metadata.txt/distributions:Distributions|
+
+  * |:library/importlib.metadata.txt/extending-the-search-algorithm:Extending the search algorithm|
+
+
+

@@ -1,0 +1,105 @@
+%hyperhelp title="modulefinder" date="2021-07-11"
+*|module-modulefinder:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/modulefinder.py:Lib/modulefinder.py|
+
+======================================================================
+
+This module provides a |:modulefinder.ModuleFinder:ModuleFinder| class that can be used to determine the
+set of modules imported by a script. "modulefinder.py" can also be run as a
+script, giving the filename of a Python script as its argument, after which a
+report of the imported modules will be printed.
+
+*modulefinder.AddPackagePath:modulefinder.AddPackagePath(pkg_name, path)*
+
+   Record that the package named *pkg_name* can be found in the specified *path*.
+
+*modulefinder.ReplacePackage:modulefinder.ReplacePackage(oldname, newname)*
+
+   Allows specifying that the module named *oldname* is in fact the package named *
+   newname*.
+
+*modulefinder.ModuleFinder:class modulefinder.ModuleFinder(path=None, debug=0, excludes=[], replace_paths=[])*
+
+   This class provides |:modulefinder.ModuleFinder.run_script:run_script()| and |:modulefinder.ModuleFinder.report:report()| methods to determine the set
+   of modules imported by a script. *path* can be a list of directories to search
+   for modules; if not specified, "sys.path" is used.  *debug* sets the debugging
+   level; higher values make the class print debugging messages about what it’s
+   doing. *excludes* is a list of module names to exclude from the analysis. *
+   replace_paths* is a list of "(oldpath, newpath)" tuples that will be replaced in
+   module paths.
+
+   *modulefinder.ModuleFinder.report:report()*
+
+      Print a report to standard output that lists the modules imported by the script
+      and their paths, as well as modules that are missing or seem to be missing.
+
+   *modulefinder.ModuleFinder.run_script:run_script(pathname)*
+
+      Analyze the contents of the *pathname* file, which must contain Python code.
+
+   *modulefinder.ModuleFinder.modules:modules*
+
+      A dictionary mapping module names to modules. See
+      |:modulefinder-example:Example usage of ModuleFinder|.
+
+# example-usage-of-modulefinder:Example usage of |:modulefinder.ModuleFinder:ModuleFinder|
+
+The script that is going to get analyzed later on (bacon.py):
+
+```rst
+import re, itertools
+
+try:
+    import baconhameggs
+except ImportError:
+    pass
+
+try:
+    import guido.python.ham
+except ImportError:
+    pass
+```
+
+The script that will output the report of bacon.py:
+
+```rst
+from modulefinder import ModuleFinder
+
+finder = ModuleFinder()
+finder.run_script('bacon.py')
+
+print('Loaded modules:')
+for name, mod in finder.modules.items():
+    print('%s: ' % name, end='')
+    print(','.join(list(mod.globalnames.keys())[:3]))
+
+print('-'*50)
+print('Modules not imported:')
+print('\n'.join(finder.badmodules.keys()))
+```
+
+Sample output (may vary depending on the architecture):
+
+```rst
+Loaded modules:
+_types:
+copyreg:  _inverted_registry,_slotnames,__all__
+sre_compile:  isstring,_sre,_optimize_unicode
+_sre:
+sre_constants:  REPEAT_ONE,makedict,AT_END_LINE
+sys:
+re:  __module__,finditer,_expand
+itertools:
+__main__:  re,itertools,baconhameggs
+sre_parse:  _PATTERNENDERS,SRE_FLAG_UNICODE
+array:
+types:  __module__,IntType,TypeType
+---------------------------------------------------
+Modules not imported:
+guido.python.ham
+baconhameggs
+```
+
+
+

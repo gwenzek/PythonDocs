@@ -1,0 +1,321 @@
+%hyperhelp title="collections.abc" date="2021-07-11"
+*|module-collections.abc:⚓|*
+
+New in version 3.3: Formerly, this module was part of the |:library/collections.txt/module-collections:collections| module.
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/_collections_abc.py:Lib/_collections_abc.py|
+
+======================================================================
+
+This module provides |:glossary.txt/term-abstract-base-class:abstract base classes| that can be used to test whether a
+class provides a particular interface; for example, whether it is hashable or
+whether it is a mapping.
+
+# collections-abstract-base-classes:Collections Abstract Base Classes
+
+The collections module offers the following |:glossary.txt/term-abstract-base-class:ABCs|:
+
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| ABC                        | Inherits from          | Abstract Methods        | Mixin Methods                                        |
+|============================|========================|=========================|======================================================|
+| |:collections.abc.Contain  |                        | "__contains__"          |                                                      |
+| er:Container|              |                        |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Hashabl  |                        | "__hash__"              |                                                      |
+| e:Hashable|                |                        |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Iterabl  |                        | "__iter__"              |                                                      |
+| e:Iterable|                |                        |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Iterato  | |:collections.abc.Ite  | "__next__"              | "__iter__"                                           |
+| r:Iterator|                | rable:Iterable|        |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Reversi  | |:collections.abc.Ite  | "__reversed__"          |                                                      |
+| ble:Reversible|            | rable:Iterable|        |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Generat  | |:collections.abc.Ite  | "send", "throw"         | "close", "__iter__", "__next__"                      |
+| or:Generator|              | rator:Iterator|        |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Sized:S  |                        | "__len__"               |                                                      |
+| ized|                      |                        |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Callabl  |                        | "__call__"              |                                                      |
+| e:Callable|                |                        |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Collect  | |:collections.abc.Siz  | "__contains__",         |                                                      |
+| ion:Collection|            | ed:Sized|, |:collecti  | "__iter__", "__len__"   |                                                      |
+|                            | ons.abc.Iterable:Iter  |                         |                                                      |
+|                            | able|, |:collections.  |                         |                                                      |
+|                            | abc.Container:Contain  |                         |                                                      |
+|                            | er|                    |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Sequenc  | |:collections.abc.Rev  | "__getitem__",          | "__contains__", "__iter__", "__reversed__", "index", |
+| e:Sequence|                | ersible:Reversible|,   | "__len__"               | and "count"                                          |
+|                            | |:collections.abc.Col  |                         |                                                      |
+|                            | lection:Collection|    |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Mutable  | |:collections.abc.Seq  | "__getitem__",          | Inherited |:collections.abc.Sequence:Sequence|       |
+| Sequence:MutableSequence|  | uence:Sequence|        | "__setitem__",          | methods and "append", "reverse", "extend", "pop",    |
+|                            |                        | "__delitem__",          | "remove", and "__iadd__"                             |
+|                            |                        | "__len__", "insert"     |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.ByteStr  | |:collections.abc.Seq  | "__getitem__",          | Inherited |:collections.abc.Sequence:Sequence|       |
+| ing:ByteString|            | uence:Sequence|        | "__len__"               | methods                                              |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Set:Set| | |:collections.abc.Col  | "__contains__",         | "__le__", "__lt__", "__eq__", "__ne__", "__gt__",    |
+|                            | lection:Collection|    | "__iter__", "__len__"   | "__ge__", "__and__", "__or__", "__sub__", "__xor__", |
+|                            |                        |                         | and "isdisjoint"                                     |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Mutable  | |:collections.abc.Set  | "__contains__",         | Inherited |:collections.abc.Set:Set| methods and     |
+| Set:MutableSet|            | :Set|                  | "__iter__", "__len__",  | "clear", "pop", "remove", "__ior__", "__iand__", "   |
+|                            |                        | "add", "discard"        | __ixor__", and "__isub__"                            |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Mapping  | |:collections.abc.Col  | "__getitem__",          | "__contains__", "keys", "items", "values", "get",    |
+| :Mapping|                  | lection:Collection|    | "__iter__", "__len__"   | "__eq__", and "__ne__"                               |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Mutable  | |:collections.abc.Map  | "__getitem__",          | Inherited |:collections.abc.Mapping:Mapping| methods |
+| Mapping:MutableMapping|    | ping:Mapping|          | "__setitem__",          | and "pop", "popitem", "clear", "update", and "       |
+|                            |                        | "__delitem__",          | setdefault"                                          |
+|                            |                        | "__iter__", "__len__"   |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Mapping  | |:collections.abc.Siz  |                         | "__len__"                                            |
+| View:MappingView|          | ed:Sized|              |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.ItemsVi  | |:collections.abc.Map  |                         | "__contains__", "__iter__"                           |
+| ew:ItemsView|              | pingView:MappingView|, |                         |                                                      |
+|                            | |:collections.abc.Set  |                         |                                                      |
+|                            | :Set|                  |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.KeysVie  | |:collections.abc.Map  |                         | "__contains__", "__iter__"                           |
+| w:KeysView|                | pingView:MappingView|, |                         |                                                      |
+|                            | |:collections.abc.Set  |                         |                                                      |
+|                            | :Set|                  |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.ValuesV  | |:collections.abc.Map  |                         | "__contains__", "__iter__"                           |
+| iew:ValuesView|            | pingView:MappingView|, |                         |                                                      |
+|                            | |:collections.abc.Col  |                         |                                                      |
+|                            | lection:Collection|    |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Awaitab  |                        | "__await__"             |                                                      |
+| le:Awaitable|              |                        |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.Corouti  | |:collections.abc.Awa  | "send", "throw"         | "close"                                              |
+| ne:Coroutine|              | itable:Awaitable|      |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.AsyncIt  |                        | "__aiter__"             |                                                      |
+| erable:AsyncIterable|      |                        |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.AsyncIt  | |:collections.abc.Asy  | "__anext__"             | "__aiter__"                                          |
+| erator:AsyncIterator|      | ncIterable:AsyncItera  |                         |                                                      |
+|                            | ble|                   |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+| |:collections.abc.AsyncGe  | |:collections.abc.Asy  | "asend", "athrow"       | "aclose", "__aiter__", "__anext__"                   |
+| nerator:AsyncGenerator|    | ncIterator:AsyncItera  |                         |                                                      |
+|                            | tor|                   |                         |                                                      |
++----------------------------+------------------------+-------------------------+------------------------------------------------------+
+
+*collections.abc.Container:class collections.abc.Container*
+
+   ABC for classes that provide the "__contains__()" method.
+
+*collections.abc.Hashable:class collections.abc.Hashable*
+
+   ABC for classes that provide the "__hash__()" method.
+
+*collections.abc.Sized:class collections.abc.Sized*
+
+   ABC for classes that provide the "__len__()" method.
+
+*collections.abc.Callable:class collections.abc.Callable*
+
+   ABC for classes that provide the "__call__()" method.
+
+*collections.abc.Iterable:class collections.abc.Iterable*
+
+   ABC for classes that provide the "__iter__()" method.
+
+   Checking "isinstance(obj, Iterable)" detects classes that are registered as
+   |:collections.abc.Iterable:Iterable| or that have an "__iter__()" method, but it does not detect classes
+   that iterate with the "__getitem__()" method. The only reliable way to determine
+   whether an object is |:glossary.txt/term-iterable:iterable| is to call "iter(obj)".
+
+*collections.abc.Collection:class collections.abc.Collection*
+
+   ABC for sized iterable container classes.
+
+   New in version 3.6.
+
+*collections.abc.Iterator:class collections.abc.Iterator*
+
+   ABC for classes that provide the |:library/stdtypes.txt/iterator.__iter__:__iter__()| and |:library/stdtypes.txt/iterator.__next__:__next__()| methods.  See
+   also the definition of |:glossary.txt/term-iterator:iterator|.
+
+*collections.abc.Reversible:class collections.abc.Reversible*
+
+   ABC for iterable classes that also provide the "__reversed__()" method.
+
+   New in version 3.6.
+
+*collections.abc.Generator:class collections.abc.Generator*
+
+   ABC for generator classes that implement the protocol defined in *|index-0:⚓|*
+   |:www.python.org/dev/peps/pep-0342:PEP 342| that extends iterators with the |:reference/expressions.txt/generator.send:send()|, |:reference/expressions.txt/generator.throw:throw()| and |:reference/expressions.txt/generator.close:close()|
+   methods. See also the definition of |:glossary.txt/term-generator:generator|.
+
+   New in version 3.5.
+
+*collections.abc.Sequence:class collections.abc.Sequence*
+*collections.abc.MutableSequence:class collections.abc.MutableSequence*
+*collections.abc.ByteString:class collections.abc.ByteString*
+
+   ABCs for read-only and mutable |:glossary.txt/term-sequence:sequences|.
+
+   Implementation note: Some of the mixin methods, such as "__iter__()", "
+   __reversed__()" and "index()", make repeated calls to the underlying "
+   __getitem__()" method. Consequently, if "__getitem__()" is implemented with
+   constant access speed, the mixin methods will have linear performance; however,
+   if the underlying method is linear (as it would be with a linked list), the
+   mixins will have quadratic performance and will likely need to be overridden.
+
+   Changed in version 3.5: The index() method added support for *stop* and *start*
+   arguments.
+
+*collections.abc.Set:class collections.abc.Set*
+*collections.abc.MutableSet:class collections.abc.MutableSet*
+
+   ABCs for read-only and mutable sets.
+
+*collections.abc.Mapping:class collections.abc.Mapping*
+*collections.abc.MutableMapping:class collections.abc.MutableMapping*
+
+   ABCs for read-only and mutable |:glossary.txt/term-mapping:mappings|.
+
+*collections.abc.MappingView:class collections.abc.MappingView*
+*collections.abc.ItemsView:class collections.abc.ItemsView*
+*collections.abc.KeysView:class collections.abc.KeysView*
+*collections.abc.ValuesView:class collections.abc.ValuesView*
+
+   ABCs for mapping, items, keys, and values |:glossary.txt/term-dictionary-view:views|.
+
+*collections.abc.Awaitable:class collections.abc.Awaitable*
+
+   ABC for |:glossary.txt/term-awaitable:awaitable| objects, which can be used in |:reference/expressions.txt/await:await| expressions.  Custom
+   implementations must provide the "__await__()" method.
+
+   |:glossary.txt/term-coroutine:Coroutine| objects and instances of the |:collections.abc.Coroutine:Coroutine| ABC are all instances of
+   this ABC.
+
+   Note:
+
+     In CPython, generator-based coroutines (generators decorated with
+     |:library/types.txt/types.coroutine:types.coroutine()| or |:library/asyncio-task.txt/asyncio.coroutine:asyncio.coroutine()|) are *awaitables*, even though they
+     do not have an "__await__()" method. Using "isinstance(gencoro, Awaitable)" for
+     them will return "False". Use |:library/inspect.txt/inspect.isawaitable:inspect.isawaitable()| to detect them.
+
+   New in version 3.5.
+
+*collections.abc.Coroutine:class collections.abc.Coroutine*
+
+   ABC for coroutine compatible classes.  These implement the following methods,
+   defined in |:reference/datamodel.txt/coroutine-objects:Coroutine Objects|: |:reference/datamodel.txt/coroutine.send:send()|, |:reference/datamodel.txt/coroutine.throw:throw()|, and |:reference/datamodel.txt/coroutine.close:close()|.  Custom
+   implementations must also implement "__await__()".  All |:collections.abc.Coroutine:Coroutine| instances
+   are also instances of |:collections.abc.Awaitable:Awaitable|.  See also the definition of |:glossary.txt/term-coroutine:coroutine|.
+
+   Note:
+
+     In CPython, generator-based coroutines (generators decorated with
+     |:library/types.txt/types.coroutine:types.coroutine()| or |:library/asyncio-task.txt/asyncio.coroutine:asyncio.coroutine()|) are *awaitables*, even though they
+     do not have an "__await__()" method. Using "isinstance(gencoro, Coroutine)" for
+     them will return "False". Use |:library/inspect.txt/inspect.isawaitable:inspect.isawaitable()| to detect them.
+
+   New in version 3.5.
+
+*collections.abc.AsyncIterable:class collections.abc.AsyncIterable*
+
+   ABC for classes that provide "__aiter__" method.  See also the definition of
+   |:glossary.txt/term-asynchronous-iterable:asynchronous iterable|.
+
+   New in version 3.5.
+
+*collections.abc.AsyncIterator:class collections.abc.AsyncIterator*
+
+   ABC for classes that provide "__aiter__" and "__anext__" methods.  See also the
+   definition of |:glossary.txt/term-asynchronous-iterator:asynchronous iterator|.
+
+   New in version 3.5.
+
+*collections.abc.AsyncGenerator:class collections.abc.AsyncGenerator*
+
+   ABC for asynchronous generator classes that implement the protocol defined in
+   *|index-1:⚓|* |:www.python.org/dev/peps/pep-0525:PEP 525| and *|index-2:⚓|* |:www.python.org/dev/peps/pep-0492:PEP 492|.
+
+   New in version 3.6.
+
+These ABCs allow us to ask classes or instances if they provide particular
+functionality, for example:
+
+```rst
+size = None
+if isinstance(myvar, collections.abc.Sized):
+    size = len(myvar)
+```
+
+Several of the ABCs are also useful as mixins that make it easier to develop
+classes supporting container APIs.  For example, to write a class supporting the
+full |:collections.abc.Set:Set| API, it is only necessary to supply the three underlying abstract
+methods: "__contains__()", "__iter__()", and "__len__()". The ABC supplies the
+remaining methods such as "__and__()" and "isdisjoint()":
+
+```rst
+class ListBasedSet(collections.abc.Set):
+    ''' Alternate set implementation favoring space over speed
+        and not requiring the set elements to be hashable. '''
+    def __init__(self, iterable):
+        self.elements = lst = []
+        for value in iterable:
+            if value not in lst:
+                lst.append(value)
+
+    def __iter__(self):
+        return iter(self.elements)
+
+    def __contains__(self, value):
+        return value in self.elements
+
+    def __len__(self):
+        return len(self.elements)
+
+s1 = ListBasedSet('abcdef')
+s2 = ListBasedSet('defghi')
+overlap = s1 & s2            # The __and__() method is supported automatically
+```
+
+Notes on using |:collections.abc.Set:Set| and |:collections.abc.MutableSet:MutableSet| as a mixin:
+
+1. Since some set operations create new sets, the default mixin methods need a way
+   to create new instances from an iterable. The class constructor is assumed to
+   have a signature in the form "ClassName(iterable)". That assumption is factored-
+   out to an internal classmethod called "_from_iterable()" which calls "
+   cls(iterable)" to produce a new set. If the |:collections.abc.Set:Set| mixin is being used in a class
+   with a different constructor signature, you will need to override "
+   _from_iterable()" with a classmethod that can construct new instances from an
+   iterable argument.
+
+2. To override the comparisons (presumably for speed, as the semantics are fixed),
+   redefine "__le__()" and "__ge__()", then the other operations will automatically
+   follow suit.
+
+3. The |:collections.abc.Set:Set| mixin provides a "_hash()" method to compute a hash value for the set;
+   however, "__hash__()" is not defined because not all sets are hashable or
+   immutable.  To add set hashability using mixins, inherit from both |:collections.abc.Set:Set()| and
+   |:collections.abc.Hashable:Hashable()|, then define "__hash__ = Set._hash".
+
+See also:
+
+  * |:code.activestate.com/recipes/576694:OrderedSet recipe|*|orderedset-recipe:⚓|*  for an example built on |:collections.abc.MutableSet:MutableSet|
+    .
+
+  * For more about ABCs, see the |:library/abc.txt/module-abc:abc| module and *|index-3:⚓|* |:www.python.org/dev/peps/pep-3119:PEP 3119|.
+
+
+

@@ -1,0 +1,169 @@
+%hyperhelp title="The Python Language Reference" date="2021-07-11"
+*|the-python-language-reference:⚓|*
+
+This reference manual describes the syntax and “core semantics” of the language.
+It is terse, but attempts to be exact and complete. The semantics of non-
+essential built-in object types and of the built-in functions and modules are
+described in |:library/index.txt/library-index:The Python Standard Library|. For an informal introduction to the
+language, see |:tutorial/index.txt/tutorial-index:The Python Tutorial|. For C or C++ programmers, two additional
+manuals exist: |:extending/index.txt/extending-index:Extending and Embedding the Python Interpreter| describes the
+high-level picture of how to write a Python extension module, and the
+|:c-api/index.txt/c-api-index:Python/C API Reference Manual| describes the interfaces available to C/C++
+programmers in detail.
+
+* |:reference/introduction.txt:Introduction|
+
+  * |:reference/introduction.txt/alternate-implementations:Alternate Implementations|
+
+  * |:reference/introduction.txt/notation:Notation|
+
+* |:reference/lexical_analysis.txt:Lexical analysis|
+
+  * |:reference/lexical_analysis.txt/line-structure:Line structure|
+
+  * |:reference/lexical_analysis.txt/other-tokens:Other tokens|
+
+  * |:reference/lexical_analysis.txt/identifiers:Identifiers and keywords|
+
+  * |:reference/lexical_analysis.txt/literals:Literals|
+
+  * |:reference/lexical_analysis.txt/operators:Operators|
+
+  * |:reference/lexical_analysis.txt/delimiters:Delimiters|
+
+* |:reference/datamodel.txt:Data model|
+
+  * |:reference/datamodel.txt/objects-values-and-types:Objects, values and types|
+
+  * |:reference/datamodel.txt/the-standard-type-hierarchy:The standard type hierarchy|
+
+  * |:reference/datamodel.txt/special-method-names:Special method names|
+
+  * |:reference/datamodel.txt/coroutines:Coroutines|
+
+* |:reference/executionmodel.txt:Execution model|
+
+  * |:reference/executionmodel.txt/structure-of-a-program:Structure of a program|
+
+  * |:reference/executionmodel.txt/naming-and-binding:Naming and binding|
+
+  * |:reference/executionmodel.txt/exceptions:Exceptions|
+
+* |:reference/import.txt:The import system|
+
+  * |:reference/import.txt/importlib:importlib|
+
+  * |:reference/import.txt/packages:Packages|
+
+  * |:reference/import.txt/searching:Searching|
+
+  * |:reference/import.txt/loading:Loading|
+
+  * |:reference/import.txt/the-path-based-finder:The Path Based Finder|
+
+  * |:reference/import.txt/replacing-the-standard-import-system:Replacing the standard import system|
+
+  * |:reference/import.txt/package-relative-imports:Package Relative Imports|
+
+  * |:reference/import.txt/special-considerations-for-main:Special considerations for __main__|
+
+  * |:reference/import.txt/open-issues:Open issues|
+
+  * |:reference/import.txt/references:References|
+
+* |:reference/expressions.txt:Expressions|
+
+  * |:reference/expressions.txt/arithmetic-conversions:Arithmetic conversions|
+
+  * |:reference/expressions.txt/atoms:Atoms|
+
+  * |:reference/expressions.txt/primaries:Primaries|
+
+  * |:reference/expressions.txt/await-expression:Await expression|
+
+  * |:reference/expressions.txt/the-power-operator:The power operator|
+
+  * |:reference/expressions.txt/unary-arithmetic-and-bitwise-operations:Unary arithmetic and bitwise operations|
+
+  * |:reference/expressions.txt/binary-arithmetic-operations:Binary arithmetic operations|
+
+  * |:reference/expressions.txt/shifting-operations:Shifting operations|
+
+  * |:reference/expressions.txt/binary-bitwise-operations:Binary bitwise operations|
+
+  * |:reference/expressions.txt/comparisons:Comparisons|
+
+  * |:reference/expressions.txt/boolean-operations:Boolean operations|
+
+  * |:reference/expressions.txt/assignment-expressions:Assignment expressions|
+
+  * |:reference/expressions.txt/conditional-expressions:Conditional expressions|
+
+  * |:reference/expressions.txt/lambda:Lambdas|
+
+  * |:reference/expressions.txt/expression-lists:Expression lists|
+
+  * |:reference/expressions.txt/evaluation-order:Evaluation order|
+
+  * |:reference/expressions.txt/operator-precedence:Operator precedence|
+
+* |:reference/simple_stmts.txt:Simple statements|
+
+  * |:reference/simple_stmts.txt/expression-statements:Expression statements|
+
+  * |:reference/simple_stmts.txt/assignment-statements:Assignment statements|
+
+  * |:reference/simple_stmts.txt/the-assert-statement:The assert statement|
+
+  * |:reference/simple_stmts.txt/the-pass-statement:The pass statement|
+
+  * |:reference/simple_stmts.txt/the-del-statement:The del statement|
+
+  * |:reference/simple_stmts.txt/the-return-statement:The return statement|
+
+  * |:reference/simple_stmts.txt/the-yield-statement:The yield statement|
+
+  * |:reference/simple_stmts.txt/the-raise-statement:The raise statement|
+
+  * |:reference/simple_stmts.txt/the-break-statement:The break statement|
+
+  * |:reference/simple_stmts.txt/the-continue-statement:The continue statement|
+
+  * |:reference/simple_stmts.txt/the-import-statement:The import statement|
+
+  * |:reference/simple_stmts.txt/the-global-statement:The global statement|
+
+  * |:reference/simple_stmts.txt/the-nonlocal-statement:The nonlocal statement|
+
+* |:reference/compound_stmts.txt:Compound statements|
+
+  * |:reference/compound_stmts.txt/the-if-statement:The if statement|
+
+  * |:reference/compound_stmts.txt/the-while-statement:The while statement|
+
+  * |:reference/compound_stmts.txt/the-for-statement:The for statement|
+
+  * |:reference/compound_stmts.txt/the-try-statement:The try statement|
+
+  * |:reference/compound_stmts.txt/the-with-statement:The with statement|
+
+  * |:reference/compound_stmts.txt/function-definitions:Function definitions|
+
+  * |:reference/compound_stmts.txt/class-definitions:Class definitions|
+
+  * |:reference/compound_stmts.txt/coroutines:Coroutines|
+
+* |:reference/toplevel_components.txt:Top-level components|
+
+  * |:reference/toplevel_components.txt/complete-python-programs:Complete Python programs|
+
+  * |:reference/toplevel_components.txt/file-input:File input|
+
+  * |:reference/toplevel_components.txt/interactive-input:Interactive input|
+
+  * |:reference/toplevel_components.txt/expression-input:Expression input|
+
+* |:reference/grammar.txt:Full Grammar specification|
+
+
+

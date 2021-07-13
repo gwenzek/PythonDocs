@@ -1,0 +1,142 @@
+%hyperhelp title="reprlib" date="2021-07-11"
+*|module-reprlib:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/reprlib.py:Lib/reprlib.py|
+
+======================================================================
+
+The |:module-reprlib:reprlib| module provides a means for producing object representations with
+limits on the size of the resulting strings. This is used in the Python debugger
+and may be useful in other contexts as well.
+
+This module provides a class, an instance, and a function:
+
+*reprlib.Repr:class reprlib.Repr*
+
+   Class which provides formatting services useful in implementing functions
+   similar to the built-in |:library/functions.txt/repr:repr()|; size limits for  different object types are
+   added to avoid the generation of representations which are excessively long.
+
+*reprlib.aRepr:reprlib.aRepr*
+
+   This is an instance of |:reprlib.Repr:Repr| which is used to provide the |:reprlib.repr:repr()| function
+   described below.  Changing the attributes of this object will affect the size
+   limits used by |:reprlib.repr:repr()| and the Python debugger.
+
+*reprlib.repr:reprlib.repr(obj)*
+
+   This is the |:reprlib.Repr.repr:repr()| method of "aRepr".  It returns a string similar to that
+   returned by the built-in function of the same name, but with limits on most
+   sizes.
+
+In addition to size-limiting tools, the module also provides a decorator for
+detecting recursive calls to "__repr__()" and substituting a placeholder string
+instead.
+
+*|index-0:⚓|*
+
+*reprlib.recursive_repr:@reprlib.recursive_repr(fillvalue='...')*
+
+   Decorator for "__repr__()" methods to detect recursive calls within the same
+   thread.  If a recursive call is made, the *fillvalue* is returned, otherwise,
+   the usual "__repr__()" call is made.  For example:
+
+```python
+>>> from reprlib import recursive_repr
+>>> class MyList(list):
+...     @recursive_repr()
+...     def __repr__(self):
+...         return '<' + '|'.join(map(repr, self)) + '>'
+...
+>>> m = MyList('abc')
+>>> m.append(m)
+>>> m.append('x')
+>>> print(m)
+<'a'|'b'|'c'|...|'x'>
+```
+
+   New in version 3.2.
+
+# repr-objects:Repr Objects
+
+|:reprlib.Repr:Repr| instances provide several attributes which can be used to provide size
+limits for the representations of different object types,  and methods which
+format specific object types.
+
+*reprlib.Repr.maxlevel:Repr.maxlevel*
+
+   Depth limit on the creation of recursive representations.  The default is "6".
+
+*reprlib.Repr.maxdict:Repr.maxdict*
+*reprlib.Repr.maxlist:Repr.maxlist*
+*reprlib.Repr.maxtuple:Repr.maxtuple*
+*reprlib.Repr.maxset:Repr.maxset*
+*reprlib.Repr.maxfrozenset:Repr.maxfrozenset*
+*reprlib.Repr.maxdeque:Repr.maxdeque*
+*reprlib.Repr.maxarray:Repr.maxarray*
+
+   Limits on the number of entries represented for the named object type.  The
+   default is "4" for |:reprlib.Repr.maxdict:maxdict|, "5" for |:reprlib.Repr.maxarray:maxarray|, and  "6" for the others.
+
+*reprlib.Repr.maxlong:Repr.maxlong*
+
+   Maximum number of characters in the representation for an integer.  Digits are
+   dropped from the middle.  The default is "40".
+
+*reprlib.Repr.maxstring:Repr.maxstring*
+
+   Limit on the number of characters in the representation of the string.  Note
+   that the “normal” representation of the string is used as the character source:
+   if escape sequences are needed in the representation, these may be mangled when
+   the representation is shortened.  The default is "30".
+
+*reprlib.Repr.maxother:Repr.maxother*
+
+   This limit is used to control the size of object types for which no specific
+   formatting method is available on the |:reprlib.Repr:Repr| object. It is applied in a similar
+   manner as |:reprlib.Repr.maxstring:maxstring|.  The default is "20".
+
+*reprlib.Repr.repr:Repr.repr(obj)*
+
+   The equivalent to the built-in |:library/functions.txt/repr:repr()| that uses the formatting imposed by the
+   instance.
+
+*reprlib.Repr.repr1:Repr.repr1(obj, level)*
+
+   Recursive implementation used by |:reprlib.Repr.repr:repr()|.  This uses the type of *obj* to
+   determine which formatting method to call, passing it *obj* and *level*.  The
+   type-specific methods should call |:reprlib.Repr.repr1:repr1()| to perform recursive formatting,
+   with "level - 1" for the value of *level* in the recursive  call.
+
+Repr.repr_TYPE(obj, level)
+
+   Formatting methods for specific types are implemented as methods with a name
+   based on the type name.  In the method name, *TYPE* is replaced by "
+   '_'.join(type(obj).__name__.split())". Dispatch to these methods is handled by
+   |:reprlib.Repr.repr1:repr1()|. Type-specific methods which need to recursively format a value should
+   call "self.repr1(subobj, level - 1)".
+
+*|subclassing-reprs:⚓|* # subclassing-repr-objects:Subclassing Repr Objects
+
+The use of dynamic dispatching by |:reprlib.Repr.repr1:Repr.repr1()| allows subclasses of |:reprlib.Repr:Repr| to
+add support for additional built-in object types or to modify the handling of
+types already supported. This example shows how special support for file objects
+could be added:
+
+```rst
+import reprlib
+import sys
+
+class MyRepr(reprlib.Repr):
+
+    def repr_TextIOWrapper(self, obj, level):
+        if obj.name in {'<stdin>', '<stdout>', '<stderr>'}:
+            return obj.name
+        return repr(obj)
+
+aRepr = MyRepr()
+print(aRepr.repr(sys.stdin))         # prints '<stdin>'
+```
+
+
+

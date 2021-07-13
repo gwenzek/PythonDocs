@@ -1,0 +1,312 @@
+%hyperhelp title="xml.sax.xmlreader" date="2021-07-11"
+*|module-xml.sax.xmlreader:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/xml/sax/xmlreader.py:Lib/xml/sax/xmlreader.py|
+
+======================================================================
+
+SAX parsers implement the |:xml.sax.xmlreader.XMLReader:XMLReader| interface. They are implemented in a
+Python module, which must provide a function "create_parser()". This function is
+invoked by  |:library/xml.sax.txt/xml.sax.make_parser:xml.sax.make_parser()| with no arguments to create a new  parser
+object.
+
+*xml.sax.xmlreader.XMLReader:class xml.sax.xmlreader.XMLReader*
+
+   Base class which can be inherited by SAX parsers.
+
+*xml.sax.xmlreader.IncrementalParser:class xml.sax.xmlreader.IncrementalParser*
+
+   In some cases, it is desirable not to parse an input source at once, but to feed
+   chunks of the document as they get available. Note that the reader will normally
+   not read the entire file, but read it in chunks as well; still "parse()" won’t
+   return until the entire document is processed. So these interfaces should be
+   used if the blocking behaviour of "parse()" is not desirable.
+
+   When the parser is instantiated it is ready to begin accepting data from the
+   feed method immediately. After parsing has been finished with a call to close
+   the reset method must be called to make the parser ready to accept new data,
+   either from feed or using the parse method.
+
+   Note that these methods must *not* be called during parsing, that is, after
+   parse has been called and before it returns.
+
+   By default, the class also implements the parse method of the XMLReader
+   interface using the feed, close and reset methods of the IncrementalParser
+   interface as a convenience to SAX 2.0 driver writers.
+
+*xml.sax.xmlreader.Locator:class xml.sax.xmlreader.Locator*
+
+   Interface for associating a SAX event with a document location. A locator object
+   will return valid results only during calls to DocumentHandler methods; at any
+   other time, the results are unpredictable. If information is not available,
+   methods may return "None".
+
+*xml.sax.xmlreader.InputSource:class xml.sax.xmlreader.InputSource(system_id=None)*
+
+   Encapsulation of the information needed by the |:xml.sax.xmlreader.XMLReader:XMLReader| to read entities.
+
+   This class may include information about the public identifier, system
+   identifier, byte stream (possibly with character encoding information) and/or
+   the character stream of an entity.
+
+   Applications will create objects of this class for use in the
+   |:xml.sax.xmlreader.XMLReader.parse:XMLReader.parse()| method and for returning from EntityResolver.resolveEntity.
+
+   An |:xml.sax.xmlreader.InputSource:InputSource| belongs to the application, the |:xml.sax.xmlreader.XMLReader:XMLReader| is not allowed to
+   modify |:xml.sax.xmlreader.InputSource:InputSource| objects passed to it from the application, although it may
+   make copies and modify those.
+
+*xml.sax.xmlreader.AttributesImpl:class xml.sax.xmlreader.AttributesImpl(attrs)*
+
+   This is an implementation of the "Attributes" interface (see section
+   |:attributes-objects:The Attributes Interface|).  This is a dictionary-like object which represents
+   the element attributes in a "startElement()" call. In addition to the most
+   useful dictionary operations, it supports a number of other methods as described
+   by the interface. Objects of this class should be instantiated by readers; *
+   attrs* must be a dictionary-like object containing a mapping from attribute
+   names to attribute values.
+
+*xml.sax.xmlreader.AttributesNSImpl:class xml.sax.xmlreader.AttributesNSImpl(attrs, qnames)*
+
+   Namespace-aware variant of |:xml.sax.xmlreader.AttributesImpl:AttributesImpl|, which will be passed to "
+   startElementNS()". It is derived from |:xml.sax.xmlreader.AttributesImpl:AttributesImpl|, but understands
+   attribute names as two-tuples of *namespaceURI* and *localname*. In addition, it
+   provides a number of methods expecting qualified names as they appear in the
+   original document.  This class implements the "AttributesNS" interface (see
+   section |:attributes-ns-objects:The AttributesNS Interface|).
+
+# xmlreader-objects:XMLReader Objects
+
+The |:xml.sax.xmlreader.XMLReader:XMLReader| interface supports the following methods:
+
+*xml.sax.xmlreader.XMLReader.parse:XMLReader.parse(source)*
+
+   Process an input source, producing SAX events. The *source* object can be a
+   system identifier (a string identifying the input source – typically a file name
+   or a URL), a |:library/pathlib.txt/pathlib.Path:pathlib.Path| or |:glossary.txt/term-path-like-object:path-like| object, or an |:xml.sax.xmlreader.InputSource:InputSource| object.
+   When |:xml.sax.xmlreader.XMLReader.parse:parse()| returns, the input is completely processed, and the parser object
+   can be discarded or reset.
+
+   Changed in version 3.5: Added support of character streams.
+
+   Changed in version 3.8: Added support of path-like objects.
+
+*xml.sax.xmlreader.XMLReader.getContentHandler:XMLReader.getContentHandler()*
+
+   Return the current |:library/xml.sax.handler.txt/xml.sax.handler.ContentHandler:ContentHandler|.
+
+*xml.sax.xmlreader.XMLReader.setContentHandler:XMLReader.setContentHandler(handler)*
+
+   Set the current |:library/xml.sax.handler.txt/xml.sax.handler.ContentHandler:ContentHandler|.  If no |:library/xml.sax.handler.txt/xml.sax.handler.ContentHandler:ContentHandler| is set, content events
+   will be discarded.
+
+*xml.sax.xmlreader.XMLReader.getDTDHandler:XMLReader.getDTDHandler()*
+
+   Return the current |:library/xml.sax.handler.txt/xml.sax.handler.DTDHandler:DTDHandler|.
+
+*xml.sax.xmlreader.XMLReader.setDTDHandler:XMLReader.setDTDHandler(handler)*
+
+   Set the current |:library/xml.sax.handler.txt/xml.sax.handler.DTDHandler:DTDHandler|.  If no |:library/xml.sax.handler.txt/xml.sax.handler.DTDHandler:DTDHandler| is set, DTD events will be
+   discarded.
+
+*xml.sax.xmlreader.XMLReader.getEntityResolver:XMLReader.getEntityResolver()*
+
+   Return the current |:library/xml.sax.handler.txt/xml.sax.handler.EntityResolver:EntityResolver|.
+
+*xml.sax.xmlreader.XMLReader.setEntityResolver:XMLReader.setEntityResolver(handler)*
+
+   Set the current |:library/xml.sax.handler.txt/xml.sax.handler.EntityResolver:EntityResolver|.  If no |:library/xml.sax.handler.txt/xml.sax.handler.EntityResolver:EntityResolver| is set, attempts to
+   resolve an external entity will result in opening the system identifier for the
+   entity, and fail if it is not available.
+
+*xml.sax.xmlreader.XMLReader.getErrorHandler:XMLReader.getErrorHandler()*
+
+   Return the current |:library/xml.sax.handler.txt/xml.sax.handler.ErrorHandler:ErrorHandler|.
+
+*xml.sax.xmlreader.XMLReader.setErrorHandler:XMLReader.setErrorHandler(handler)*
+
+   Set the current error handler.  If no |:library/xml.sax.handler.txt/xml.sax.handler.ErrorHandler:ErrorHandler| is set, errors will be
+   raised as exceptions, and warnings will be printed.
+
+*xml.sax.xmlreader.XMLReader.setLocale:XMLReader.setLocale(locale)*
+
+   Allow an application to set the locale for errors and warnings.
+
+   SAX parsers are not required to provide localization for errors and warnings; if
+   they cannot support the requested locale, however, they must raise a SAX
+   exception.  Applications may request a locale change in the middle of a parse.
+
+*xml.sax.xmlreader.XMLReader.getFeature:XMLReader.getFeature(featurename)*
+
+   Return the current setting for feature *featurename*.  If the feature is not
+   recognized, "SAXNotRecognizedException" is raised. The well-known featurenames
+   are listed in the module |:library/xml.sax.handler.txt/module-xml.sax.handler:xml.sax.handler|.
+
+*xml.sax.xmlreader.XMLReader.setFeature:XMLReader.setFeature(featurename, value)*
+
+   Set the *featurename* to *value*. If the feature is not recognized, "
+   SAXNotRecognizedException" is raised. If the feature or its setting is not
+   supported by the parser, *SAXNotSupportedException* is raised.
+
+*xml.sax.xmlreader.XMLReader.getProperty:XMLReader.getProperty(propertyname)*
+
+   Return the current setting for property *propertyname*. If the property is not
+   recognized, a "SAXNotRecognizedException" is raised. The well-known
+   propertynames are listed in the module |:library/xml.sax.handler.txt/module-xml.sax.handler:xml.sax.handler|.
+
+*xml.sax.xmlreader.XMLReader.setProperty:XMLReader.setProperty(propertyname, value)*
+
+   Set the *propertyname* to *value*. If the property is not recognized, "
+   SAXNotRecognizedException" is raised. If the property or its setting is not
+   supported by the parser, *SAXNotSupportedException* is raised.
+
+*|incremental-parser-objects:⚓|* # incrementalparser-objects:IncrementalParser
+Objects
+
+Instances of |:xml.sax.xmlreader.IncrementalParser:IncrementalParser| offer the following additional methods:
+
+*xml.sax.xmlreader.IncrementalParser.feed:IncrementalParser.feed(data)*
+
+   Process a chunk of *data*.
+
+*xml.sax.xmlreader.IncrementalParser.close:IncrementalParser.close()*
+
+   Assume the end of the document. That will check well-formedness conditions that
+   can be checked only at the end, invoke handlers, and may clean up resources
+   allocated during parsing.
+
+*xml.sax.xmlreader.IncrementalParser.reset:IncrementalParser.reset()*
+
+   This method is called after close has been called to reset the parser so that it
+   is ready to parse new documents. The results of calling parse or feed after
+   close without calling reset are undefined.
+
+*|locator-objects:⚓|* # locator-objects:Locator Objects
+
+Instances of |:xml.sax.xmlreader.Locator:Locator| provide these methods:
+
+*xml.sax.xmlreader.Locator.getColumnNumber:Locator.getColumnNumber()*
+
+   Return the column number where the current event begins.
+
+*xml.sax.xmlreader.Locator.getLineNumber:Locator.getLineNumber()*
+
+   Return the line number where the current event begins.
+
+*xml.sax.xmlreader.Locator.getPublicId:Locator.getPublicId()*
+
+   Return the public identifier for the current event.
+
+*xml.sax.xmlreader.Locator.getSystemId:Locator.getSystemId()*
+
+   Return the system identifier for the current event.
+
+*|input-source-objects:⚓|* # inputsource-objects:InputSource Objects
+
+*xml.sax.xmlreader.InputSource.setPublicId:InputSource.setPublicId(id)*
+
+   Sets the public identifier of this |:xml.sax.xmlreader.InputSource:InputSource|.
+
+*xml.sax.xmlreader.InputSource.getPublicId:InputSource.getPublicId()*
+
+   Returns the public identifier of this |:xml.sax.xmlreader.InputSource:InputSource|.
+
+*xml.sax.xmlreader.InputSource.setSystemId:InputSource.setSystemId(id)*
+
+   Sets the system identifier of this |:xml.sax.xmlreader.InputSource:InputSource|.
+
+*xml.sax.xmlreader.InputSource.getSystemId:InputSource.getSystemId()*
+
+   Returns the system identifier of this |:xml.sax.xmlreader.InputSource:InputSource|.
+
+*xml.sax.xmlreader.InputSource.setEncoding:InputSource.setEncoding(encoding)*
+
+   Sets the character encoding of this |:xml.sax.xmlreader.InputSource:InputSource|.
+
+   The encoding must be a string acceptable for an XML encoding declaration (see
+   section 4.3.3 of the XML recommendation).
+
+   The encoding attribute of the |:xml.sax.xmlreader.InputSource:InputSource| is ignored if the |:xml.sax.xmlreader.InputSource:InputSource| also
+   contains a character stream.
+
+*xml.sax.xmlreader.InputSource.getEncoding:InputSource.getEncoding()*
+
+   Get the character encoding of this InputSource.
+
+*xml.sax.xmlreader.InputSource.setByteStream:InputSource.setByteStream(bytefile)*
+
+   Set the byte stream (a |:glossary.txt/term-binary-file:binary file|) for this input source.
+
+   The SAX parser will ignore this if there is also a character stream specified,
+   but it will use a byte stream in preference to opening a URI connection itself.
+
+   If the application knows the character encoding of the byte stream, it should
+   set it with the setEncoding method.
+
+*xml.sax.xmlreader.InputSource.getByteStream:InputSource.getByteStream()*
+
+   Get the byte stream for this input source.
+
+   The getEncoding method will return the character encoding for this byte stream,
+   or "None" if unknown.
+
+*xml.sax.xmlreader.InputSource.setCharacterStream:InputSource.setCharacterStream(charfile)*
+
+   Set the character stream (a |:glossary.txt/term-text-file:text file|) for this input source.
+
+   If there is a character stream specified, the SAX parser will ignore any byte
+   stream and will not attempt to open a URI connection to the system identifier.
+
+*xml.sax.xmlreader.InputSource.getCharacterStream:InputSource.getCharacterStream()*
+
+   Get the character stream for this input source.
+
+*|attributes-objects:⚓|* # the-attributes-interface:The "Attributes" Interface
+
+"Attributes" objects implement a portion of the |:glossary.txt/term-mapping:mapping protocol|, including
+the methods "copy()", "get()", |:reference/datamodel.txt/object.__contains__:__contains__()|, "items()", "keys()", and "
+values()".  The following methods are also provided:
+
+*xml.sax.xmlreader.Attributes.getLength:Attributes.getLength()*
+
+   Return the number of attributes.
+
+*xml.sax.xmlreader.Attributes.getNames:Attributes.getNames()*
+
+   Return the names of the attributes.
+
+*xml.sax.xmlreader.Attributes.getType:Attributes.getType(name)*
+
+   Returns the type of the attribute *name*, which is normally "'CDATA'".
+
+*xml.sax.xmlreader.Attributes.getValue:Attributes.getValue(name)*
+
+   Return the value of attribute *name*.
+
+*|attributes-ns-objects:⚓|* # the-attributesns-interface:The "AttributesNS"
+Interface
+
+This interface is a subtype of the "Attributes" interface (see section
+|:attributes-objects:The Attributes Interface|).  All methods supported by that interface are also
+available on "AttributesNS" objects.
+
+The following methods are also available:
+
+*xml.sax.xmlreader.AttributesNS.getValueByQName:AttributesNS.getValueByQName(name)*
+
+   Return the value for a qualified name.
+
+*xml.sax.xmlreader.AttributesNS.getNameByQName:AttributesNS.getNameByQName(name)*
+
+   Return the "(namespace, localname)" pair for a qualified *name*.
+
+*xml.sax.xmlreader.AttributesNS.getQNameByName:AttributesNS.getQNameByName(name)*
+
+   Return the qualified name for a "(namespace, localname)" pair.
+
+*xml.sax.xmlreader.AttributesNS.getQNames:AttributesNS.getQNames()*
+
+   Return the qualified names of all attributes.
+
+
+

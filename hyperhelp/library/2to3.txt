@@ -1,0 +1,463 @@
+%hyperhelp title="2to3 - Automated Python 2 to 3 code translation" date="2021-07-11"
+*|to3-automated-python-2-to-3-code-translation:⚓|*
+
+2to3 is a Python program that reads Python 2.x source code and applies a series
+of *fixers* to transform it into valid Python 3.x code.  The standard library
+contains a rich set of fixers that will handle almost all code.  2to3 supporting
+library |:module-lib2to3:lib2to3| is, however, a flexible and generic library, so it is possible
+to write your own fixers for 2to3.  |:module-lib2to3:lib2to3| could also be adapted to custom
+applications in which Python code needs to be edited automatically.
+
+# using-2to3:Using 2to3
+
+2to3 will usually be installed with the Python interpreter as a script.  It is
+also located in the "Tools/scripts" directory of the Python root.
+
+2to3’s basic arguments are a list of files or directories to transform.  The
+directories are recursively traversed for Python sources.
+
+Here is a sample Python 2.x source file, "example.py":
+
+```rst
+def greet(name):
+    print "Hello, {0}!".format(name)
+print "What's your name?"
+name = raw_input()
+greet(name)
+```
+
+It can be converted to Python 3.x code via 2to3 on the command line:
+
+```rst
+$ 2to3 example.py
+```
+
+A diff against the original source file is printed.  2to3 can also write the
+needed modifications right back to the source file.  (A backup of the original
+file is made unless "-n" is also given.)  Writing the changes back is enabled
+with the "-w" flag:
+
+```rst
+$ 2to3 -w example.py
+```
+
+After transformation, "example.py" looks like this:
+
+```rst
+def greet(name):
+    print("Hello, {0}!".format(name))
+print("What's your name?")
+name = input()
+greet(name)
+```
+
+Comments and exact indentation are preserved throughout the translation process.
+
+By default, 2to3 runs a set of |:to3-fixers:predefined fixers|.  The "-l" flag lists all
+available fixers.  An explicit set of fixers to run can be given with "-f".
+Likewise the "-x" explicitly disables a fixer.  The following example runs only
+the "imports" and "has_key" fixers:
+
+```rst
+$ 2to3 -f imports -f has_key example.py
+```
+
+This command runs every fixer except the "apply" fixer:
+
+```rst
+$ 2to3 -x apply example.py
+```
+
+Some fixers are *explicit*, meaning they aren’t run by default and must be
+listed on the command line to be run.  Here, in addition to the default fixers,
+the "idioms" fixer is run:
+
+```rst
+$ 2to3 -f all -f idioms example.py
+```
+
+Notice how passing "all" enables all default fixers.
+
+Sometimes 2to3 will find a place in your source code that needs to be changed,
+but 2to3 cannot fix automatically.  In this case, 2to3 will print a warning
+beneath the diff for a file.  You should address the warning in order to have
+compliant 3.x code.
+
+2to3 can also refactor doctests.  To enable this mode, use the "-d" flag.  Note
+that *only* doctests will be refactored.  This also doesn’t require the module
+to be valid Python.  For example, doctest like examples in a reST document could
+also be refactored with this option.
+
+The "-v" option enables output of more information on the translation process.
+
+Since some print statements can be parsed as function calls or statements, 2to3
+cannot always read files containing the print function.  When 2to3 detects the
+presence of the "from __future__ import print_function" compiler directive, it
+modifies its internal grammar to interpret |:library/functions.txt/print:print()| as a function.  This change
+can also be enabled manually with the "-p" flag.  Use "-p" to run fixers on code
+that already has had its print statements converted.
+
+The "-o" or "--output-dir" option allows specification of an alternate directory
+for processed output files to be written to.  The "-n" flag is required when
+using this as backup files do not make sense when not overwriting the input
+files.
+
+New in version 3.2.3: The "-o" option was added.
+
+The "-W" or "--write-unchanged-files" flag tells 2to3 to always write output
+files even if no changes were required to the file.  This is most useful with "
+-o" so that an entire Python source tree is copied with translation from one
+directory to another. This option implies the "-w" flag as it would not make
+sense otherwise.
+
+New in version 3.2.3: The "-W" flag was added.
+
+The "--add-suffix" option specifies a string to append to all output filenames.
+The "-n" flag is required when specifying this as backups are not necessary when
+writing to different filenames.  Example:
+
+```rst
+$ 2to3 -n -W --add-suffix=3 example.py
+```
+
+Will cause a converted file named "example.py3" to be written.
+
+New in version 3.2.3: The "--add-suffix" option was added.
+
+To translate an entire project from one directory tree to another use:
+
+```rst
+$ 2to3 --output-dir=python3-version/mycode -W -n python2-version/mycode
+```
+
+*|to3-fixers:⚓|* # fixers:Fixers
+
+Each step of transforming code is encapsulated in a fixer.  The command "2to3 -l
+" lists them.  As |:to3-using:documented above|, each can be turned on and off
+individually.  They are described here in more detail.
+
+*to3fixer-apply:apply*
+
+   Removes usage of "apply()".  For example "apply(function, *args, **kwargs)" is
+   converted to "function(*args, **kwargs)".
+
+*to3fixer-asserts:asserts*
+
+   Replaces deprecated |:library/unittest.txt/module-unittest:unittest| method names with the correct ones.
+
+   +----------------------------------+--------------------------------------------+
+   | From                             | To                                         |
+   |==================================|============================================|
+   | "failUnlessEqual(a, b)"          | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertEqual:assertEqual(a, b)|             |
+   +----------------------------------+--------------------------------------------+
+   | "assertEquals(a, b)"             | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertEqual:assertEqual(a, b)|             |
+   +----------------------------------+--------------------------------------------+
+   | "failIfEqual(a, b)"              | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertNotEqual:assertNotEqual(a, b)|       |
+   +----------------------------------+--------------------------------------------+
+   | "assertNotEquals(a, b)"          | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertNotEqual:assertNotEqual(a, b)|       |
+   +----------------------------------+--------------------------------------------+
+   | "failUnless(a)"                  | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertTrue:assertTrue(a)|                  |
+   +----------------------------------+--------------------------------------------+
+   | "assert_(a)"                     | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertTrue:assertTrue(a)|                  |
+   +----------------------------------+--------------------------------------------+
+   | "failIf(a)"                      | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertFalse:assertFalse(a)|                |
+   +----------------------------------+--------------------------------------------+
+   | "failUnlessRaises(exc, cal)"     | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertRaises:assertRaises(exc, cal)|       |
+   +----------------------------------+--------------------------------------------+
+   | "failUnlessAlmostEqual(a, b)"    | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertAlmostEqual:assertAlmostEqual(a, b)| |
+   +----------------------------------+--------------------------------------------+
+   | "assertAlmostEquals(a, b)"       | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertAlmostEqual:assertAlmostEqual(a, b)| |
+   +----------------------------------+--------------------------------------------+
+   | "failIfAlmostEqual(a, b)"        | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertNotAlmostEqual:assertNotAlmostEqual  |
+   |                                  | (a, b)|                                    |
+   +----------------------------------+--------------------------------------------+
+   | "assertNotAlmostEquals(a, b)"    | |:library/unittest.txt/unittest.TestCase.  |
+   |                                  | assertNotAlmostEqual:assertNotAlmostEqual  |
+   |                                  | (a, b)|                                    |
+   +----------------------------------+--------------------------------------------+
+
+*to3fixer-basestring:basestring*
+
+   Converts "basestring" to |:library/stdtypes.txt/str:str|.
+
+*to3fixer-buffer:buffer*
+
+   Converts "buffer" to |:library/stdtypes.txt/memoryview:memoryview|.  This fixer is optional because the
+   |:library/stdtypes.txt/memoryview:memoryview| API is similar but not exactly the same as that of "buffer".
+
+*to3fixer-dict:dict*
+
+   Fixes dictionary iteration methods.  "dict.iteritems()" is converted to
+   |:library/stdtypes.txt/dict.items:dict.items()|, "dict.iterkeys()" to |:library/stdtypes.txt/dict.keys:dict.keys()|, and "dict.itervalues()" to
+   |:library/stdtypes.txt/dict.values:dict.values()|.  Similarly, "dict.viewitems()", "dict.viewkeys()" and "
+   dict.viewvalues()" are converted respectively to |:library/stdtypes.txt/dict.items:dict.items()|, |:library/stdtypes.txt/dict.keys:dict.keys()|
+   and |:library/stdtypes.txt/dict.values:dict.values()|.  It also wraps existing usages of |:library/stdtypes.txt/dict.items:dict.items()|,
+   |:library/stdtypes.txt/dict.keys:dict.keys()|, and |:library/stdtypes.txt/dict.values:dict.values()| in a call to |:library/stdtypes.txt/list:list|.
+
+*to3fixer-except:except*
+
+   Converts "except X, T" to "except X as T".
+
+*to3fixer-exec:exec*
+
+   Converts the "exec" statement to the |:library/functions.txt/exec:exec()| function.
+
+*to3fixer-execfile:execfile*
+
+   Removes usage of "execfile()".  The argument to "execfile()" is wrapped in calls
+   to |:library/functions.txt/open:open()|, |:library/functions.txt/compile:compile()|, and |:library/functions.txt/exec:exec()|.
+
+*to3fixer-exitfunc:exitfunc*
+
+   Changes assignment of "sys.exitfunc" to use of the |:library/atexit.txt/module-atexit:atexit| module.
+
+*to3fixer-filter:filter*
+
+   Wraps |:library/functions.txt/filter:filter()| usage in a |:library/stdtypes.txt/list:list| call.
+
+*to3fixer-funcattrs:funcattrs*
+
+   Fixes function attributes that have been renamed.  For example, "
+   my_function.func_closure" is converted to "my_function.__closure__".
+
+*to3fixer-future:future*
+
+   Removes "from __future__ import new_feature" statements.
+
+*to3fixer-getcwdu:getcwdu*
+
+   Renames "os.getcwdu()" to |:library/os.txt/os.getcwd:os.getcwd()|.
+
+*to3fixer-has_key:has_key*
+
+   Changes "dict.has_key(key)" to "key in dict".
+
+*to3fixer-idioms:idioms*
+
+   This optional fixer performs several transformations that make Python code more
+   idiomatic.  Type comparisons like "type(x) is SomeClass" and "type(x) ==
+   SomeClass" are converted to "isinstance(x, SomeClass)". "while 1" becomes "while
+   True".  This fixer also tries to make use of |:library/functions.txt/sorted:sorted()| in appropriate places.
+   For example, this block
+
+```rst
+L = list(some_iterable)
+L.sort()
+```
+
+   is changed to
+
+```rst
+L = sorted(some_iterable)
+```
+
+*to3fixer-import:import*
+
+   Detects sibling imports and converts them to relative imports.
+
+*to3fixer-imports:imports*
+
+   Handles module renames in the standard library.
+
+*to3fixer-imports2:imports2*
+
+   Handles other modules renames in the standard library.  It is separate from the
+   |:to3fixer-imports:imports| fixer only because of technical limitations.
+
+*to3fixer-input:input*
+
+   Converts "input(prompt)" to "eval(input(prompt))".
+
+*to3fixer-intern:intern*
+
+   Converts "intern()" to |:library/sys.txt/sys.intern:sys.intern()|.
+
+*to3fixer-isinstance:isinstance*
+
+   Fixes duplicate types in the second argument of |:library/functions.txt/isinstance:isinstance()|.  For example, "
+   isinstance(x, (int, int))" is converted to "isinstance(x, int)" and "
+   isinstance(x, (int, float, int))" is converted to "isinstance(x, (int, float))".
+
+*to3fixer-itertools_imports:itertools_imports*
+
+   Removes imports of "itertools.ifilter()", "itertools.izip()", and "
+   itertools.imap()".  Imports of "itertools.ifilterfalse()" are also changed to
+   |:library/itertools.txt/itertools.filterfalse:itertools.filterfalse()|.
+
+*to3fixer-itertools:itertools*
+
+   Changes usage of "itertools.ifilter()", "itertools.izip()", and "
+   itertools.imap()" to their built-in equivalents. "itertools.ifilterfalse()" is
+   changed to |:library/itertools.txt/itertools.filterfalse:itertools.filterfalse()|.
+
+*to3fixer-long:long*
+
+   Renames "long" to |:library/functions.txt/int:int|.
+
+*to3fixer-map:map*
+
+   Wraps |:library/functions.txt/map:map()| in a |:library/stdtypes.txt/list:list| call.  It also changes "map(None, x)" to "list(x)".
+   Using "from future_builtins import map" disables this fixer.
+
+*to3fixer-metaclass:metaclass*
+
+   Converts the old metaclass syntax ("__metaclass__ = Meta" in the class body) to
+   the new ("class X(metaclass=Meta)").
+
+*to3fixer-methodattrs:methodattrs*
+
+   Fixes old method attribute names.  For example, "meth.im_func" is converted to "
+   meth.__func__".
+
+*to3fixer-ne:ne*
+
+   Converts the old not-equal syntax, "<>", to "!=".
+
+*to3fixer-next:next*
+
+   Converts the use of iterator’s "next()" methods to the |:library/functions.txt/next:next()| function.  It
+   also renames |:library/functions.txt/next:next()| methods to |:library/stdtypes.txt/iterator.__next__:__next__()|.
+
+*to3fixer-nonzero:nonzero*
+
+   Renames "__nonzero__()" to |:reference/datamodel.txt/object.__bool__:__bool__()|.
+
+*to3fixer-numliterals:numliterals*
+
+   Converts octal literals into the new syntax.
+
+*to3fixer-operator:operator*
+
+   Converts calls to various functions in the |:library/operator.txt/module-operator:operator| module to other, but
+   equivalent, function calls.  When needed, the appropriate "import" statements
+   are added, e.g. "import collections.abc".  The following mapping are made:
+
+   +------------------------------------+-----------------------------------------------+
+   | From                               | To                                            |
+   |====================================|===============================================|
+   | "operator.isCallable(obj)"         | "callable(obj)"                               |
+   +------------------------------------+-----------------------------------------------+
+   | "operator.sequenceIncludes(obj)"   | "operator.contains(obj)"                      |
+   +------------------------------------+-----------------------------------------------+
+   | "operator.isSequenceType(obj)"     | "isinstance(obj, collections.abc.Sequence)"   |
+   +------------------------------------+-----------------------------------------------+
+   | "operator.isMappingType(obj)"      | "isinstance(obj, collections.abc.Mapping)"    |
+   +------------------------------------+-----------------------------------------------+
+   | "operator.isNumberType(obj)"       | "isinstance(obj, numbers.Number)"             |
+   +------------------------------------+-----------------------------------------------+
+   | "operator.repeat(obj, n)"          | "operator.mul(obj, n)"                        |
+   +------------------------------------+-----------------------------------------------+
+   | "operator.irepeat(obj, n)"         | "operator.imul(obj, n)"                       |
+   +------------------------------------+-----------------------------------------------+
+
+*to3fixer-paren:paren*
+
+   Add extra parenthesis where they are required in list comprehensions.  For
+   example, "[x for x in 1, 2]" becomes "[x for x in (1, 2)]".
+
+*to3fixer-print:print*
+
+   Converts the "print" statement to the |:library/functions.txt/print:print()| function.
+
+*to3fixer-raise:raise*
+
+   Converts "raise E, V" to "raise E(V)", and "raise E, V, T" to "raise
+   E(V).with_traceback(T)".  If "E" is a tuple, the translation will be incorrect
+   because substituting tuples for exceptions has been removed in 3.0.
+
+*to3fixer-raw_input:raw_input*
+
+   Converts "raw_input()" to |:library/functions.txt/input:input()|.
+
+*to3fixer-reduce:reduce*
+
+   Handles the move of "reduce()" to |:library/functools.txt/functools.reduce:functools.reduce()|.
+
+*to3fixer-reload:reload*
+
+   Converts "reload()" to |:library/importlib.txt/importlib.reload:importlib.reload()|.
+
+*to3fixer-renames:renames*
+
+   Changes "sys.maxint" to |:library/sys.txt/sys.maxsize:sys.maxsize|.
+
+*to3fixer-repr:repr*
+
+   Replaces backtick repr with the |:library/functions.txt/repr:repr()| function.
+
+*to3fixer-set_literal:set_literal*
+
+   Replaces use of the |:library/stdtypes.txt/set:set| constructor with set literals.  This fixer is
+   optional.
+
+*to3fixer-standarderror:standarderror*
+
+   Renames "StandardError" to |:library/exceptions.txt/Exception:Exception|.
+
+*to3fixer-sys_exc:sys_exc*
+
+   Changes the deprecated "sys.exc_value", "sys.exc_type", "sys.exc_traceback" to
+   use |:library/sys.txt/sys.exc_info:sys.exc_info()|.
+
+*to3fixer-throw:throw*
+
+   Fixes the API change in generator’s "throw()" method.
+
+*to3fixer-tuple_params:tuple_params*
+
+   Removes implicit tuple parameter unpacking.  This fixer inserts temporary
+   variables.
+
+*to3fixer-types:types*
+
+   Fixes code broken from the removal of some members in the |:library/types.txt/module-types:types| module.
+
+*to3fixer-unicode:unicode*
+
+   Renames "unicode" to |:library/stdtypes.txt/str:str|.
+
+*to3fixer-urllib:urllib*
+
+   Handles the rename of |:library/urllib.txt/module-urllib:urllib| and "urllib2" to the |:library/urllib.txt/module-urllib:urllib| package.
+
+*to3fixer-ws_comma:ws_comma*
+
+   Removes excess whitespace from comma separated items.  This fixer is optional.
+
+*to3fixer-xrange:xrange*
+
+   Renames "xrange()" to |:library/stdtypes.txt/range:range()| and wraps existing |:library/stdtypes.txt/range:range()| calls with |:library/stdtypes.txt/list:list|.
+
+*to3fixer-xreadlines:xreadlines*
+
+   Changes "for x in file.xreadlines()" to "for x in file".
+
+*to3fixer-zip:zip*
+
+   Wraps |:library/functions.txt/zip:zip()| usage in a |:library/stdtypes.txt/list:list| call.  This is disabled when "from
+   future_builtins import zip" appears.
+
+# module-lib2to3:|:module-lib2to3:lib2to3| - 2to3’s library
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/lib2to3:Lib/lib2to3/|
+
+======================================================================
+
+Note:
+
+  The |:module-lib2to3:lib2to3| API should be considered unstable and may change drastically in
+  the future.
+
+
+

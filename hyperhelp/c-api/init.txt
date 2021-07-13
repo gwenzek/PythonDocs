@@ -1,0 +1,1555 @@
+%hyperhelp title="Initialization, Finalization, and Threads" date="2021-07-11"
+*|initialization-finalization-and-threads:⚓|*
+
+See also |:c-api/init_config.txt/init-config:Python Initialization Configuration|.
+
+# before-python-initialization:Before Python Initialization
+
+In an application embedding  Python, the |:c.Py_Initialize:Py_Initialize()| function must be
+called before using any other Python/C API functions; with the exception of a
+few functions and the |:global-conf-vars:global configuration variables|.
+
+The following functions can be safely called before Python is initialized:
+
+* Configuration functions:
+
+  * |:c-api/import.txt/c.PyImport_AppendInittab:PyImport_AppendInittab()|
+
+  * |:c-api/import.txt/c.PyImport_ExtendInittab:PyImport_ExtendInittab()|
+
+  * "PyInitFrozenExtensions()"
+
+  * |:c-api/memory.txt/c.PyMem_SetAllocator:PyMem_SetAllocator()|
+
+  * |:c-api/memory.txt/c.PyMem_SetupDebugHooks:PyMem_SetupDebugHooks()|
+
+  * |:c-api/memory.txt/c.PyObject_SetArenaAllocator:PyObject_SetArenaAllocator()|
+
+  * |:c.Py_SetPath:Py_SetPath()|
+
+  * |:c.Py_SetProgramName:Py_SetProgramName()|
+
+  * |:c.Py_SetPythonHome:Py_SetPythonHome()|
+
+  * |:c.Py_SetStandardStreamEncoding:Py_SetStandardStreamEncoding()|
+
+  * |:c-api/sys.txt/c.PySys_AddWarnOption:PySys_AddWarnOption()|
+
+  * |:c-api/sys.txt/c.PySys_AddXOption:PySys_AddXOption()|
+
+  * |:c-api/sys.txt/c.PySys_ResetWarnOptions:PySys_ResetWarnOptions()|
+
+* Informative functions:
+
+  * |:c.Py_IsInitialized:Py_IsInitialized()|
+
+  * |:c-api/memory.txt/c.PyMem_GetAllocator:PyMem_GetAllocator()|
+
+  * |:c-api/memory.txt/c.PyObject_GetArenaAllocator:PyObject_GetArenaAllocator()|
+
+  * |:c.Py_GetBuildInfo:Py_GetBuildInfo()|
+
+  * |:c.Py_GetCompiler:Py_GetCompiler()|
+
+  * |:c.Py_GetCopyright:Py_GetCopyright()|
+
+  * |:c.Py_GetPlatform:Py_GetPlatform()|
+
+  * |:c.Py_GetVersion:Py_GetVersion()|
+
+* Utilities:
+
+  * |:c-api/sys.txt/c.Py_DecodeLocale:Py_DecodeLocale()|
+
+* Memory allocators:
+
+  * |:c-api/memory.txt/c.PyMem_RawMalloc:PyMem_RawMalloc()|
+
+  * |:c-api/memory.txt/c.PyMem_RawRealloc:PyMem_RawRealloc()|
+
+  * |:c-api/memory.txt/c.PyMem_RawCalloc:PyMem_RawCalloc()|
+
+  * |:c-api/memory.txt/c.PyMem_RawFree:PyMem_RawFree()|
+
+Note:
+
+  The following functions *should not be called* before |:c.Py_Initialize:Py_Initialize()|:
+  |:c-api/sys.txt/c.Py_EncodeLocale:Py_EncodeLocale()|, |:c.Py_GetPath:Py_GetPath()|, |:c.Py_GetPrefix:Py_GetPrefix()|, |:c.Py_GetExecPrefix:Py_GetExecPrefix()|,
+  |:c.Py_GetProgramFullPath:Py_GetProgramFullPath()|, |:c.Py_GetPythonHome:Py_GetPythonHome()|, |:c.Py_GetProgramName:Py_GetProgramName()| and
+  |:c.PyEval_InitThreads:PyEval_InitThreads()|.
+
+*|global-conf-vars:⚓|* # global-configuration-variables:Global configuration
+variables
+
+Python has variables for the global configuration to control different features
+and options. By default, these flags are controlled by |:using/cmdline.txt/using-on-interface-options:command line
+options|.
+
+When a flag is set by an option, the value of the flag is the number of times
+that the option was set. For example, "-b" sets |:c.Py_BytesWarningFlag:Py_BytesWarningFlag| to 1 and "
+-bb" sets |:c.Py_BytesWarningFlag:Py_BytesWarningFlag| to 2.
+
+*c.Py_BytesWarningFlag:int Py_BytesWarningFlag
+*
+
+   Issue a warning when comparing |:library/stdtypes.txt/bytes:bytes| or |:library/stdtypes.txt/bytearray:bytearray| with |:library/stdtypes.txt/str:str| or |:library/stdtypes.txt/bytes:bytes| with
+   |:library/functions.txt/int:int|.  Issue an error if greater or equal to "2".
+
+   Set by the |:using/cmdline.txt/cmdoption-b:-b| option.
+
+*c.Py_DebugFlag:int Py_DebugFlag
+*
+
+   Turn on parser debugging output (for expert only, depending on compilation
+   options).
+
+   Set by the |:using/cmdline.txt/cmdoption-d:-d| option and the *|index-0:⚓|* |:using/cmdline.txt/envvar-PYTHONDEBUG:PYTHONDEBUG| environment variable.
+
+*c.Py_DontWriteBytecodeFlag:int Py_DontWriteBytecodeFlag
+*
+
+   If set to non-zero, Python won’t try to write ".pyc" files on the import of
+   source modules.
+
+   Set by the |:using/cmdline.txt/cmdoption-B:-B| option and the *|index-1:⚓|* |:using/cmdline.txt/envvar-PYTHONDONTWRITEBYTECODE:PYTHONDONTWRITEBYTECODE|
+   environment variable.
+
+*c.Py_FrozenFlag:int Py_FrozenFlag
+*
+
+   Suppress error messages when calculating the module search path in
+   |:c.Py_GetPath:Py_GetPath()|.
+
+   Private flag used by "_freeze_importlib" and "frozenmain" programs.
+
+*c.Py_HashRandomizationFlag:int Py_HashRandomizationFlag
+*
+
+   Set to "1" if the *|index-2:⚓|* |:using/cmdline.txt/envvar-PYTHONHASHSEED:PYTHONHASHSEED| environment variable is set to
+   a non-empty string.
+
+   If the flag is non-zero, read the *|index-3:⚓|* |:using/cmdline.txt/envvar-PYTHONHASHSEED:PYTHONHASHSEED| environment
+   variable to initialize the secret hash seed.
+
+*c.Py_IgnoreEnvironmentFlag:int Py_IgnoreEnvironmentFlag
+*
+
+   Ignore all *|index-4:⚓|* "PYTHON*" environment variables, e.g. *|index-5:⚓|*
+   |:using/cmdline.txt/envvar-PYTHONPATH:PYTHONPATH| and *|index-6:⚓|* |:using/cmdline.txt/envvar-PYTHONHOME:PYTHONHOME|, that might be set.
+
+   Set by the |:using/cmdline.txt/cmdoption-E:-E| and |:using/cmdline.txt/cmdoption-I:-I| options.
+
+*c.Py_InspectFlag:int Py_InspectFlag
+*
+
+   When a script is passed as first argument or the |:using/cmdline.txt/cmdoption-c:-c| option is used, enter
+   interactive mode after executing the script or the command, even when
+   |:library/sys.txt/sys.stdin:sys.stdin| does not appear to be a terminal.
+
+   Set by the |:using/cmdline.txt/cmdoption-i:-i| option and the *|index-7:⚓|* |:using/cmdline.txt/envvar-PYTHONINSPECT:PYTHONINSPECT| environment
+   variable.
+
+*c.Py_InteractiveFlag:int Py_InteractiveFlag
+*
+
+   Set by the |:using/cmdline.txt/cmdoption-i:-i| option.
+
+*c.Py_IsolatedFlag:int Py_IsolatedFlag
+*
+
+   Run Python in isolated mode. In isolated mode |:library/sys.txt/sys.path:sys.path| contains neither the
+   script’s directory nor the user’s site-packages directory.
+
+   Set by the |:using/cmdline.txt/cmdoption-I:-I| option.
+
+   New in version 3.4.
+
+*c.Py_LegacyWindowsFSEncodingFlag:int Py_LegacyWindowsFSEncodingFlag
+*
+
+   If the flag is non-zero, use the "mbcs" encoding instead of the UTF-8 encoding
+   for the filesystem encoding.
+
+   Set to "1" if the *|index-8:⚓|* |:using/cmdline.txt/envvar-PYTHONLEGACYWINDOWSFSENCODING:PYTHONLEGACYWINDOWSFSENCODING| environment
+   variable is set to a non-empty string.
+
+   See *|index-9:⚓|* |:www.python.org/dev/peps/pep-0529:PEP 529| for more details.
+
+   |:library/intro.txt/availability:Availability|: Windows.
+
+*c.Py_LegacyWindowsStdioFlag:int Py_LegacyWindowsStdioFlag
+*
+
+   If the flag is non-zero, use |:library/io.txt/io.FileIO:io.FileIO| instead of "WindowsConsoleIO" for |:library/sys.txt/module-sys:sys|
+   standard streams.
+
+   Set to "1" if the *|index-10:⚓|* |:using/cmdline.txt/envvar-PYTHONLEGACYWINDOWSSTDIO:PYTHONLEGACYWINDOWSSTDIO| environment variable
+   is set to a non-empty string.
+
+   See *|index-11:⚓|* |:www.python.org/dev/peps/pep-0528:PEP 528| for more details.
+
+   |:library/intro.txt/availability:Availability|: Windows.
+
+*c.Py_NoSiteFlag:int Py_NoSiteFlag
+*
+
+   Disable the import of the module |:library/site.txt/module-site:site| and the site-dependent manipulations of
+   |:library/sys.txt/sys.path:sys.path| that it entails.  Also disable these manipulations if |:library/site.txt/module-site:site| is
+   explicitly imported later (call |:library/site.txt/site.main:site.main()| if you want them to be triggered).
+
+   Set by the |:using/cmdline.txt/cmdoption-S:-S| option.
+
+*c.Py_NoUserSiteDirectory:int Py_NoUserSiteDirectory
+*
+
+   Don’t add the |:library/site.txt/site.USER_SITE:user site-packages directory| to |:library/sys.txt/sys.path:sys.path|.
+
+   Set by the |:using/cmdline.txt/cmdoption-s:-s| and |:using/cmdline.txt/cmdoption-I:-I| options, and the *|index-12:⚓|* |:using/cmdline.txt/envvar-PYTHONNOUSERSITE:PYTHONNOUSERSITE|
+   environment variable.
+
+*c.Py_OptimizeFlag:int Py_OptimizeFlag
+*
+
+   Set by the |:using/cmdline.txt/cmdoption-O:-O| option and the *|index-13:⚓|* |:using/cmdline.txt/envvar-PYTHONOPTIMIZE:PYTHONOPTIMIZE| environment
+   variable.
+
+*c.Py_QuietFlag:int Py_QuietFlag
+*
+
+   Don’t display the copyright and version messages even in interactive mode.
+
+   Set by the |:using/cmdline.txt/cmdoption-q:-q| option.
+
+   New in version 3.2.
+
+*c.Py_UnbufferedStdioFlag:int Py_UnbufferedStdioFlag
+*
+
+   Force the stdout and stderr streams to be unbuffered.
+
+   Set by the |:using/cmdline.txt/cmdoption-u:-u| option and the *|index-14:⚓|* |:using/cmdline.txt/envvar-PYTHONUNBUFFERED:PYTHONUNBUFFERED| environment
+   variable.
+
+*c.Py_VerboseFlag:int Py_VerboseFlag
+*
+
+   Print a message each time a module is initialized, showing the place (filename
+   or built-in module) from which it is loaded.  If greater or equal to "2", print
+   a message for each file that is checked for when searching for a module. Also
+   provides information on module cleanup at exit.
+
+   Set by the |:using/cmdline.txt/cmdoption-1:-v| option and the *|index-15:⚓|* |:using/cmdline.txt/envvar-PYTHONVERBOSE:PYTHONVERBOSE| environment
+   variable.
+
+# initializing-and-finalizing-the-interpreter:Initializing and finalizing the
+interpreter
+
+*c.Py_Initialize:void Py_Initialize()
+*
+    *|index-16:⚓|*
+
+   Initialize the Python interpreter.  In an application embedding  Python, this
+   should be called before using any other Python/C API functions; see
+   |:pre-init-safe:Before Python Initialization| for the few exceptions.
+
+   This initializes the table of loaded modules ("sys.modules"), and creates the
+   fundamental modules |:library/builtins.txt/module-builtins:builtins|, |:library/__main__.txt/module-__main__:__main__| and |:library/sys.txt/module-sys:sys|.  It also initializes the
+   module search path ("sys.path"). It does not set "sys.argv"; use
+   |:c.PySys_SetArgvEx:PySys_SetArgvEx()| for that.  This is a no-op when called for a second time
+   (without calling |:c.Py_FinalizeEx:Py_FinalizeEx()| first).  There is no return value; it is a
+   fatal error if the initialization fails.
+
+   Note:
+
+     On Windows, changes the console mode from "O_TEXT" to "O_BINARY", which will
+     also affect non-Python uses of the console using the C Runtime.
+
+*c.Py_InitializeEx:void Py_InitializeEx(int initsigs)
+*
+
+   This function works like |:c.Py_Initialize:Py_Initialize()| if *initsigs* is "1". If *initsigs*
+   is "0", it skips initialization registration of signal handlers, which might be
+   useful when Python is embedded.
+
+*c.Py_IsInitialized:int Py_IsInitialized()
+*
+
+   Return true (nonzero) when the Python interpreter has been initialized, false
+   (zero) if not.  After |:c.Py_FinalizeEx:Py_FinalizeEx()| is called, this returns false until
+   |:c.Py_Initialize:Py_Initialize()| is called again.
+
+*c.Py_FinalizeEx:int Py_FinalizeEx()
+*
+
+   Undo all initializations made by |:c.Py_Initialize:Py_Initialize()| and subsequent use of
+   Python/C API functions, and destroy all sub-interpreters (see
+   |:c.Py_NewInterpreter:Py_NewInterpreter()| below) that were created and not yet destroyed since the
+   last call to |:c.Py_Initialize:Py_Initialize()|.  Ideally, this frees all memory allocated by the
+   Python interpreter.  This is a no-op when called for a second time (without
+   calling |:c.Py_Initialize:Py_Initialize()| again first).  Normally the return value is "0".  If
+   there were errors during finalization (flushing buffered data), "-1" is
+   returned.
+
+   This function is provided for a number of reasons.  An embedding application
+   might want to restart Python without having to restart the application itself.
+   An application that has loaded the Python interpreter from a dynamically
+   loadable library (or DLL) might want to free all memory allocated by Python
+   before unloading the DLL. During a hunt for memory leaks in an application a
+   developer might want to free all memory allocated by Python before exiting from
+   the application.
+
+   *Bugs and caveats:* The destruction of modules and objects in modules is done in
+   random order; this may cause destructors ("__del__()" methods) to fail when they
+   depend on other objects (even functions) or modules.  Dynamically loaded
+   extension modules loaded by Python are not unloaded.  Small amounts of memory
+   allocated by the Python interpreter may not be freed (if you find a leak, please
+   report it).  Memory tied up in circular references between objects is not freed.
+   Some memory allocated by extension modules may not be freed.  Some extensions
+   may not work properly if their initialization routine is called more than once;
+   this can happen if an application calls |:c.Py_Initialize:Py_Initialize()| and |:c.Py_FinalizeEx:Py_FinalizeEx()|
+   more than once.
+
+   Raises an |:library/sys.txt/auditing:auditing event| "cpython._PySys_ClearAuditHooks" with no arguments.
+
+   New in version 3.6.
+
+*c.Py_Finalize:void Py_Finalize()
+*
+
+   This is a backwards-compatible version of |:c.Py_FinalizeEx:Py_FinalizeEx()| that disregards the
+   return value.
+
+# process-wide-parameters:Process-wide parameters
+
+*c.Py_SetStandardStreamEncoding:int Py_SetStandardStreamEncoding(const char *encoding, const char *errors)
+*
+    *|index-17:⚓|*
+
+   This function should be called before |:c.Py_Initialize:Py_Initialize()|, if it is called at all.
+   It specifies which encoding and error handling to use with standard IO, with the
+   same meanings as in |:library/stdtypes.txt/str.encode:str.encode()|.
+
+   It overrides *|index-18:⚓|* |:using/cmdline.txt/envvar-PYTHONIOENCODING:PYTHONIOENCODING| values, and allows embedding code
+   to control IO encoding when the environment variable does not work.
+
+   *encoding* and/or *errors* may be "NULL" to use *|index-19:⚓|*
+   |:using/cmdline.txt/envvar-PYTHONIOENCODING:PYTHONIOENCODING| and/or default values (depending on other settings).
+
+   Note that |:library/sys.txt/sys.stderr:sys.stderr| always uses the “backslashreplace” error handler,
+   regardless of this (or any other) setting.
+
+   If |:c.Py_FinalizeEx:Py_FinalizeEx()| is called, this function will need to be called again in
+   order to affect subsequent calls to |:c.Py_Initialize:Py_Initialize()|.
+
+   Returns "0" if successful, a nonzero value on error (e.g. calling after the
+   interpreter has already been initialized).
+
+   New in version 3.4.
+
+*c.Py_SetProgramName:void Py_SetProgramName(const wchar_t *name)
+*
+    *|index-20:⚓|*
+
+   This function should be called before |:c.Py_Initialize:Py_Initialize()| is called for the first
+   time, if it is called at all.  It tells the interpreter the value of the "
+   argv[0]" argument to the "main()" function of the program (converted to wide
+   characters). This is used by |:c.Py_GetPath:Py_GetPath()| and some other functions below to
+   find the Python run-time libraries relative to the interpreter executable.  The
+   default value is "'python'".  The argument should point to a zero-terminated
+   wide character string in static storage whose contents will not change for the
+   duration of the program’s execution.  No code in the Python interpreter will
+   change the contents of this storage.
+
+   Use |:c-api/sys.txt/c.Py_DecodeLocale:Py_DecodeLocale()| to decode a bytes string to get a *wchar_** string.
+
+*c.Py_GetProgramName:wchar *Py_GetProgramName()
+*
+    *|index-21:⚓|*
+
+   Return the program name set with |:c.Py_SetProgramName:Py_SetProgramName()|, or the default. The
+   returned string points into static storage; the caller should not modify its
+   value.
+
+*c.Py_GetPrefix:wchar_t *Py_GetPrefix()
+*
+
+   Return the *prefix* for installed platform-independent files. This is derived
+   through a number of complicated rules from the program name set with
+   |:c.Py_SetProgramName:Py_SetProgramName()| and some environment variables; for example, if the
+   program name is "'/usr/local/bin/python'", the prefix is "'/usr/local'". The
+   returned string points into static storage; the caller should not modify its
+   value.  This corresponds to the *prefix* variable in the top-level "Makefile"
+   and the "--prefix" argument to the *configure* script at build time.  The value
+   is available to Python code as "sys.prefix". It is only useful on Unix.  See
+   also the next function.
+
+*c.Py_GetExecPrefix:wchar_t *Py_GetExecPrefix()
+*
+
+   Return the *exec-prefix* for installed platform-*dependent* files.  This is
+   derived through a number of complicated rules from the program name set with
+   |:c.Py_SetProgramName:Py_SetProgramName()| and some environment variables; for example, if the
+   program name is "'/usr/local/bin/python'", the exec-prefix is "'/usr/local'".
+   The returned string points into static storage; the caller should not modify its
+   value.  This corresponds to the *exec_prefix* variable in the top-level "
+   Makefile" and the "--exec-prefix" argument to the *configure* script at build
+   time.  The value is available to Python code as "sys.exec_prefix".  It is only
+   useful on Unix.
+
+   Background: The exec-prefix differs from the prefix when platform dependent
+   files (such as executables and shared libraries) are installed in a different
+   directory tree.  In a typical installation, platform dependent files may be
+   installed in the "/usr/local/plat" subtree while platform independent may be
+   installed in "/usr/local".
+
+   Generally speaking, a platform is a combination of hardware and software
+   families, e.g.  Sparc machines running the Solaris 2.x operating system are
+   considered the same platform, but Intel machines running Solaris 2.x are another
+   platform, and Intel machines running Linux are yet another platform.  Different
+   major revisions of the same operating system generally also form different
+   platforms.  Non-Unix operating systems are a different story; the installation
+   strategies on those systems are so different that the prefix and exec-prefix are
+   meaningless, and set to the empty string. Note that compiled Python bytecode
+   files are platform independent (but not independent from the Python version by
+   which they were compiled!).
+
+   System administrators will know how to configure the *mount* or *automount*
+   programs to share "/usr/local" between platforms while having "/usr/local/plat"
+   be a different filesystem for each platform.
+
+*c.Py_GetProgramFullPath:wchar_t *Py_GetProgramFullPath()
+*
+    *|index-22:⚓|*
+
+   Return the full program name of the Python executable; this is  computed as a
+   side-effect of deriving the default module search path  from the program name
+   (set by |:c.Py_SetProgramName:Py_SetProgramName()| above). The returned string points into static
+   storage; the caller should not modify its value.  The value is available to
+   Python code as "sys.executable".
+
+*c.Py_GetPath:wchar_t *Py_GetPath()
+*
+    *|index-23:⚓|*
+
+   Return the default module search path; this is computed from the program name
+   (set by |:c.Py_SetProgramName:Py_SetProgramName()| above) and some environment variables. The
+   returned string consists of a series of directory names separated by a platform
+   dependent delimiter character.  The delimiter character is "':'" on Unix and Mac
+   OS X, "';'" on Windows.  The returned string points into static storage; the
+   caller should not modify its value.  The list |:library/sys.txt/sys.path:sys.path| is initialized with
+   this value on interpreter startup; it can be (and usually is) modified later to
+   change the search path for loading modules.
+
+*c.Py_SetPath:void Py_SetPath(const wchar_t*)
+*
+    *|index-24:⚓|*
+
+   Set the default module search path.  If this function is called before
+   |:c.Py_Initialize:Py_Initialize()|, then |:c.Py_GetPath:Py_GetPath()| won’t attempt to compute a default search
+   path but uses the one provided instead.  This is useful if Python is embedded by
+   an application that has full knowledge of the location of all modules.  The path
+   components should be separated by the platform dependent delimiter character,
+   which is "':'" on Unix and Mac OS X, "';'" on Windows.
+
+   This also causes |:library/sys.txt/sys.executable:sys.executable| to be set to the program full path (see
+   |:c.Py_GetProgramFullPath:Py_GetProgramFullPath()|) and for |:library/sys.txt/sys.prefix:sys.prefix| and |:library/sys.txt/sys.exec_prefix:sys.exec_prefix| to be
+   empty.  It is up to the caller to modify these if required after calling
+   |:c.Py_Initialize:Py_Initialize()|.
+
+   Use |:c-api/sys.txt/c.Py_DecodeLocale:Py_DecodeLocale()| to decode a bytes string to get a *wchar_** string.
+
+   The path argument is copied internally, so the caller may free it after the call
+   completes.
+
+   Changed in version 3.8: The program full path is now used for |:library/sys.txt/sys.executable:sys.executable|,
+   instead of the program name.
+
+*c.Py_GetVersion:const char *Py_GetVersion()
+*
+
+   Return the version of this Python interpreter.  This is a string that looks
+   something like
+
+```rst
+"3.0a5+ (py3k:63103M, May 12 2008, 00:53:55) \n[GCC 4.2.3]"
+```
+
+   *|index-25:⚓|*
+
+   The first word (up to the first space character) is the current Python version;
+   the first three characters are the major and minor version separated by a
+   period.  The returned string points into static storage; the caller should not
+   modify its value.  The value is available to Python code as |:library/sys.txt/sys.version:sys.version|.
+
+*c.Py_GetPlatform:const char *Py_GetPlatform()
+*
+    *|index-26:⚓|*
+
+   Return the platform identifier for the current platform.  On Unix, this is
+   formed from the “official” name of the operating system, converted to lower
+   case, followed by the major revision number; e.g., for Solaris 2.x, which is
+   also known as SunOS 5.x, the value is "'sunos5'".  On Mac OS X, it is "'darwin'"
+   .  On Windows, it is "'win'".  The returned string points into static storage;
+   the caller should not modify its value.  The value is available to Python code
+   as "sys.platform".
+
+*c.Py_GetCopyright:const char *Py_GetCopyright()
+*
+
+   Return the official copyright string for the current Python version, for example
+
+   "'Copyright 1991-1995 Stichting Mathematisch Centrum, Amsterdam'"
+
+   *|index-27:⚓|*
+
+   The returned string points into static storage; the caller should not modify its
+   value.  The value is available to Python code as "sys.copyright".
+
+*c.Py_GetCompiler:const char *Py_GetCompiler()
+*
+
+   Return an indication of the compiler used to build the current Python version,
+   in square brackets, for example:
+
+```rst
+"[GCC 2.7.2.2]"
+```
+
+   *|index-28:⚓|*
+
+   The returned string points into static storage; the caller should not modify its
+   value.  The value is available to Python code as part of the variable "
+   sys.version".
+
+*c.Py_GetBuildInfo:const char *Py_GetBuildInfo()
+*
+
+   Return information about the sequence number and build date and time  of the
+   current Python interpreter instance, for example
+
+```rst
+"#67, Aug  1 1997, 22:34:28"
+```
+
+   *|index-29:⚓|*
+
+   The returned string points into static storage; the caller should not modify its
+   value.  The value is available to Python code as part of the variable "
+   sys.version".
+
+*c.PySys_SetArgvEx:void PySys_SetArgvEx(int argc, wchar_t **argv, int updatepath)
+*
+    *|index-30:⚓|*
+
+   Set |:library/sys.txt/sys.argv:sys.argv| based on *argc* and *argv*.  These parameters are similar to
+   those passed to the program’s "main()" function with the difference that the
+   first entry should refer to the script file to be executed rather than the
+   executable hosting the Python interpreter.  If there isn’t a script that will be
+   run, the first entry in *argv* can be an empty string.  If this function fails
+   to initialize |:library/sys.txt/sys.argv:sys.argv|, a fatal condition is signalled using |:c-api/sys.txt/c.Py_FatalError:Py_FatalError()|
+   .
+
+   If *updatepath* is zero, this is all the function does.  If *updatepath* is non-
+   zero, the function also modifies |:library/sys.txt/sys.path:sys.path| according to the following
+   algorithm:
+
+   * If the name of an existing script is passed in "argv[0]", the absolute path of
+     the directory where the script is located is prepended to |:library/sys.txt/sys.path:sys.path|.
+
+   * Otherwise (that is, if *argc* is "0" or "argv[0]" doesn’t point to an existing
+     file name), an empty string is prepended to |:library/sys.txt/sys.path:sys.path|, which is the same as
+     prepending the current working directory (""."").
+
+   Use |:c-api/sys.txt/c.Py_DecodeLocale:Py_DecodeLocale()| to decode a bytes string to get a *wchar_** string.
+
+   Note:
+
+     It is recommended that applications embedding the Python interpreter for
+     purposes other than executing a single script pass "0" as *updatepath*, and
+     update |:library/sys.txt/sys.path:sys.path| themselves if desired. See |:cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5983:CVE-2008-5983|*|cve-2008-5983:⚓|*
+     .On versions before 3.1.3, you can achieve the same effect by manually popping
+     the first |:library/sys.txt/sys.path:sys.path| element after having called |:c.PySys_SetArgv:PySys_SetArgv()|, for example
+     using:
+
+```rst
+PyRun_SimpleString("import sys; sys.path.pop(0)\n");
+```
+
+   New in version 3.1.3.
+
+*c.PySys_SetArgv:void PySys_SetArgv(int argc, wchar_t **argv)
+*
+
+   This function works like |:c.PySys_SetArgvEx:PySys_SetArgvEx()| with *updatepath* set to "1" unless
+   the *python* interpreter was started with the |:using/cmdline.txt/cmdoption-I:-I|.
+
+   Use |:c-api/sys.txt/c.Py_DecodeLocale:Py_DecodeLocale()| to decode a bytes string to get a *wchar_** string.
+
+   Changed in version 3.4: The *updatepath* value depends on |:using/cmdline.txt/cmdoption-I:-I|.
+
+*c.Py_SetPythonHome:void Py_SetPythonHome(const wchar_t *home)
+*
+
+   Set the default “home” directory, that is, the location of the standard Python
+   libraries.  See *|index-31:⚓|* |:using/cmdline.txt/envvar-PYTHONHOME:PYTHONHOME| for the meaning of the argument
+   string.
+
+   The argument should point to a zero-terminated character string in static
+   storage whose contents will not change for the duration of the program’s
+   execution.  No code in the Python interpreter will change the contents of this
+   storage.
+
+   Use |:c-api/sys.txt/c.Py_DecodeLocale:Py_DecodeLocale()| to decode a bytes string to get a *wchar_** string.
+
+*c.Py_GetPythonHome:w_char *Py_GetPythonHome()
+*
+
+   Return the default “home”, that is, the value set by a previous call to
+   |:c.Py_SetPythonHome:Py_SetPythonHome()|, or the value of the *|index-32:⚓|* |:using/cmdline.txt/envvar-PYTHONHOME:PYTHONHOME|
+   environment variable if it is set.
+
+*|threads:⚓|* # thread-state-and-the-global-interpreter-lock:Thread State and
+the Global Interpreter Lock*|index-33:⚓|*
+
+The Python interpreter is not fully thread-safe.  In order to support multi-
+threaded Python programs, there’s a global lock, called the
+|:glossary.txt/term-global-interpreter-lock:global
+interpreter lock| or |:glossary.txt/term-GIL:GIL|, that must be held by the current thread
+before it can safely access Python objects. Without the lock, even the simplest
+operations could cause problems in a multi-threaded program: for example, when
+two threads simultaneously increment the reference count of the same object, the
+reference count could end up being incremented only once instead of twice.
+
+*|index-34:⚓|*
+
+Therefore, the rule exists that only the thread that has acquired the |:glossary.txt/term-GIL:GIL| may
+operate on Python objects or call Python/C API functions. In order to emulate
+concurrency of execution, the interpreter regularly tries to switch threads (see
+|:library/sys.txt/sys.setswitchinterval:sys.setswitchinterval()|).  The lock is also released around potentially
+blocking I/O operations like reading or writing a file, so that other Python
+threads can run in the meantime.
+
+*|index-35:⚓|*
+
+The Python interpreter keeps some thread-specific bookkeeping information inside
+a data structure called |:c.PyThreadState:PyThreadState|.  There’s also one global variable
+pointing to the current |:c.PyThreadState:PyThreadState|: it can be retrieved using
+|:c.PyThreadState_Get:PyThreadState_Get()|.
+
+## releasing-the-gil-from-extension-code:Releasing the GIL from extension code
+
+Most extension code manipulating the |:glossary.txt/term-GIL:GIL| has the following simple structure:
+
+```rst
+Save the thread state in a local variable.
+Release the global interpreter lock.
+... Do some blocking I/O operation ...
+Reacquire the global interpreter lock.
+Restore the thread state from the local variable.
+```
+
+This is so common that a pair of macros exists to simplify it:
+
+```rst
+Py_BEGIN_ALLOW_THREADS
+... Do some blocking I/O operation ...
+Py_END_ALLOW_THREADS
+```
+
+*|index-36:⚓|*
+
+The |:c.Py_BEGIN_ALLOW_THREADS:Py_BEGIN_ALLOW_THREADS| macro opens a new block and declares a hidden local
+variable; the |:c.Py_END_ALLOW_THREADS:Py_END_ALLOW_THREADS| macro closes the block.
+
+The block above expands to the following code:
+
+```rst
+PyThreadState *_save;
+
+_save = PyEval_SaveThread();
+... Do some blocking I/O operation ...
+PyEval_RestoreThread(_save);
+```
+
+*|index-37:⚓|*
+
+Here is how these functions work: the global interpreter lock is used to protect
+the pointer to the current thread state.  When releasing the lock and saving the
+thread state, the current thread state pointer must be retrieved before the lock
+is released (since another thread could immediately acquire the lock and store
+its own thread state in the global variable). Conversely, when acquiring the
+lock and restoring the thread state, the lock must be acquired before storing
+the thread state pointer.
+
+Note:
+
+  Calling system I/O functions is the most common use case for releasing the GIL,
+  but it can also be useful before calling long-running computations which don’t
+  need access to Python objects, such as compression or cryptographic functions
+  operating over memory buffers.  For example, the standard |:library/zlib.txt/module-zlib:zlib| and |:library/hashlib.txt/module-hashlib:hashlib|
+  modules release the GIL when compressing or hashing data.
+
+*|gilstate:⚓|* ## non-python-created-threads:Non-Python created threads
+
+When threads are created using the dedicated Python APIs (such as the
+|:library/threading.txt/module-threading:threading| module), a thread state is automatically associated to them and the
+code showed above is therefore correct.  However, when threads are created from
+C (for example by a third-party library with its own thread management), they
+don’t hold the GIL, nor is there a thread state structure for them.
+
+If you need to call Python code from these threads (often this will be part of a
+callback API provided by the aforementioned third-party library), you must first
+register these threads with the interpreter by creating a thread state data
+structure, then acquiring the GIL, and finally storing their thread state
+pointer, before you can start using the Python/C API.  When you are done, you
+should reset the thread state pointer, release the GIL, and finally free the
+thread state data structure.
+
+The |:c.PyGILState_Ensure:PyGILState_Ensure()| and |:c.PyGILState_Release:PyGILState_Release()| functions do all of the
+above automatically.  The typical idiom for calling into Python from a C thread
+is:
+
+```rst
+PyGILState_STATE gstate;
+gstate = PyGILState_Ensure();
+
+/* Perform Python actions here. */
+result = CallSomeFunction();
+/* evaluate result or handle exception */
+
+/* Release the thread. No Python API allowed beyond this point. */
+PyGILState_Release(gstate);
+```
+
+Note that the *PyGILState_** functions assume there is only one global
+interpreter (created automatically by |:c.Py_Initialize:Py_Initialize()|).  Python supports the
+creation of additional interpreters (using |:c.Py_NewInterpreter:Py_NewInterpreter()|), but mixing
+multiple interpreters and the *PyGILState_** API is unsupported.
+
+*|fork-and-threads:⚓|* ## cautions-about-fork:Cautions about fork()
+
+Another important thing to note about threads is their behaviour in the face of
+the C "fork()" call. On most systems with "fork()", after a process forks only
+the thread that issued the fork will exist.  This has a concrete impact both on
+how locks must be handled and on all stored state in CPython’s runtime.
+
+The fact that only the “current” thread remains means any locks held by other
+threads will never be released. Python solves this for |:library/os.txt/os.fork:os.fork()| by acquiring
+the locks it uses internally before the fork, and releasing them afterwards. In
+addition, it resets any |:library/threading.txt/lock-objects:Lock Objects| in the child. When extending or embedding
+Python, there is no way to inform Python of additional (non-Python) locks that
+need to be acquired before or reset after a fork. OS facilities such as "
+pthread_atfork()" would need to be used to accomplish the same thing.
+Additionally, when extending or embedding Python, calling "fork()" directly
+rather than through |:library/os.txt/os.fork:os.fork()| (and returning to or calling into Python) may
+result in a deadlock by one of Python’s internal locks being held by a thread
+that is defunct after the fork. |:c-api/sys.txt/c.PyOS_AfterFork_Child:PyOS_AfterFork_Child()| tries to reset the
+necessary locks, but is not always able to.
+
+The fact that all other threads go away also means that CPython’s runtime state
+there must be cleaned up properly, which |:library/os.txt/os.fork:os.fork()| does.  This means
+finalizing all other |:c.PyThreadState:PyThreadState| objects belonging to the current
+interpreter and all other |:c.PyInterpreterState:PyInterpreterState| objects.  Due to this and the
+special nature of the |:sub-interpreter-support:“main” interpreter|, "fork()" should only be called in
+that interpreter’s “main” thread, where the CPython global runtime was
+originally initialized. The only exception is if "exec()" will be called
+immediately after.
+
+## high-level-api:High-level API
+
+These are the most commonly used types and functions when writing C extension
+code, or when embedding the Python interpreter:
+
+*c.PyInterpreterState:type PyInterpreterState
+*
+
+   This data structure represents the state shared by a number of cooperating
+   threads.  Threads belonging to the same interpreter share their module
+   administration and a few other internal items. There are no public members in
+   this structure.
+
+   Threads belonging to different interpreters initially share nothing, except
+   process state like available memory, open file descriptors and such.  The global
+   interpreter lock is also shared by all threads, regardless of to which
+   interpreter they belong.
+
+*c.PyThreadState:type PyThreadState
+*
+
+   This data structure represents the state of a single thread.  The only public
+   data member is "interp" (*|:c.PyInterpreterState:PyInterpreterState|**), which points to this thread’s
+   interpreter state.
+
+*c.PyEval_InitThreads:void PyEval_InitThreads()
+*
+    *|index-38:⚓|*
+
+   Initialize and acquire the global interpreter lock.  It should be called in the
+   main thread before creating a second thread or engaging in any other thread
+   operations such as "PyEval_ReleaseThread(tstate)". It is not needed before
+   calling |:c.PyEval_SaveThread:PyEval_SaveThread()| or |:c.PyEval_RestoreThread:PyEval_RestoreThread()|.
+
+   This is a no-op when called for a second time.
+
+   Changed in version 3.7: This function is now called by |:c.Py_Initialize:Py_Initialize()|, so you
+   don’t have to call it yourself anymore.
+
+   Changed in version 3.2: This function cannot be called before |:c.Py_Initialize:Py_Initialize()|
+   anymore.
+
+   *|index-39:⚓|*
+
+*c.PyEval_ThreadsInitialized:int PyEval_ThreadsInitialized()
+*
+
+   Returns a non-zero value if |:c.PyEval_InitThreads:PyEval_InitThreads()| has been called.  This
+   function can be called without holding the GIL, and therefore can be used to
+   avoid calls to the locking API when running single-threaded.
+
+   Changed in version 3.7: The |:glossary.txt/term-GIL:GIL| is now initialized by |:c.Py_Initialize:Py_Initialize()|.
+
+*c.PyEval_SaveThread:|:c.PyThreadState:PyThreadState| *PyEval_SaveThread()
+*
+
+   Release the global interpreter lock (if it has been created) and reset the
+   thread state to "NULL", returning the previous thread state (which is not "NULL"
+   ).  If the lock has been created, the current thread must have acquired it.
+
+*c.PyEval_RestoreThread:void PyEval_RestoreThread(PyThreadState *tstate)
+*
+
+   Acquire the global interpreter lock (if it has been created) and set the thread
+   state to *tstate*, which must not be "NULL".  If the lock has been created, the
+   current thread must not have acquired it, otherwise deadlock ensues.
+
+   Note:
+
+     Calling this function from a thread when the runtime is finalizing will
+     terminate the thread, even if the thread was not created by Python. You can use
+     "_Py_IsFinalizing()" or |:library/sys.txt/sys.is_finalizing:sys.is_finalizing()| to check if the interpreter is in
+     process of being finalized before calling this function to avoid unwanted
+     termination.
+
+*c.PyThreadState_Get:|:c.PyThreadState:PyThreadState| *PyThreadState_Get()
+*
+
+   Return the current thread state.  The global interpreter lock must be held. When
+   the current thread state is "NULL", this issues a fatal error (so that the
+   caller needn’t check for "NULL").
+
+*c.PyThreadState_Swap:|:c.PyThreadState:PyThreadState| *PyThreadState_Swap(PyThreadState *tstate)
+*
+
+   Swap the current thread state with the thread state given by the argument *
+   tstate*, which may be "NULL".  The global interpreter lock must be held and is
+   not released.
+
+The following functions use thread-local storage, and are not compatible with
+sub-interpreters:
+
+*c.PyGILState_Ensure:PyGILState_STATE PyGILState_Ensure()
+*
+
+   Ensure that the current thread is ready to call the Python C API regardless of
+   the current state of Python, or of the global interpreter lock. This may be
+   called as many times as desired by a thread as long as each call is matched with
+   a call to |:c.PyGILState_Release:PyGILState_Release()|. In general, other thread-related APIs may be
+   used between |:c.PyGILState_Ensure:PyGILState_Ensure()| and |:c.PyGILState_Release:PyGILState_Release()| calls as long as
+   the thread state is restored to its previous state before the Release().  For
+   example, normal usage of the |:c.Py_BEGIN_ALLOW_THREADS:Py_BEGIN_ALLOW_THREADS| and |:c.Py_END_ALLOW_THREADS:Py_END_ALLOW_THREADS|
+   macros is acceptable.
+
+   The return value is an opaque “handle” to the thread state when
+   |:c.PyGILState_Ensure:PyGILState_Ensure()| was called, and must be passed to |:c.PyGILState_Release:PyGILState_Release()|
+   to ensure Python is left in the same state. Even though recursive calls are
+   allowed, these handles *cannot* be shared - each unique call to
+   |:c.PyGILState_Ensure:PyGILState_Ensure()| must save the handle for its call to
+   |:c.PyGILState_Release:PyGILState_Release()|.
+
+   When the function returns, the current thread will hold the GIL and be able to
+   call arbitrary Python code.  Failure is a fatal error.
+
+   Note:
+
+     Calling this function from a thread when the runtime is finalizing will
+     terminate the thread, even if the thread was not created by Python. You can use
+     "_Py_IsFinalizing()" or |:library/sys.txt/sys.is_finalizing:sys.is_finalizing()| to check if the interpreter is in
+     process of being finalized before calling this function to avoid unwanted
+     termination.
+
+*c.PyGILState_Release:void PyGILState_Release(PyGILState_STATE)
+*
+
+   Release any resources previously acquired.  After this call, Python’s state will
+   be the same as it was prior to the corresponding |:c.PyGILState_Ensure:PyGILState_Ensure()| call (but
+   generally this state will be unknown to the caller, hence the use of the
+   GILState API).
+
+   Every call to |:c.PyGILState_Ensure:PyGILState_Ensure()| must be matched by a call to
+   |:c.PyGILState_Release:PyGILState_Release()| on the same thread.
+
+*c.PyGILState_GetThisThreadState:|:c.PyThreadState:PyThreadState| *PyGILState_GetThisThreadState()
+*
+
+   Get the current thread state for this thread.  May return "NULL" if no GILState
+   API has been used on the current thread.  Note that the main thread always has
+   such a thread-state, even if no auto-thread-state call has been made on the main
+   thread.  This is mainly a helper/diagnostic function.
+
+*c.PyGILState_Check:int PyGILState_Check()
+*
+
+   Return "1" if the current thread is holding the GIL and "0" otherwise. This
+   function can be called from any thread at any time. Only if it has had its
+   Python thread state initialized and currently is holding the GIL will it return
+   "1". This is mainly a helper/diagnostic function.  It can be useful for example
+   in callback contexts or memory allocation functions when knowing that the GIL is
+   locked can allow the caller to perform sensitive actions or otherwise behave
+   differently.
+
+   New in version 3.4.
+
+The following macros are normally used without a trailing semicolon; look for
+example usage in the Python source distribution.
+
+*c.Py_BEGIN_ALLOW_THREADS:Py_BEGIN_ALLOW_THREADS
+*
+
+   This macro expands to "{ PyThreadState *_save; _save = PyEval_SaveThread();".
+   Note that it contains an opening brace; it must be matched with a following
+   |:c.Py_END_ALLOW_THREADS:Py_END_ALLOW_THREADS| macro.  See above for further discussion of this macro.
+
+*c.Py_END_ALLOW_THREADS:Py_END_ALLOW_THREADS
+*
+
+   This macro expands to "PyEval_RestoreThread(_save); }". Note that it contains a
+   closing brace; it must be matched with an earlier |:c.Py_BEGIN_ALLOW_THREADS:Py_BEGIN_ALLOW_THREADS|
+   macro.  See above for further discussion of this macro.
+
+*c.Py_BLOCK_THREADS:Py_BLOCK_THREADS
+*
+
+   This macro expands to "PyEval_RestoreThread(_save);": it is equivalent to
+   |:c.Py_END_ALLOW_THREADS:Py_END_ALLOW_THREADS| without the closing brace.
+
+*c.Py_UNBLOCK_THREADS:Py_UNBLOCK_THREADS
+*
+
+   This macro expands to "_save = PyEval_SaveThread();": it is equivalent to
+   |:c.Py_BEGIN_ALLOW_THREADS:Py_BEGIN_ALLOW_THREADS| without the opening brace and variable declaration.
+
+## low-level-api:Low-level API
+
+All of the following functions must be called after |:c.Py_Initialize:Py_Initialize()|.
+
+Changed in version 3.7: |:c.Py_Initialize:Py_Initialize()| now initializes the |:glossary.txt/term-GIL:GIL|.
+
+*c.PyInterpreterState_New:|:c.PyInterpreterState:PyInterpreterState| *PyInterpreterState_New()
+*
+
+   Create a new interpreter state object.  The global interpreter lock need not be
+   held, but may be held if it is necessary to serialize calls to this function.
+
+   Raises an |:library/sys.txt/auditing:auditing event| "cpython.PyInterpreterState_New" with no arguments.
+
+*c.PyInterpreterState_Clear:void PyInterpreterState_Clear(PyInterpreterState *interp)
+*
+
+   Reset all information in an interpreter state object.  The global interpreter
+   lock must be held.
+
+   Raises an |:library/sys.txt/auditing:auditing event| "cpython.PyInterpreterState_Clear" with no arguments.
+
+*c.PyInterpreterState_Delete:void PyInterpreterState_Delete(PyInterpreterState *interp)
+*
+
+   Destroy an interpreter state object.  The global interpreter lock need not be
+   held.  The interpreter state must have been reset with a previous call to
+   |:c.PyInterpreterState_Clear:PyInterpreterState_Clear()|.
+
+*c.PyThreadState_New:|:c.PyThreadState:PyThreadState| *PyThreadState_New(PyInterpreterState *interp)
+*
+
+   Create a new thread state object belonging to the given interpreter object. The
+   global interpreter lock need not be held, but may be held if it is necessary to
+   serialize calls to this function.
+
+*c.PyThreadState_Clear:void PyThreadState_Clear(PyThreadState *tstate)
+*
+
+   Reset all information in a thread state object.  The global interpreter lock
+   must be held.
+
+*c.PyThreadState_Delete:void PyThreadState_Delete(PyThreadState *tstate)
+*
+
+   Destroy a thread state object.  The global interpreter lock need not be held.
+   The thread state must have been reset with a previous call to
+   |:c.PyThreadState_Clear:PyThreadState_Clear()|.
+
+*c.PyInterpreterState_GetID:PY_INT64_T PyInterpreterState_GetID(PyInterpreterState *interp)
+*
+
+   Return the interpreter’s unique ID.  If there was any error in doing so then "-1
+   " is returned and an error is set.
+
+   New in version 3.7.
+
+*c.PyInterpreterState_GetDict:|:c-api/structures.txt/c.PyObject:PyObject| *PyInterpreterState_GetDict(PyInterpreterState *interp)
+*
+
+   Return a dictionary in which interpreter-specific data may be stored. If this
+   function returns "NULL" then no exception has been raised and the caller should
+   assume no interpreter-specific dict is available.
+
+   This is not a replacement for |:c-api/module.txt/c.PyModule_GetState:PyModule_GetState()|, which extensions should use
+   to store interpreter-specific state information.
+
+   New in version 3.8.
+
+*c.PyThreadState_GetDict:|:c-api/structures.txt/c.PyObject:PyObject| *PyThreadState_GetDict()
+*
+    *Return value: Borrowed reference.*
+
+   Return a dictionary in which extensions can store thread-specific state
+   information.  Each extension should use a unique key to use to store state in
+   the dictionary.  It is okay to call this function when no current thread state
+   is available. If this function returns "NULL", no exception has been raised and
+   the caller should assume no current thread state is available.
+
+*c.PyThreadState_SetAsyncExc:int PyThreadState_SetAsyncExc(unsigned long id, PyObject *exc)
+*
+
+   Asynchronously raise an exception in a thread. The *id* argument is the thread
+   id of the target thread; *exc* is the exception object to be raised. This
+   function does not steal any references to *exc*. To prevent naive misuse, you
+   must write your own C extension to call this.  Must be called with the GIL held.
+   Returns the number of thread states modified; this is normally one, but will be
+   zero if the thread id isn’t found.  If *exc* is "NULL", the pending exception
+   (if any) for the thread is cleared. This raises no exceptions.
+
+   Changed in version 3.7: The type of the *id* parameter changed from *long* to *
+   unsigned long*.
+
+*c.PyEval_AcquireThread:void PyEval_AcquireThread(PyThreadState *tstate)
+*
+
+   Acquire the global interpreter lock and set the current thread state to *tstate*
+   , which should not be "NULL".  The lock must have been created earlier. If this
+   thread already has the lock, deadlock ensues.
+
+   Note:
+
+     Calling this function from a thread when the runtime is finalizing will
+     terminate the thread, even if the thread was not created by Python. You can use
+     "_Py_IsFinalizing()" or |:library/sys.txt/sys.is_finalizing:sys.is_finalizing()| to check if the interpreter is in
+     process of being finalized before calling this function to avoid unwanted
+     termination.
+
+   Changed in version 3.8: Updated to be consistent with |:c.PyEval_RestoreThread:PyEval_RestoreThread()|,
+   |:c.Py_END_ALLOW_THREADS:Py_END_ALLOW_THREADS()|, and |:c.PyGILState_Ensure:PyGILState_Ensure()|, and terminate the current
+   thread if called while the interpreter is finalizing.
+
+   |:c.PyEval_RestoreThread:PyEval_RestoreThread()| is a higher-level function which is always available
+   (even when threads have not been initialized).
+
+*c.PyEval_ReleaseThread:void PyEval_ReleaseThread(PyThreadState *tstate)
+*
+
+   Reset the current thread state to "NULL" and release the global interpreter
+   lock.  The lock must have been created earlier and must be held by the current
+   thread.  The *tstate* argument, which must not be "NULL", is only used to check
+   that it represents the current thread state — if it isn’t, a fatal error is
+   reported.
+
+   |:c.PyEval_SaveThread:PyEval_SaveThread()| is a higher-level function which is always available (even
+   when threads have not been initialized).
+
+*c.PyEval_AcquireLock:void PyEval_AcquireLock()
+*
+
+   Acquire the global interpreter lock.  The lock must have been created earlier.
+   If this thread already has the lock, a deadlock ensues.
+
+   Deprecated since version 3.2: This function does not update the current thread
+   state.  Please use |:c.PyEval_RestoreThread:PyEval_RestoreThread()| or |:c.PyEval_AcquireThread:PyEval_AcquireThread()| instead.
+
+   Note:
+
+     Calling this function from a thread when the runtime is finalizing will
+     terminate the thread, even if the thread was not created by Python. You can use
+     "_Py_IsFinalizing()" or |:library/sys.txt/sys.is_finalizing:sys.is_finalizing()| to check if the interpreter is in
+     process of being finalized before calling this function to avoid unwanted
+     termination.
+
+   Changed in version 3.8: Updated to be consistent with |:c.PyEval_RestoreThread:PyEval_RestoreThread()|,
+   |:c.Py_END_ALLOW_THREADS:Py_END_ALLOW_THREADS()|, and |:c.PyGILState_Ensure:PyGILState_Ensure()|, and terminate the current
+   thread if called while the interpreter is finalizing.
+
+*c.PyEval_ReleaseLock:void PyEval_ReleaseLock()
+*
+
+   Release the global interpreter lock.  The lock must have been created earlier.
+
+   Deprecated since version 3.2: This function does not update the current thread
+   state.  Please use |:c.PyEval_SaveThread:PyEval_SaveThread()| or |:c.PyEval_ReleaseThread:PyEval_ReleaseThread()| instead.
+
+*|sub-interpreter-support:⚓|* # sub-interpreter-support:Sub-interpreter support
+
+While in most uses, you will only embed a single Python interpreter, there are
+cases where you need to create several independent interpreters in the same
+process and perhaps even in the same thread. Sub-interpreters allow you to do
+that.
+
+The “main” interpreter is the first one created when the runtime initializes. It
+is usually the only Python interpreter in a process.  Unlike sub-interpreters,
+the main interpreter has unique process-global responsibilities like signal
+handling.  It is also responsible for execution during runtime initialization
+and is usually the active interpreter during runtime finalization.  The
+|:c.PyInterpreterState_Main:PyInterpreterState_Main()| function returns a pointer to its state.
+
+You can switch between sub-interpreters using the |:c.PyThreadState_Swap:PyThreadState_Swap()|
+function. You can create and destroy them using the following functions:
+
+*c.Py_NewInterpreter:|:c.PyThreadState:PyThreadState| *Py_NewInterpreter()
+*
+    *|index-40:⚓|*
+
+   Create a new sub-interpreter.  This is an (almost) totally separate environment
+   for the execution of Python code.  In particular, the new interpreter has
+   separate, independent versions of all imported modules, including the
+   fundamental modules |:library/builtins.txt/module-builtins:builtins|, |:library/__main__.txt/module-__main__:__main__| and |:library/sys.txt/module-sys:sys|.  The table of loaded
+   modules ("sys.modules") and the module search path ("sys.path") are also
+   separate.  The new environment has no "sys.argv" variable.  It has new standard
+   I/O stream file objects "sys.stdin", "sys.stdout" and "sys.stderr" (however
+   these refer to the same underlying file descriptors).
+
+   The return value points to the first thread state created in the new sub-
+   interpreter.  This thread state is made in the current thread state. Note that
+   no actual thread is created; see the discussion of thread states below.  If
+   creation of the new interpreter is unsuccessful, "NULL" is returned; no
+   exception is set since the exception state is stored in the current thread state
+   and there may not be a current thread state.  (Like all other Python/C API
+   functions, the global interpreter lock must be held before calling this function
+   and is still held when it returns; however, unlike most other Python/C API
+   functions, there needn’t be a current thread state on entry.)
+
+   *|index-41:⚓|*
+
+   Extension modules are shared between (sub-)interpreters as follows:
+
+   * For modules using multi-phase initialization, e.g. |:c-api/module.txt/c.PyModule_FromDefAndSpec:PyModule_FromDefAndSpec()|,
+     a separate module object is created and initialized for each interpreter. Only
+     C-level static and global variables are shared between these module objects.
+
+   * For modules using single-phase initialization, e.g. |:c-api/module.txt/c.PyModule_Create:PyModule_Create()|, the
+     first time a particular extension is imported, it is initialized normally, and a
+     (shallow) copy of its module’s dictionary is squirreled away. When the same
+     extension is imported by another (sub-)interpreter, a new module is initialized
+     and filled with the contents of this copy; the extension’s "init" function is
+     not called. Objects in the module’s dictionary thus end up shared across
+     (sub-)interpreters, which might cause unwanted behavior (see |:bugs-and-caveats:Bugs and caveats|
+     below).
+
+     Note that this is different from what happens when an extension is imported
+     after the interpreter has been completely re-initialized by calling
+     |:c.Py_FinalizeEx:Py_FinalizeEx()| and |:c.Py_Initialize:Py_Initialize()|; in that case, the extension’s "
+     initmodule" function *is* called again. As with multi-phase initialization, this
+     means that only C-level static and global variables are shared between these
+     modules.
+
+   *|index-42:⚓|*
+
+*c.Py_EndInterpreter:void Py_EndInterpreter(PyThreadState *tstate)
+*
+    *|index-43:⚓|*
+
+   Destroy the (sub-)interpreter represented by the given thread state. The given
+   thread state must be the current thread state.  See the discussion of thread
+   states below.  When the call returns, the current thread state is "NULL".  All
+   thread states associated with this interpreter are destroyed.  (The global
+   interpreter lock must be held before calling this function and is still held
+   when it returns.)  |:c.Py_FinalizeEx:Py_FinalizeEx()| will destroy all sub-interpreters that
+   haven’t been explicitly destroyed at that point.
+
+## bugs-and-caveats:Bugs and caveats
+
+Because sub-interpreters (and the main interpreter) are part of the same
+process, the insulation between them isn’t perfect — for example, using low-
+level file operations like  |:library/os.txt/os.close:os.close()| they can (accidentally or maliciously)
+affect each other’s open files.  Because of the way extensions are shared
+between (sub-)interpreters, some extensions may not work properly; this is
+especially likely when using single-phase initialization or (static) global
+variables. It is possible to insert objects created in one sub-interpreter into
+a namespace of another (sub-)interpreter; this should be avoided if possible.
+
+Special care should be taken to avoid sharing user-defined functions, methods,
+instances or classes between sub-interpreters, since import operations executed
+by such objects may affect the wrong (sub-)interpreter’s dictionary of loaded
+modules. It is equally important to avoid sharing objects from which the above
+are reachable.
+
+Also note that combining this functionality with *PyGILState_** APIs is
+delicate, because these APIs assume a bijection between Python thread states and
+OS-level threads, an assumption broken by the presence of sub-interpreters. It
+is highly recommended that you don’t switch sub-interpreters between a pair of
+matching |:c.PyGILState_Ensure:PyGILState_Ensure()| and |:c.PyGILState_Release:PyGILState_Release()| calls. Furthermore,
+extensions (such as |:library/ctypes.txt/module-ctypes:ctypes|) using these APIs to allow calling of Python code
+from non-Python created threads will probably be broken when using sub-
+interpreters.
+
+# asynchronous-notifications:Asynchronous Notifications
+
+A mechanism is provided to make asynchronous notifications to the main
+interpreter thread.  These notifications take the form of a function pointer and
+a void pointer argument.
+
+*c.Py_AddPendingCall:int Py_AddPendingCall(int (*func)(void*), void *arg)
+*
+    *|index-44:⚓|*
+
+   Schedule a function to be called from the main interpreter thread.  On success,
+   "0" is returned and *func* is queued for being called in the main thread.  On
+   failure, "-1" is returned without setting any exception.
+
+   When successfully queued, *func* will be *eventually* called from the main
+   interpreter thread with the argument *arg*.  It will be called asynchronously
+   with respect to normally running Python code, but with both these conditions
+   met:
+
+   * on a |:glossary.txt/term-bytecode:bytecode| boundary;
+
+   * with the main thread holding the |:glossary.txt/term-global-interpreter-lock:global interpreter lock| (*func* can therefore
+     use the full C API).
+
+   *func* must return "0" on success, or "-1" on failure with an exception set.  *
+   func* won’t be interrupted to perform another asynchronous notification
+   recursively, but it can still be interrupted to switch threads if the global
+   interpreter lock is released.
+
+   This function doesn’t need a current thread state to run, and it doesn’t need
+   the global interpreter lock.
+
+   Warning:
+
+     This is a low-level function, only useful for very special cases. There is no
+     guarantee that *func* will be called as quick as possible.  If the main thread
+     is busy executing a system call, *func* won’t be called before the system call
+     returns.  This function is generally *not* suitable for calling Python code from
+     arbitrary C threads.  Instead, use the |:gilstate:PyGILState API|.
+
+   New in version 3.1.
+
+*|profiling:⚓|* # profiling-and-tracing:Profiling and Tracing
+
+The Python interpreter provides some low-level support for attaching profiling
+and execution tracing facilities.  These are used for profiling, debugging, and
+coverage analysis tools.
+
+This C interface allows the profiling or tracing code to avoid the overhead of
+calling through Python-level callable objects, making a direct C function call
+instead.  The essential attributes of the facility have not changed; the
+interface allows trace functions to be installed per-thread, and the basic
+events reported to the trace function are the same as had been reported to the
+Python-level trace functions in previous versions.
+
+*c.Py_tracefunc:typedef int (*Py_tracefunc)(|:c-api/structures.txt/c.PyObject:PyObject| *obj, |:c-api/veryhigh.txt/c.PyFrameObject:PyFrameObject| *frame, int what, |:c-api/structures.txt/c.PyObject:PyObject| *arg)
+*
+
+   The type of the trace function registered using |:c.PyEval_SetProfile:PyEval_SetProfile()| and
+   |:c.PyEval_SetTrace:PyEval_SetTrace()|. The first parameter is the object passed to the
+   registration function as *obj*, *frame* is the frame object to which the event
+   pertains, *what* is one of the constants "PyTrace_CALL", "PyTrace_EXCEPTION", "
+   PyTrace_LINE", "PyTrace_RETURN", "PyTrace_C_CALL", "PyTrace_C_EXCEPTION", "
+   PyTrace_C_RETURN", or "PyTrace_OPCODE", and *arg* depends on the value of *what*
+   :
+
+   +--------------------------------+------------------------------------------+
+   | Value of *what*                | Meaning of *arg*                         |
+   |================================|==========================================|
+   | "PyTrace_CALL"                 | Always                                   |
+   |                                | |:c-api/none.txt/c.Py_None:Py_None|.     |
+   +--------------------------------+------------------------------------------+
+   | "PyTrace_EXCEPTION"            | Exception information as returned by |:  |
+   |                                | library/sys.txt/sys.exc_info:sys.exc_in  |
+   |                                | fo()|.                                   |
+   +--------------------------------+------------------------------------------+
+   | "PyTrace_LINE"                 | Always                                   |
+   |                                | |:c-api/none.txt/c.Py_None:Py_None|.     |
+   +--------------------------------+------------------------------------------+
+   | "PyTrace_RETURN"               | Value being returned to the caller, or   |
+   |                                | "NULL" if caused by an exception.        |
+   +--------------------------------+------------------------------------------+
+   | "PyTrace_C_CALL"               | Function object being called.            |
+   +--------------------------------+------------------------------------------+
+   | "PyTrace_C_EXCEPTION"          | Function object being called.            |
+   +--------------------------------+------------------------------------------+
+   | "PyTrace_C_RETURN"             | Function object being called.            |
+   +--------------------------------+------------------------------------------+
+   | "PyTrace_OPCODE"               | Always                                   |
+   |                                | |:c-api/none.txt/c.Py_None:Py_None|.     |
+   +--------------------------------+------------------------------------------+
+
+*c.PyTrace_CALL:int PyTrace_CALL
+*
+
+   The value of the *what* parameter to a |:c.Py_tracefunc:Py_tracefunc| function when a new call
+   to a function or method is being reported, or a new entry into a generator. Note
+   that the creation of the iterator for a generator function is not reported as
+   there is no control transfer to the Python bytecode in the corresponding frame.
+
+*c.PyTrace_EXCEPTION:int PyTrace_EXCEPTION
+*
+
+   The value of the *what* parameter to a |:c.Py_tracefunc:Py_tracefunc| function when an exception
+   has been raised.  The callback function is called with this value for *what*
+   when after any bytecode is processed after which the exception becomes set
+   within the frame being executed.  The effect of this is that as exception
+   propagation causes the Python stack to unwind, the callback is called upon
+   return to each frame as the exception propagates.  Only trace functions receives
+   these events; they are not needed by the profiler.
+
+*c.PyTrace_LINE:int PyTrace_LINE
+*
+
+   The value passed as the *what* parameter to a |:c.Py_tracefunc:Py_tracefunc| function (but not a
+   profiling function) when a line-number event is being reported. It may be
+   disabled for a frame by setting "f_trace_lines" to *0* on that frame.
+
+*c.PyTrace_RETURN:int PyTrace_RETURN
+*
+
+   The value for the *what* parameter to |:c.Py_tracefunc:Py_tracefunc| functions when a call is
+   about to return.
+
+*c.PyTrace_C_CALL:int PyTrace_C_CALL
+*
+
+   The value for the *what* parameter to |:c.Py_tracefunc:Py_tracefunc| functions when a C function
+   is about to be called.
+
+*c.PyTrace_C_EXCEPTION:int PyTrace_C_EXCEPTION
+*
+
+   The value for the *what* parameter to |:c.Py_tracefunc:Py_tracefunc| functions when a C function
+   has raised an exception.
+
+*c.PyTrace_C_RETURN:int PyTrace_C_RETURN
+*
+
+   The value for the *what* parameter to |:c.Py_tracefunc:Py_tracefunc| functions when a C function
+   has returned.
+
+*c.PyTrace_OPCODE:int PyTrace_OPCODE
+*
+
+   The value for the *what* parameter to |:c.Py_tracefunc:Py_tracefunc| functions (but not
+   profiling functions) when a new opcode is about to be executed.  This event is
+   not emitted by default: it must be explicitly requested by setting "
+   f_trace_opcodes" to *1* on the frame.
+
+*c.PyEval_SetProfile:void PyEval_SetProfile(Py_tracefunc func, PyObject *obj)
+*
+
+   Set the profiler function to *func*.  The *obj* parameter is passed to the
+   function as its first parameter, and may be any Python object, or "NULL".  If
+   the profile function needs to maintain state, using a different value for *obj*
+   for each thread provides a convenient and thread-safe place to store it.  The
+   profile function is called for all monitored events except "PyTrace_LINE" "
+   PyTrace_OPCODE" and "PyTrace_EXCEPTION".
+
+*c.PyEval_SetTrace:void PyEval_SetTrace(Py_tracefunc func, PyObject *obj)
+*
+
+   Set the tracing function to *func*.  This is similar to |:c.PyEval_SetProfile:PyEval_SetProfile()|,
+   except the tracing function does receive line-number events and per-opcode
+   events, but does not receive any event related to C function objects being
+   called.  Any trace function registered using |:c.PyEval_SetTrace:PyEval_SetTrace()| will not
+   receive "PyTrace_C_CALL", "PyTrace_C_EXCEPTION" or "PyTrace_C_RETURN" as a value
+   for the *what* parameter.
+
+*|advanced-debugging:⚓|* # advanced-debugger-support:Advanced Debugger Support
+
+These functions are only intended to be used by advanced debugging tools.
+
+*c.PyInterpreterState_Head:|:c.PyInterpreterState:PyInterpreterState| *PyInterpreterState_Head()
+*
+
+   Return the interpreter state object at the head of the list of all such objects.
+
+*c.PyInterpreterState_Main:|:c.PyInterpreterState:PyInterpreterState| *PyInterpreterState_Main()
+*
+
+   Return the main interpreter state object.
+
+*c.PyInterpreterState_Next:|:c.PyInterpreterState:PyInterpreterState| *PyInterpreterState_Next(PyInterpreterState *interp)
+*
+
+   Return the next interpreter state object after *interp* from the list of all
+   such objects.
+
+*c.PyInterpreterState_ThreadHead:|:c.PyThreadState:PyThreadState| *PyInterpreterState_ThreadHead(PyInterpreterState *interp)
+*
+
+   Return the pointer to the first |:c.PyThreadState:PyThreadState| object in the list of threads
+   associated with the interpreter *interp*.
+
+*c.PyThreadState_Next:|:c.PyThreadState:PyThreadState| *PyThreadState_Next(PyThreadState *tstate)
+*
+
+   Return the next thread state object after *tstate* from the list of all such
+   objects belonging to the same |:c.PyInterpreterState:PyInterpreterState| object.
+
+*|thread-local-storage:⚓|* # thread-local-storage-support:Thread Local Storage
+Support
+
+The Python interpreter provides low-level support for thread-local storage (TLS)
+which wraps the underlying native TLS implementation to support the Python-level
+thread local storage API (|:library/threading.txt/threading.local:threading.local|).  The CPython C level APIs are
+similar to those offered by pthreads and Windows: use a thread key and functions
+to associate a *void** value per thread.
+
+The GIL does *not* need to be held when calling these functions; they supply
+their own locking.
+
+Note that "Python.h" does not include the declaration of the TLS APIs, you need
+to include "pythread.h" to use thread-local storage.
+
+Note:
+
+  None of these API functions handle memory management on behalf of the *void**
+  values.  You need to allocate and deallocate them yourself. If the *void**
+  values happen to be *|:c-api/structures.txt/c.PyObject:PyObject|**, these functions don’t do refcount operations
+  on them either.
+
+## thread-specific-storage-tss-api:Thread Specific Storage (TSS) API
+
+TSS API is introduced to supersede the use of the existing TLS API within the
+CPython interpreter.  This API uses a new type |:c.Py_tss_t:Py_tss_t| instead of *int* to
+represent thread keys.
+
+New in version 3.7.
+
+See also:
+
+  “A New C-API for Thread-Local Storage in CPython” (*|index-45:⚓|* |:www.python.org/dev/peps/pep-0539:PEP 539|)
+
+*c.Py_tss_t:type Py_tss_t
+*
+
+   This data structure represents the state of a thread key, the definition of
+   which may depend on the underlying TLS implementation, and it has an internal
+   field representing the key’s initialization state.  There are no public members
+   in this structure.
+
+   When |:c-api/stable.txt/stable:Py_LIMITED_API| is not defined, static allocation of this type by
+   |:c.Py_tss_NEEDS_INIT:Py_tss_NEEDS_INIT| is allowed.
+
+*c.Py_tss_NEEDS_INIT:Py_tss_NEEDS_INIT
+*
+
+   This macro expands to the initializer for |:c.Py_tss_t:Py_tss_t| variables. Note that this
+   macro won’t be defined with |:c-api/stable.txt/stable:Py_LIMITED_API|.
+
+### dynamic-allocation:Dynamic Allocation
+
+Dynamic allocation of the |:c.Py_tss_t:Py_tss_t|, required in extension modules built with
+|:c-api/stable.txt/stable:Py_LIMITED_API|, where static allocation of this type is not possible due to
+its implementation being opaque at build time.
+
+*c.PyThread_tss_alloc:|:c.Py_tss_t:Py_tss_t| *PyThread_tss_alloc()
+*
+
+   Return a value which is the same state as a value initialized with
+   |:c.Py_tss_NEEDS_INIT:Py_tss_NEEDS_INIT|, or "NULL" in the case of dynamic allocation failure.
+
+*c.PyThread_tss_free:void PyThread_tss_free(Py_tss_t *key)
+*
+
+   Free the given *key* allocated by |:c.PyThread_tss_alloc:PyThread_tss_alloc()|, after first calling
+   |:c.PyThread_tss_delete:PyThread_tss_delete()| to ensure any associated thread locals have been
+   unassigned. This is a no-op if the *key* argument is *NULL*.
+
+   Note:
+
+     A freed key becomes a dangling pointer, you should reset the key to *NULL*.
+
+### methods:Methods
+
+The parameter *key* of these functions must not be "NULL".  Moreover, the
+behaviors of |:c.PyThread_tss_set:PyThread_tss_set()| and |:c.PyThread_tss_get:PyThread_tss_get()| are undefined if the
+given |:c.Py_tss_t:Py_tss_t| has not been initialized by |:c.PyThread_tss_create:PyThread_tss_create()|.
+
+*c.PyThread_tss_is_created:int PyThread_tss_is_created(Py_tss_t *key)
+*
+
+   Return a non-zero value if the given |:c.Py_tss_t:Py_tss_t| has been initialized by
+   |:c.PyThread_tss_create:PyThread_tss_create()|.
+
+*c.PyThread_tss_create:int PyThread_tss_create(Py_tss_t *key)
+*
+
+   Return a zero value on successful initialization of a TSS key.  The behavior is
+   undefined if the value pointed to by the *key* argument is not initialized by
+   |:c.Py_tss_NEEDS_INIT:Py_tss_NEEDS_INIT|.  This function can be called repeatedly on the same key –
+   calling it on an already initialized key is a no-op and immediately returns
+   success.
+
+*c.PyThread_tss_delete:void PyThread_tss_delete(Py_tss_t *key)
+*
+
+   Destroy a TSS key to forget the values associated with the key across all
+   threads, and change the key’s initialization state to uninitialized.  A
+   destroyed key is able to be initialized again by |:c.PyThread_tss_create:PyThread_tss_create()|. This
+   function can be called repeatedly on the same key – calling it on an already
+   destroyed key is a no-op.
+
+*c.PyThread_tss_set:int PyThread_tss_set(Py_tss_t *key, void *value)
+*
+
+   Return a zero value to indicate successfully associating a *void** value with a
+   TSS key in the current thread.  Each thread has a distinct mapping of the key to
+   a *void** value.
+
+*c.PyThread_tss_get:void *PyThread_tss_get(Py_tss_t *key)
+*
+
+   Return the *void** value associated with a TSS key in the current thread.  This
+   returns "NULL" if no value is associated with the key in the current thread.
+
+*|thread-local-storage-api:⚓|* ## thread-local-storage-tls-api:Thread Local
+Storage (TLS) API
+
+Deprecated since version 3.7: This API is superseded by
+|:thread-specific-storage-api:Thread Specific Storage (TSS) API|.
+
+Note:
+
+  This version of the API does not support platforms where the native TLS key is
+  defined in a way that cannot be safely cast to "int".  On such platforms,
+  |:c.PyThread_create_key:PyThread_create_key()| will return immediately with a failure status, and the
+  other TLS functions will all be no-ops on such platforms.
+
+Due to the compatibility problem noted above, this version of the API should not
+be used in new code.
+
+*c.PyThread_create_key:int PyThread_create_key()
+*
+
+*c.PyThread_delete_key:void PyThread_delete_key(int key)
+*
+
+*c.PyThread_set_key_value:int PyThread_set_key_value(int key, void *value)
+*
+
+*c.PyThread_get_key_value:void *PyThread_get_key_value(int key)
+*
+
+*c.PyThread_delete_key_value:void PyThread_delete_key_value(int key)
+*
+
+*c.PyThread_ReInitTLS:void PyThread_ReInitTLS()
+*
+
+
+

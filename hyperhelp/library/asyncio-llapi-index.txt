@@ -1,0 +1,449 @@
+%hyperhelp title="Low-level API Index" date="2021-07-11"
+*|low-level-api-index:⚓|*
+
+This page lists all low-level asyncio APIs.
+
+# obtaining-the-event-loop:Obtaining the Event Loop
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.get_runni  | The *preferred* function to get the running event  |
+| ng_loop:asyncio.get_running_loop()|                | loop.                                              |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.get_event  | Get an event loop instance (current or via the     |
+| _loop:asyncio.get_event_loop()|                    | policy).                                           |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.set_event  | Set the event loop as current via the current      |
+| _loop:asyncio.set_event_loop()|                    | policy.                                            |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.new_event  | Create a new event loop.                           |
+| _loop:asyncio.new_event_loop()|                    |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Examples ]-
+
+* |:library/asyncio-future.txt/asyncio-example-future:Using asyncio.get_running_loop()|.
+
+# event-loop-methods:Event Loop Methods
+
+See also the main documentation section about the |:library/asyncio-eventloop.txt/asyncio-event-loop:event loop methods|.
+
+-[ Lifecycle ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.run_  | Run a Future/Task/awaitable until complete.        |
+| until_complete:loop.run_until_complete()|          |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.run_  | Run the event loop forever.                        |
+| forever:loop.run_forever()|                        |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | Stop the event loop.                               |
+| eventloop.txt/asyncio.loop.stop:loop.stop()|       |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | Close the event loop.                              |
+| eventloop.txt/asyncio.loop.close:loop.close()|     |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.is_r  | Return "True" if the event loop is running.        |
+| unning:loop.is_running()|                          |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.is_c  | Return "True" if the event loop is closed.         |
+| losed:loop.is_closed()|                            |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Close asynchronous generators.                     |
+| oop.shutdown_asyncgens:loop.shutdown_asyncgens()|  |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Debugging ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.set_  | Enable or disable the debug mode.                  |
+| debug:loop.set_debug()|                            |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.get_  | Get the current debug mode.                        |
+| debug:loop.get_debug()|                            |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Scheduling Callbacks ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.call  | Invoke a callback soon.                            |
+| _soon:loop.call_soon()|                            |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.call  | A thread-safe variant of |:library/asyncio-eventl  |
+| _soon_threadsafe:loop.call_soon_threadsafe()|      | oop.txt/asyncio.loop.call_soon:loop.call_soon()|.  |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.call  | Invoke a callback *after* the given time.          |
+| _later:loop.call_later()|                          |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-                                 | Invoke a callback *at* the given time.             |
+| eventloop.txt/asyncio.loop.call_at:loop.call_at()| |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Thread/Process Pool ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Run a CPU-bound or other blocking function in a    |
+| oop.run_in_executor:loop.run_in_executor()|        | |:library/concurrent.futures.txt/module-           |
+|                                                    | concurrent.futures:concurrent.futures| executor.   |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.set_  | Set the default executor for |:library/asyncio-ev  |
+| default_executor:loop.set_default_executor()|      | entloop.txt/asyncio.loop.run_in_executor:loop.run  |
+|                                                    | _in_executor()|.                                   |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Tasks and Futures ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.crea  | Create a |:library/asyncio-                        |
+| te_future:loop.create_future()|                    | future.txt/asyncio.Future:Future| object.          |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.crea  | Schedule coroutine as a |:library/asyncio-         |
+| te_task:loop.create_task()|                        | task.txt/asyncio.Task:Task|.                       |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.set_  | Set a factory used by |:library/asyncio-eventloop  |
+| task_factory:loop.set_task_factory()|              | .txt/asyncio.loop.create_task:loop.create_task()|  |
+|                                                    | to create |:library/asyncio-                       |
+|                                                    | task.txt/asyncio.Task:Tasks|.                      |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.get_  | Get the factory |:library/asyncio-eventloop.txt/a  |
+| task_factory:loop.get_task_factory()|              | syncio.loop.create_task:loop.create_task()| uses   |
+|                                                    | to create |:library/asyncio-                       |
+|                                                    | task.txt/asyncio.Task:Tasks|.                      |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ DNS ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Asynchronous version of |:library/socket.txt/sock  |
+| oop.getaddrinfo:loop.getaddrinfo()|                | et.getaddrinfo:socket.getaddrinfo()|.              |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Asynchronous version of |:library/socket.txt/sock  |
+| oop.getnameinfo:loop.getnameinfo()|                | et.getnameinfo:socket.getnameinfo()|.              |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Networking and IPC ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Open a TCP connection.                             |
+| oop.create_connection:loop.create_connection()|    |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Create a TCP server.                               |
+| oop.create_server:loop.create_server()|            |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Open a Unix socket connection.                     |
+| oop.create_unix_connection:loop.create_unix_conne  |                                                    |
+| ction()|                                           |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Create a Unix socket server.                       |
+| oop.create_unix_server:loop.create_unix_server()|  |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Wrap a |:library/socket.txt/socket.socket:socket|  |
+| oop.connect_accepted_socket:loop.connect_accepted  | into a "(transport, protocol)" pair.               |
+| _socket()|                                         |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Open a datagram (UDP) connection.                  |
+| oop.create_datagram_endpoint:loop.create_datagram  |                                                    |
+| _endpoint()|                                       |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Send a file over a transport.                      |
+| oop.sendfile:loop.sendfile()|                      |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Upgrade an existing connection to TLS.             |
+| oop.start_tls:loop.start_tls()|                    |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Wrap a read end of a pipe into a "(transport,      |
+| oop.connect_read_pipe:loop.connect_read_pipe()|    | protocol)" pair.                                   |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Wrap a write end of a pipe into a "(transport,     |
+| oop.connect_write_pipe:loop.connect_write_pipe()|  | protocol)" pair.                                   |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Sockets ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Receive data from the                              |
+| oop.sock_recv:loop.sock_recv()|                    | |:library/socket.txt/socket.socket:socket|.        |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Receive data from the                              |
+| oop.sock_recv_into:loop.sock_recv_into()|          | |:library/socket.txt/socket.socket:socket| into a  |
+|                                                    | buffer.                                            |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Send data to the                                   |
+| oop.sock_sendall:loop.sock_sendall()|              | |:library/socket.txt/socket.socket:socket|.        |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Connect the                                        |
+| oop.sock_connect:loop.sock_connect()|              | |:library/socket.txt/socket.socket:socket|.        |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Accept a                                           |
+| oop.sock_accept:loop.sock_accept()|                | |:library/socket.txt/socket.socket:socket|         |
+|                                                    | connection.                                        |
++----------------------------------------------------+----------------------------------------------------+
+| "await" |:library/asyncio-eventloop.txt/asyncio.l  | Send a file over the                               |
+| oop.sock_sendfile:loop.sock_sendfile()|            | |:library/socket.txt/socket.socket:socket|.        |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.add_  | Start watching a file descriptor for read          |
+| reader:loop.add_reader()|                          | availability.                                      |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.remo  | Stop watching a file descriptor for read           |
+| ve_reader:loop.remove_reader()|                    | availability.                                      |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.add_  | Start watching a file descriptor for write         |
+| writer:loop.add_writer()|                          | availability.                                      |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.remo  | Stop watching a file descriptor for write          |
+| ve_writer:loop.remove_writer()|                    | availability.                                      |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Unix Signals ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.add_  | Add a handler for a |:library/signal.txt/module-   |
+| signal_handler:loop.add_signal_handler()|          | signal:signal|.                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.remo  | Remove a handler for a |:library/signal.txt        |
+| ve_signal_handler:loop.remove_signal_handler()|    | /module-signal:signal|.                            |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Subprocesses ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.subp  | Spawn a subprocess.                                |
+| rocess_exec:loop.subprocess_exec()|                |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.subp  | Spawn a subprocess from a shell command.           |
+| rocess_shell:loop.subprocess_shell()|              |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Error Handling ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.call  | Call the exception handler.                        |
+| _exception_handler:loop.call_exception_handler()|  |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.set_  | Set a new exception handler.                       |
+| exception_handler:loop.set_exception_handler()|    |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.get_  | Get the current exception handler.                 |
+| exception_handler:loop.get_exception_handler()|    |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-eventloop.txt/asyncio.loop.defa  | The default exception handler implementation.      |
+| ult_exception_handler:loop.default_exception_hand  |                                                    |
+| ler()|                                             |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Examples ]-
+
+* |:library/asyncio-eventloop.txt/asyncio-example-lowlevel-helloworld:Using asyncio.get_event_loop() and loop.run_forever()|.
+
+* |:library/asyncio-eventloop.txt/asyncio-example-call-later:Using loop.call_later()|.
+
+* Using "loop.create_connection()" to implement |:library/asyncio-protocol.txt/asyncio-example-tcp-echo-client-protocol:an echo-client|.
+
+* Using "loop.create_connection()" to |:library/asyncio-protocol.txt/asyncio-example-create-connection:connect a socket|.
+
+* |:library/asyncio-eventloop.txt/asyncio-example-watch-fd:Using add_reader() to watch an FD for read events|.
+
+* |:library/asyncio-eventloop.txt/asyncio-example-unix-signals:Using loop.add_signal_handler()|.
+
+* |:library/asyncio-protocol.txt/asyncio-example-subprocess-proto:Using loop.subprocess_exec()|.
+
+# transports:Transports
+
+All transports implement the following methods:
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.BaseTransp  | Close the transport.                               |
+| ort.close:transport.close()|                       |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.BaseTransp  | Return "True" if the transport is closing or is    |
+| ort.is_closing:transport.is_closing()|             | closed.                                            |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.BaseTransp  | Request for information about the transport.       |
+| ort.get_extra_info:transport.get_extra_info()|     |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.BaseTransp  | Set a new protocol.                                |
+| ort.set_protocol:transport.set_protocol()|         |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.BaseTransp  | Return the current protocol.                       |
+| ort.get_protocol:transport.get_protocol()|         |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+Transports that can receive data (TCP and Unix connections, pipes, etc).
+Returned from methods like |:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()|,
+|:library/asyncio-eventloop.txt/asyncio.loop.create_unix_connection:loop.create_unix_connection()|, |:library/asyncio-eventloop.txt/asyncio.loop.connect_read_pipe:loop.connect_read_pipe()|, etc:
+
+-[ Read Transports ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.ReadTransp  | Return "True" if the transport is receiving.       |
+| ort.is_reading:transport.is_reading()|             |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.ReadTransp  | Pause receiving.                                   |
+| ort.pause_reading:transport.pause_reading()|       |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.ReadTransp  | Resume receiving.                                  |
+| ort.resume_reading:transport.resume_reading()|     |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+Transports that can Send data (TCP and Unix connections, pipes, etc).  Returned
+from methods like |:library/asyncio-eventloop.txt/asyncio.loop.create_connection:loop.create_connection()|, |:library/asyncio-eventloop.txt/asyncio.loop.create_unix_connection:loop.create_unix_connection()|,
+|:library/asyncio-eventloop.txt/asyncio.loop.connect_write_pipe:loop.connect_write_pipe()|, etc:
+
+-[ Write Transports ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.WriteTrans  | Write data to the transport.                       |
+| port.write:transport.write()|                      |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.WriteTrans  | Write buffers to the transport.                    |
+| port.writelines:transport.writelines()|            |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.WriteTrans  | Return |:library/constants.txt/True:True| if the   |
+| port.can_write_eof:transport.can_write_eof()|      | transport supports sending EOF.                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.WriteTrans  | Close and send EOF after flushing buffered data.   |
+| port.write_eof:transport.write_eof()|              |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.WriteTrans  | Close the transport immediately.                   |
+| port.abort:transport.abort()|                      |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.WriteTrans  | Return high and low water marks for write flow     |
+| port.get_write_buffer_size:transport.get_write_bu  | control.                                           |
+| ffer_size()|                                       |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.WriteTrans  | Set new high and low water marks for write flow    |
+| port.set_write_buffer_limits:transport.set_write_  | control.                                           |
+| buffer_limits()|                                   |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+Transports returned by |:library/asyncio-eventloop.txt/asyncio.loop.create_datagram_endpoint:loop.create_datagram_endpoint()|:
+
+-[ Datagram Transports ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.DatagramTr  | Send data to the remote peer.                      |
+| ansport.sendto:transport.sendto()|                 |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.DatagramTr  | Close the transport immediately.                   |
+| ansport.abort:transport.abort()|                   |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+Low-level transport abstraction over subprocesses. Returned by
+|:library/asyncio-eventloop.txt/asyncio.loop.subprocess_exec:loop.subprocess_exec()| and |:library/asyncio-eventloop.txt/asyncio.loop.subprocess_shell:loop.subprocess_shell()|:
+
+-[ Subprocess Transports ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.Subprocess  | Return the subprocess process id.                  |
+| Transport.get_pid:transport.get_pid()|             |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.Subprocess  | Return the transport for the requested             |
+| Transport.get_pipe_transport:transport.get_pipe_t  | communication pipe (*stdin*, *stdout*, or          |
+| ransport()|                                        | *stderr*).                                         |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.Subprocess  | Return the subprocess return code.                 |
+| Transport.get_returncode:transport.get_returncode  |                                                    |
+| ()|                                                |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.Subprocess  | Kill the subprocess.                               |
+| Transport.kill:transport.kill()|                   |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.Subprocess  | Send a signal to the subprocess.                   |
+| Transport.send_signal:transport.send_signal()|     |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.Subprocess  | Stop the subprocess.                               |
+| Transport.terminate:transport.terminate()|         |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-protocol.txt/asyncio.Subprocess  | Kill the subprocess and close all pipes.           |
+| Transport.close:transport.close()|                 |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+# protocols:Protocols
+
+Protocol classes can implement the following *callback methods*:
+
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when a connection is made.                  |
+| .BaseProtocol.connection_made:connection_made()|   |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when the connection is lost or closed.      |
+| .BaseProtocol.connection_lost:connection_lost()|   |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when the transport’s buffer goes over the   |
+| .BaseProtocol.pause_writing:pause_writing()|       | high water mark.                                   |
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when the transport’s buffer drains below    |
+| .BaseProtocol.resume_writing:resume_writing()|     | the low water mark.                                |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Streaming Protocols (TCP, Unix Sockets, Pipes) ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when some data is received.                 |
+| .Protocol.data_received:data_received()|           |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when an EOF is received.                    |
+| .Protocol.eof_received:eof_received()|             |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Buffered Streaming Protocols ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called to allocate a new receive buffer.           |
+| .BufferedProtocol.get_buffer:get_buffer()|         |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when the buffer was updated with the        |
+| .BufferedProtocol.buffer_updated:buffer_updated()| | received data.                                     |
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when an EOF is received.                    |
+| .BufferedProtocol.eof_received:eof_received()|     |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Datagram Protocols ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when a datagram is received.                |
+| .DatagramProtocol.datagram_received:datagram_rece  |                                                    |
+| ived()|                                            |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when a previous send or receive operation   |
+| .DatagramProtocol.error_received:error_received()| | raises an                                          |
+|                                                    | |:library/exceptions.txt/OSError:OSError|.         |
++----------------------------------------------------+----------------------------------------------------+
+
+-[ Subprocess Protocols ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when the child process writes data into its |
+| .SubprocessProtocol.pipe_data_received:pipe_data_  | *stdout* or *stderr* pipe.                         |
+| received()|                                        |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when one of the pipes communicating with    |
+| .SubprocessProtocol.pipe_connection_lost:pipe_con  | the child process is closed.                       |
+| nection_lost()|                                    |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| "callback" |:library/asyncio-protocol.txt/asyncio  | Called when the child process has exited.          |
+| .SubprocessProtocol.process_exited:process_exited  |                                                    |
+| ()|                                                |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+# event-loop-policies:Event Loop Policies
+
+Policies is a low-level mechanism to alter the behavior of functions like
+|:library/asyncio-eventloop.txt/asyncio.get_event_loop:asyncio.get_event_loop()|.  See also the main |:library/asyncio-policy.txt/asyncio-policies:policies section| for more
+details.
+
+-[ Accessing Policies ]-
+
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-policy.txt/asyncio.get_event_lo  | Return the current process-wide policy.            |
+| op_policy:asyncio.get_event_loop_policy()|         |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-policy.txt/asyncio.set_event_lo  | Set a new process-wide policy.                     |
+| op_policy:asyncio.set_event_loop_policy()|         |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+| |:library/asyncio-policy.txt/asyncio.AbstractEven  | Base class for policy objects.                     |
+| tLoopPolicy:AbstractEventLoopPolicy|               |                                                    |
++----------------------------------------------------+----------------------------------------------------+
+
+
+

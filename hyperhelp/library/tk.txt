@@ -1,0 +1,241 @@
+%hyperhelp title="Graphical User Interfaces with Tk" date="2021-07-11"
+*|graphical-user-interfaces-with-tk:⚓|*
+
+*|index-0:⚓|*
+
+Tk/Tcl has long been an integral part of Python.  It provides a robust and
+platform independent windowing toolkit, that is available to Python programmers
+using the |:library/tkinter.txt/module-tkinter:tkinter| package, and its extension, the |:library/tkinter.tix.txt/module-tkinter.tix:tkinter.tix| and the
+|:library/tkinter.ttk.txt/module-tkinter.ttk:tkinter.ttk| modules.
+
+The |:library/tkinter.txt/module-tkinter:tkinter| package is a thin object-oriented layer on top of Tcl/Tk. To use
+|:library/tkinter.txt/module-tkinter:tkinter|, you don’t need to write Tcl code, but you will need to consult the Tk
+documentation, and occasionally the Tcl documentation. |:library/tkinter.txt/module-tkinter:tkinter| is a set of
+wrappers that implement the Tk widgets as Python classes.  In addition, the
+internal module "_tkinter" provides a threadsafe mechanism which allows Python
+and Tcl to interact.
+
+|:library/tkinter.txt/module-tkinter:tkinter|’s chief virtues are that it is fast, and that it usually comes bundled
+with Python. Although its standard documentation is weak, good material is
+available, which includes: references, tutorials, a book and others. |:library/tkinter.txt/module-tkinter:tkinter|
+is also famous for having an outdated look and feel, which has been vastly
+improved in Tk 8.5. Nevertheless, there are many other GUI libraries that you
+could be interested in. For more information about alternatives, see the
+|:library/othergui.txt/other-gui-packages:Other Graphical User Interface Packages| section.
+
+* |:library/tkinter.txt:tkinter — Python interface to Tcl/Tk|
+
+  * |:library/tkinter.txt/tkinter-modules:Tkinter Modules|
+
+  * |:library/tkinter.txt/tkinter-life-preserver:Tkinter Life Preserver|
+
+    * |:library/tkinter.txt/how-to-use-this-section:How To Use This Section|
+
+    * |:library/tkinter.txt/a-simple-hello-world-program:A Simple Hello World Program|
+
+  * |:library/tkinter.txt/a-very-quick-look-at-tcl-tk:A (Very) Quick Look at Tcl/Tk|
+
+  * |:library/tkinter.txt/mapping-basic-tk-into-tkinter:Mapping Basic Tk into Tkinter|
+
+  * |:library/tkinter.txt/how-tk-and-tkinter-are-related:How Tk and Tkinter are Related|
+
+  * |:library/tkinter.txt/handy-reference:Handy Reference|
+
+    * |:library/tkinter.txt/setting-options:Setting Options|
+
+    * |:library/tkinter.txt/the-packer:The Packer|
+
+    * |:library/tkinter.txt/packer-options:Packer Options|
+
+    * |:library/tkinter.txt/coupling-widget-variables:Coupling Widget Variables|
+
+    * |:library/tkinter.txt/the-window-manager:The Window Manager|
+
+    * |:library/tkinter.txt/tk-option-data-types:Tk Option Data Types|
+
+    * |:library/tkinter.txt/bindings-and-events:Bindings and Events|
+
+    * |:library/tkinter.txt/the-index-parameter:The index Parameter|
+
+    * |:library/tkinter.txt/images:Images|
+
+  * |:library/tkinter.txt/file-handlers:File Handlers|
+
+* |:library/tkinter.ttk.txt:tkinter.ttk — Tk themed widgets|
+
+  * |:library/tkinter.ttk.txt/using-ttk:Using Ttk|
+
+  * |:library/tkinter.ttk.txt/ttk-widgets:Ttk Widgets|
+
+  * |:library/tkinter.ttk.txt/widget:Widget|
+
+    * |:library/tkinter.ttk.txt/standard-options:Standard Options|
+
+    * |:library/tkinter.ttk.txt/scrollable-widget-options:Scrollable Widget Options|
+
+    * |:library/tkinter.ttk.txt/label-options:Label Options|
+
+    * |:library/tkinter.ttk.txt/compatibility-options:Compatibility Options|
+
+    * |:library/tkinter.ttk.txt/widget-states:Widget States|
+
+    * |:library/tkinter.ttk.txt/ttk-widget:ttk.Widget|
+
+  * |:library/tkinter.ttk.txt/combobox:Combobox|
+
+    * |:library/tkinter.ttk.txt/options:Options|
+
+    * |:library/tkinter.ttk.txt/virtual-events:Virtual events|
+
+    * |:library/tkinter.ttk.txt/ttk-combobox:ttk.Combobox|
+
+  * |:library/tkinter.ttk.txt/spinbox:Spinbox|
+
+    * |:library/tkinter.ttk.txt/id1:Options|
+
+    * |:library/tkinter.ttk.txt/id2:Virtual events|
+
+    * |:library/tkinter.ttk.txt/ttk-spinbox:ttk.Spinbox|
+
+  * |:library/tkinter.ttk.txt/notebook:Notebook|
+
+    * |:library/tkinter.ttk.txt/id3:Options|
+
+    * |:library/tkinter.ttk.txt/tab-options:Tab Options|
+
+    * |:library/tkinter.ttk.txt/tab-identifiers:Tab Identifiers|
+
+    * |:library/tkinter.ttk.txt/id4:Virtual Events|
+
+    * |:library/tkinter.ttk.txt/ttk-notebook:ttk.Notebook|
+
+  * |:library/tkinter.ttk.txt/progressbar:Progressbar|
+
+    * |:library/tkinter.ttk.txt/id5:Options|
+
+    * |:library/tkinter.ttk.txt/ttk-progressbar:ttk.Progressbar|
+
+  * |:library/tkinter.ttk.txt/separator:Separator|
+
+    * |:library/tkinter.ttk.txt/id6:Options|
+
+  * |:library/tkinter.ttk.txt/sizegrip:Sizegrip|
+
+    * |:library/tkinter.ttk.txt/platform-specific-notes:Platform-specific notes|
+
+    * |:library/tkinter.ttk.txt/bugs:Bugs|
+
+  * |:library/tkinter.ttk.txt/treeview:Treeview|
+
+    * |:library/tkinter.ttk.txt/id7:Options|
+
+    * |:library/tkinter.ttk.txt/item-options:Item Options|
+
+    * |:library/tkinter.ttk.txt/tag-options:Tag Options|
+
+    * |:library/tkinter.ttk.txt/column-identifiers:Column Identifiers|
+
+    * |:library/tkinter.ttk.txt/id8:Virtual Events|
+
+    * |:library/tkinter.ttk.txt/ttk-treeview:ttk.Treeview|
+
+  * |:library/tkinter.ttk.txt/ttk-styling:Ttk Styling|
+
+    * |:library/tkinter.ttk.txt/layouts:Layouts|
+
+* |:library/tkinter.tix.txt:tkinter.tix — Extension widgets for Tk|
+
+  * |:library/tkinter.tix.txt/using-tix:Using Tix|
+
+  * |:library/tkinter.tix.txt/tix-widgets:Tix Widgets|
+
+    * |:library/tkinter.tix.txt/basic-widgets:Basic Widgets|
+
+    * |:library/tkinter.tix.txt/file-selectors:File Selectors|
+
+    * |:library/tkinter.tix.txt/hierarchical-listbox:Hierarchical ListBox|
+
+    * |:library/tkinter.tix.txt/tabular-listbox:Tabular ListBox|
+
+    * |:library/tkinter.tix.txt/manager-widgets:Manager Widgets|
+
+    * |:library/tkinter.tix.txt/image-types:Image Types|
+
+    * |:library/tkinter.tix.txt/miscellaneous-widgets:Miscellaneous Widgets|
+
+    * |:library/tkinter.tix.txt/form-geometry-manager:Form Geometry Manager|
+
+  * |:library/tkinter.tix.txt/tix-commands:Tix Commands|
+
+* |:library/tkinter.scrolledtext.txt:tkinter.scrolledtext — Scrolled Text Widget|
+
+* |:library/idle.txt:IDLE|
+
+  * |:library/idle.txt/menus:Menus|
+
+    * |:library/idle.txt/file-menu-shell-and-editor:File menu (Shell and Editor)|
+
+    * |:library/idle.txt/edit-menu-shell-and-editor:Edit menu (Shell and Editor)|
+
+    * |:library/idle.txt/format-menu-editor-window-only:Format menu (Editor window only)|
+
+    * |:library/idle.txt/run-menu-editor-window-only:Run menu (Editor window only)|
+
+    * |:library/idle.txt/shell-menu-shell-window-only:Shell menu (Shell window only)|
+
+    * |:library/idle.txt/debug-menu-shell-window-only:Debug menu (Shell window only)|
+
+    * |:library/idle.txt/options-menu-shell-and-editor:Options menu (Shell and Editor)|
+
+    * |:library/idle.txt/window-menu-shell-and-editor:Window menu (Shell and Editor)|
+
+    * |:library/idle.txt/help-menu-shell-and-editor:Help menu (Shell and Editor)|
+
+    * |:library/idle.txt/context-menus:Context Menus|
+
+  * |:library/idle.txt/editing-and-navigation:Editing and navigation|
+
+    * |:library/idle.txt/editor-windows:Editor windows|
+
+    * |:library/idle.txt/key-bindings:Key bindings|
+
+    * |:library/idle.txt/automatic-indentation:Automatic indentation|
+
+    * |:library/idle.txt/completions:Completions|
+
+    * |:library/idle.txt/calltips:Calltips|
+
+    * |:library/idle.txt/code-context:Code Context|
+
+    * |:library/idle.txt/python-shell-window:Python Shell window|
+
+    * |:library/idle.txt/text-colors:Text colors|
+
+  * |:library/idle.txt/startup-and-code-execution:Startup and code execution|
+
+    * |:library/idle.txt/command-line-usage:Command line usage|
+
+    * |:library/idle.txt/startup-failure:Startup failure|
+
+    * |:library/idle.txt/running-user-code:Running user code|
+
+    * |:library/idle.txt/user-output-in-shell:User output in Shell|
+
+    * |:library/idle.txt/developing-tkinter-applications:Developing tkinter applications|
+
+    * |:library/idle.txt/running-without-a-subprocess:Running without a subprocess|
+
+  * |:library/idle.txt/help-and-preferences:Help and preferences|
+
+    * |:library/idle.txt/help-sources:Help sources|
+
+    * |:library/idle.txt/setting-preferences:Setting preferences|
+
+    * |:library/idle.txt/idle-on-macos:IDLE on macOS|
+
+    * |:library/idle.txt/extensions:Extensions|
+
+* |:library/othergui.txt:Other Graphical User Interface Packages|
+
+
+

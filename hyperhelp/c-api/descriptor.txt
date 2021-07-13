@@ -1,0 +1,44 @@
+%hyperhelp title="Descriptor Objects" date="2021-07-11"
+*|descriptor-objects:⚓|*
+
+“Descriptors” are objects that describe some attribute of an object. They are
+found in the dictionary of type objects.
+
+*c.PyProperty_Type:|:c-api/type.txt/c.PyTypeObject:PyTypeObject| PyProperty_Type
+*
+
+   The type object for the built-in descriptor types.
+
+*c.PyDescr_NewGetSet:|:c-api/structures.txt/c.PyObject:PyObject| *PyDescr_NewGetSet(PyTypeObject *type, struct PyGetSetDef *getset)
+*
+    *Return value: New reference.*
+
+*c.PyDescr_NewMember:|:c-api/structures.txt/c.PyObject:PyObject| *PyDescr_NewMember(PyTypeObject *type, struct PyMemberDef *meth)
+*
+    *Return value: New reference.*
+
+*c.PyDescr_NewMethod:|:c-api/structures.txt/c.PyObject:PyObject| *PyDescr_NewMethod(PyTypeObject *type, struct PyMethodDef *meth)
+*
+    *Return value: New reference.*
+
+*c.PyDescr_NewWrapper:|:c-api/structures.txt/c.PyObject:PyObject| *PyDescr_NewWrapper(PyTypeObject *type, struct wrapperbase *wrapper, void *wrapped)
+*
+    *Return value: New reference.*
+
+*c.PyDescr_NewClassMethod:|:c-api/structures.txt/c.PyObject:PyObject| *PyDescr_NewClassMethod(PyTypeObject *type, PyMethodDef *method)
+*
+    *Return value: New reference.*
+
+*c.PyDescr_IsData:int PyDescr_IsData(PyObject *descr)
+*
+
+   Return true if the descriptor objects *descr* describes a data attribute, or
+   false if it describes a method.  *descr* must be a descriptor object; there is
+   no error checking.
+
+*c.PyWrapper_New:|:c-api/structures.txt/c.PyObject:PyObject| *PyWrapper_New(PyObject*, PyObject*)
+*
+    *Return value: New reference.*
+
+
+

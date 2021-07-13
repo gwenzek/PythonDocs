@@ -1,0 +1,57 @@
+%hyperhelp title="urllib.error" date="2021-07-11"
+*|module-urllib.error:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/urllib/error.py:Lib/urllib/error.py|
+
+======================================================================
+
+The |:module-urllib.error:urllib.error| module defines the exception classes for exceptions raised by
+|:library/urllib.request.txt/module-urllib.request:urllib.request|.  The base exception class is |:urllib.error.URLError:URLError|.
+
+The following exceptions are raised by |:module-urllib.error:urllib.error| as appropriate:
+
+*urllib.error.URLError:exception urllib.error.URLError*
+
+   The handlers raise this exception (or derived exceptions) when they run into a
+   problem.  It is a subclass of |:library/exceptions.txt/OSError:OSError|.
+
+   *urllib.error.URLError.reason:reason*
+
+      The reason for this error.  It can be a message string or another exception
+      instance.
+
+   Changed in version 3.3: |:urllib.error.URLError:URLError| has been made a subclass of |:library/exceptions.txt/OSError:OSError| instead
+   of |:library/exceptions.txt/IOError:IOError|.
+
+*urllib.error.HTTPError:exception urllib.error.HTTPError*
+
+   Though being an exception (a subclass of |:urllib.error.URLError:URLError|), an |:urllib.error.HTTPError:HTTPError| can also
+   function as a non-exceptional file-like return value (the same thing that
+   |:library/urllib.request.txt/urllib.request.urlopen:urlopen()| returns).  This is useful when handling exotic HTTP errors, such as
+   requests for authentication.
+
+   *urllib.error.HTTPError.code:code*
+
+      An HTTP status code as defined in *|index-0:⚓|* |:tools.ietf.org/html/rfc2616.html:RFC 2616|.  This numeric value
+      corresponds to a value found in the dictionary of codes as found in
+      |:library/http.server.txt/http.server.BaseHTTPRequestHandler.responses:http.server.BaseHTTPRequestHandler.responses|.
+
+   *urllib.error.HTTPError.reason:reason*
+
+      This is usually a string explaining the reason for this error.
+
+   *urllib.error.HTTPError.headers:headers*
+
+      The HTTP response headers for the HTTP request that caused the |:urllib.error.HTTPError:HTTPError|.
+
+      New in version 3.4.
+
+*urllib.error.ContentTooShortError:exception urllib.error.ContentTooShortError(msg, content)*
+
+   This exception is raised when the |:library/urllib.request.txt/urllib.request.urlretrieve:urlretrieve()| function detects that the
+   amount of the downloaded data is less than the expected amount (given by the *
+   Content-Length* header).  The "content" attribute stores the downloaded (and
+   supposedly truncated) data.
+
+
+

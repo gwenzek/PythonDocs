@@ -1,0 +1,69 @@
+%hyperhelp title="Allocating Objects on the Heap" date="2021-07-11"
+*|allocating-objects-on-the-heap:⚓|*
+
+*c._PyObject_New:|:c-api/structures.txt/c.PyObject:PyObject| *_PyObject_New(PyTypeObject *type)
+*
+    *Return value: New reference.*
+
+*c._PyObject_NewVar:|:c-api/structures.txt/c.PyVarObject:PyVarObject| *_PyObject_NewVar(PyTypeObject *type, Py_ssize_t size)
+*
+    *Return value: New reference.*
+
+*c.PyObject_Init:|:c-api/structures.txt/c.PyObject:PyObject| *PyObject_Init(PyObject *op, PyTypeObject *type)
+*
+    *Return value: Borrowed reference.*
+
+   Initialize a newly-allocated object *op* with its type and initial reference.
+   Returns the initialized object.  If *type* indicates that the object
+   participates in the cyclic garbage detector, it is added to the detector’s set
+   of observed objects. Other fields of the object are not affected.
+
+*c.PyObject_InitVar:|:c-api/structures.txt/c.PyVarObject:PyVarObject| *PyObject_InitVar(PyVarObject *op, PyTypeObject *type, Py_ssize_t size)
+*
+    *Return value: Borrowed reference.*
+
+   This does everything |:c.PyObject_Init:PyObject_Init()| does, and also initializes the length
+   information for a variable-size object.
+
+*c.PyObject_New:TYPE *PyObject_New(TYPE, PyTypeObject *type)
+*
+    *Return value: New reference.*
+
+   Allocate a new Python object using the C structure type *TYPE* and the Python
+   type object *type*.  Fields not defined by the Python object header are not
+   initialized; the object’s reference count will be one.  The size of the memory
+   allocation is determined from the |:c-api/typeobj.txt/c.PyTypeObject.tp_basicsize:tp_basicsize| field of the type object.
+
+*c.PyObject_NewVar:TYPE *PyObject_NewVar(TYPE, PyTypeObject *type, Py_ssize_t size)
+*
+    *Return value: New reference.*
+
+   Allocate a new Python object using the C structure type *TYPE* and the Python
+   type object *type*.  Fields not defined by the Python object header are not
+   initialized.  The allocated memory allows for the *TYPE* structure plus *size*
+   fields of the size given by the |:c-api/typeobj.txt/c.PyTypeObject.tp_itemsize:tp_itemsize| field of *type*.  This is useful
+   for implementing objects like tuples, which are able to determine their size at
+   construction time.  Embedding the array of fields into the same allocation
+   decreases the number of allocations, improving the memory management efficiency.
+
+*c.PyObject_Del:void PyObject_Del(void *op)
+*
+
+   Releases memory allocated to an object using |:c.PyObject_New:PyObject_New()| or
+   |:c.PyObject_NewVar:PyObject_NewVar()|.  This is normally called from the |:c-api/typeobj.txt/c.PyTypeObject.tp_dealloc:tp_dealloc| handler
+   specified in the object’s type.  The fields of the object should not be accessed
+   after this call as the memory is no longer a valid Python object.
+
+*c._Py_NoneStruct:|:c-api/structures.txt/c.PyObject:PyObject| _Py_NoneStruct
+*
+
+   Object which is visible in Python as "None".  This should only be accessed using
+   the |:c-api/none.txt/c.Py_None:Py_None| macro, which evaluates to a pointer to this object.
+
+See also:
+
+  |:c-api/module.txt/c.PyModule_Create:PyModule_Create()|
+     To allocate and create extension modules.
+
+
+

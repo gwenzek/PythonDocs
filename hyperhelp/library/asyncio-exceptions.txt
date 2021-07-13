@@ -1,0 +1,65 @@
+%hyperhelp title="Exceptions" date="2021-07-11"
+*|exceptions:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/asyncio/exceptions.py:Lib/asyncio/exceptions.py|
+
+======================================================================
+
+*asyncio.TimeoutError:exception asyncio.TimeoutError*
+
+   The operation has exceeded the given deadline.
+
+   Important:
+
+     This exception is different from the builtin |:library/exceptions.txt/TimeoutError:TimeoutError| exception.
+
+*asyncio.CancelledError:exception asyncio.CancelledError*
+
+   The operation has been cancelled.
+
+   This exception can be caught to perform custom operations when asyncio Tasks are
+   cancelled.  In almost all situations the exception must be re-raised.
+
+   Changed in version 3.8: |:asyncio.CancelledError:CancelledError| is now a subclass of |:library/exceptions.txt/BaseException:BaseException|.
+
+*asyncio.InvalidStateError:exception asyncio.InvalidStateError*
+
+   Invalid internal state of |:library/asyncio-task.txt/asyncio.Task:Task| or |:library/asyncio-future.txt/asyncio.Future:Future|.
+
+   Can be raised in situations like setting a result value for a *Future* object
+   that already has a result value set.
+
+*asyncio.SendfileNotAvailableError:exception asyncio.SendfileNotAvailableError*
+
+   The “sendfile” syscall is not available for the given socket or file type.
+
+   A subclass of |:library/exceptions.txt/RuntimeError:RuntimeError|.
+
+*asyncio.IncompleteReadError:exception asyncio.IncompleteReadError*
+
+   The requested read operation did not complete fully.
+
+   Raised by the |:library/asyncio-stream.txt/asyncio-streams:asyncio stream APIs|.
+
+   This exception is a subclass of |:library/exceptions.txt/EOFError:EOFError|.
+
+   *asyncio.IncompleteReadError.expected:expected*
+
+      The total number (|:library/functions.txt/int:int|) of expected bytes.
+
+   *asyncio.IncompleteReadError.partial:partial*
+
+      A string of |:library/stdtypes.txt/bytes:bytes| read before the end of stream was reached.
+
+*asyncio.LimitOverrunError:exception asyncio.LimitOverrunError*
+
+   Reached the buffer size limit while looking for a separator.
+
+   Raised by the |:library/asyncio-stream.txt/asyncio-streams:asyncio stream APIs|.
+
+   *asyncio.LimitOverrunError.consumed:consumed*
+
+      The total number of to be consumed bytes.
+
+
+

@@ -1,0 +1,46 @@
+%hyperhelp title="Internationalization" date="2021-07-11"
+*|internationalization:⚓|*
+
+The modules described in this chapter help you write software that is
+independent of language and locale by providing mechanisms for selecting a
+language to be used in  program messages or by tailoring output to match local
+conventions.
+
+The list of modules described in this chapter is:
+
+* |:library/gettext.txt:gettext — Multilingual internationalization services|
+
+  * |:library/gettext.txt/gnu-gettext-api:GNU gettext API|
+
+  * |:library/gettext.txt/class-based-api:Class-based API|
+
+    * |:library/gettext.txt/the-nulltranslations-class:The NullTranslations class|
+
+    * |:library/gettext.txt/the-gnutranslations-class:The GNUTranslations class|
+
+    * |:library/gettext.txt/solaris-message-catalog-support:Solaris message catalog support|
+
+    * |:library/gettext.txt/the-catalog-constructor:The Catalog constructor|
+
+  * |:library/gettext.txt/internationalizing-your-programs-and-modules:Internationalizing your programs and modules|
+
+    * |:library/gettext.txt/localizing-your-module:Localizing your module|
+
+    * |:library/gettext.txt/localizing-your-application:Localizing your application|
+
+    * |:library/gettext.txt/changing-languages-on-the-fly:Changing languages on the fly|
+
+    * |:library/gettext.txt/deferred-translations:Deferred translations|
+
+  * |:library/gettext.txt/acknowledgements:Acknowledgements|
+
+* |:library/locale.txt:locale — Internationalization services|
+
+  * |:library/locale.txt/background-details-hints-tips-and-caveats:Background, details, hints, tips and caveats|
+
+  * |:library/locale.txt/for-extension-writers-and-programs-that-embed-python:For extension writers and programs that embed Python|
+
+  * |:library/locale.txt/access-to-message-catalogs:Access to message catalogs|
+
+
+

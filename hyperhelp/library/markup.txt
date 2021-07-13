@@ -1,0 +1,170 @@
+%hyperhelp title="Structured Markup Processing Tools" date="2021-07-11"
+*|structured-markup-processing-tools:⚓|*
+
+Python supports a variety of modules to work with various forms of structured
+data markup.  This includes modules to work with the Standard Generalized Markup
+Language (SGML) and the Hypertext Markup Language (HTML), and several interfaces
+for working with the Extensible Markup Language (XML).
+
+* |:library/html.txt:html — HyperText Markup Language support|
+
+* |:library/html.parser.txt:html.parser — Simple HTML and XHTML parser|
+
+  * |:library/html.parser.txt/example-html-parser-application:Example HTML Parser Application|
+
+  * |:library/html.parser.txt/htmlparser-methods:HTMLParser Methods|
+
+  * |:library/html.parser.txt/examples:Examples|
+
+* |:library/html.entities.txt:html.entities — Definitions of HTML general entities|
+
+* |:library/xml.txt:XML Processing Modules|
+
+  * |:library/xml.txt/xml-vulnerabilities:XML vulnerabilities|
+
+  * |:library/xml.txt/the-defusedxml-package:The defusedxml Package|
+
+* |:library/xml.etree.elementtree.txt:xml.etree.ElementTree — The ElementTree XML API|
+
+  * |:library/xml.etree.elementtree.txt/tutorial:Tutorial|
+
+    * |:library/xml.etree.elementtree.txt/xml-tree-and-elements:XML tree and elements|
+
+    * |:library/xml.etree.elementtree.txt/parsing-xml:Parsing XML|
+
+    * |:library/xml.etree.elementtree.txt/pull-api-for-non-blocking-parsing:Pull API for non-blocking parsing|
+
+    * |:library/xml.etree.elementtree.txt/finding-interesting-elements:Finding interesting elements|
+
+    * |:library/xml.etree.elementtree.txt/modifying-an-xml-file:Modifying an XML File|
+
+    * |:library/xml.etree.elementtree.txt/building-xml-documents:Building XML documents|
+
+    * |:library/xml.etree.elementtree.txt/parsing-xml-with-namespaces:Parsing XML with Namespaces|
+
+    * |:library/xml.etree.elementtree.txt/additional-resources:Additional resources|
+
+  * |:library/xml.etree.elementtree.txt/xpath-support:XPath support|
+
+    * |:library/xml.etree.elementtree.txt/example:Example|
+
+    * |:library/xml.etree.elementtree.txt/supported-xpath-syntax:Supported XPath syntax|
+
+  * |:library/xml.etree.elementtree.txt/reference:Reference|
+
+    * |:library/xml.etree.elementtree.txt/functions:Functions|
+
+  * |:library/xml.etree.elementtree.txt/xinclude-support:XInclude support|
+
+    * |:library/xml.etree.elementtree.txt/id3:Example|
+
+  * |:library/xml.etree.elementtree.txt/id4:Reference|
+
+    * |:library/xml.etree.elementtree.txt/elementinclude-functions:Functions|
+
+    * |:library/xml.etree.elementtree.txt/element-objects:Element Objects|
+
+    * |:library/xml.etree.elementtree.txt/elementtree-objects:ElementTree Objects|
+
+    * |:library/xml.etree.elementtree.txt/qname-objects:QName Objects|
+
+    * |:library/xml.etree.elementtree.txt/treebuilder-objects:TreeBuilder Objects|
+
+    * |:library/xml.etree.elementtree.txt/xmlparser-objects:XMLParser Objects|
+
+    * |:library/xml.etree.elementtree.txt/xmlpullparser-objects:XMLPullParser Objects|
+
+    * |:library/xml.etree.elementtree.txt/exceptions:Exceptions|
+
+* |:library/xml.dom.txt:xml.dom — The Document Object Model API|
+
+  * |:library/xml.dom.txt/module-contents:Module Contents|
+
+  * |:library/xml.dom.txt/objects-in-the-dom:Objects in the DOM|
+
+    * |:library/xml.dom.txt/domimplementation-objects:DOMImplementation Objects|
+
+    * |:library/xml.dom.txt/node-objects:Node Objects|
+
+    * |:library/xml.dom.txt/nodelist-objects:NodeList Objects|
+
+    * |:library/xml.dom.txt/documenttype-objects:DocumentType Objects|
+
+    * |:library/xml.dom.txt/document-objects:Document Objects|
+
+    * |:library/xml.dom.txt/element-objects:Element Objects|
+
+    * |:library/xml.dom.txt/attr-objects:Attr Objects|
+
+    * |:library/xml.dom.txt/namednodemap-objects:NamedNodeMap Objects|
+
+    * |:library/xml.dom.txt/comment-objects:Comment Objects|
+
+    * |:library/xml.dom.txt/text-and-cdatasection-objects:Text and CDATASection Objects|
+
+    * |:library/xml.dom.txt/processinginstruction-objects:ProcessingInstruction Objects|
+
+    * |:library/xml.dom.txt/exceptions:Exceptions|
+
+  * |:library/xml.dom.txt/conformance:Conformance|
+
+    * |:library/xml.dom.txt/type-mapping:Type Mapping|
+
+    * |:library/xml.dom.txt/accessor-methods:Accessor Methods|
+
+* |:library/xml.dom.minidom.txt:xml.dom.minidom — Minimal DOM implementation|
+
+  * |:library/xml.dom.minidom.txt/dom-objects:DOM Objects|
+
+  * |:library/xml.dom.minidom.txt/dom-example:DOM Example|
+
+  * |:library/xml.dom.minidom.txt/minidom-and-the-dom-standard:minidom and the DOM standard|
+
+* |:library/xml.dom.pulldom.txt:xml.dom.pulldom — Support for building partial DOM trees|
+
+  * |:library/xml.dom.pulldom.txt/domeventstream-objects:DOMEventStream Objects|
+
+* |:library/xml.sax.txt:xml.sax — Support for SAX2 parsers|
+
+  * |:library/xml.sax.txt/saxexception-objects:SAXException Objects|
+
+* |:library/xml.sax.handler.txt:xml.sax.handler — Base classes for SAX handlers|
+
+  * |:library/xml.sax.handler.txt/contenthandler-objects:ContentHandler Objects|
+
+  * |:library/xml.sax.handler.txt/dtdhandler-objects:DTDHandler Objects|
+
+  * |:library/xml.sax.handler.txt/entityresolver-objects:EntityResolver Objects|
+
+  * |:library/xml.sax.handler.txt/errorhandler-objects:ErrorHandler Objects|
+
+* |:library/xml.sax.utils.txt:xml.sax.saxutils — SAX Utilities|
+
+* |:library/xml.sax.reader.txt:xml.sax.xmlreader — Interface for XML parsers|
+
+  * |:library/xml.sax.reader.txt/xmlreader-objects:XMLReader Objects|
+
+  * |:library/xml.sax.reader.txt/incrementalparser-objects:IncrementalParser Objects|
+
+  * |:library/xml.sax.reader.txt/locator-objects:Locator Objects|
+
+  * |:library/xml.sax.reader.txt/inputsource-objects:InputSource Objects|
+
+  * |:library/xml.sax.reader.txt/the-attributes-interface:The Attributes Interface|
+
+  * |:library/xml.sax.reader.txt/the-attributesns-interface:The AttributesNS Interface|
+
+* |:library/pyexpat.txt:xml.parsers.expat — Fast XML parsing using Expat|
+
+  * |:library/pyexpat.txt/xmlparser-objects:XMLParser Objects|
+
+  * |:library/pyexpat.txt/expaterror-exceptions:ExpatError Exceptions|
+
+  * |:library/pyexpat.txt/example:Example|
+
+  * |:library/pyexpat.txt/module-xml.parsers.expat.model:Content Model Descriptions|
+
+  * |:library/pyexpat.txt/module-xml.parsers.expat.errors:Expat error constants|
+
+
+

@@ -1,0 +1,186 @@
+%hyperhelp title="Queues" date="2021-07-11"
+*|queues:⚓|*
+
+*Source code:* |:github.com/python/cpython/tree/3.8/Lib/asyncio/queues.py:Lib/asyncio/queues.py|
+
+======================================================================
+
+asyncio queues are designed to be similar to classes of the |:library/queue.txt/module-queue:queue| module.
+Although asyncio queues are not thread-safe, they are designed to be used
+specifically in async/await code.
+
+Note that methods of asyncio queues don’t have a *timeout* parameter; use
+|:library/asyncio-task.txt/asyncio.wait_for:asyncio.wait_for()| function to do queue operations with a timeout.
+
+See also the |:examples:Examples| section below.
+
+# queue:Queue
+
+*asyncio.Queue:class asyncio.Queue(maxsize=0, \*, loop=None)*
+
+   A first in, first out (FIFO) queue.
+
+   If *maxsize* is less than or equal to zero, the queue size is infinite.  If it
+   is an integer greater than "0", then "await put()" blocks when the queue reaches
+   *maxsize* until an item is removed by |:asyncio.Queue.get:get()|.
+
+   Unlike the standard library threading |:library/queue.txt/module-queue:queue|, the size of the queue is always
+   known and can be returned by calling the |:asyncio.Queue.qsize:qsize()| method.
+
+   Deprecated since version 3.8, will be removed in version 3.10: The *loop*
+   parameter.
+
+   This class is |:library/asyncio-dev.txt/asyncio-multithreading:not thread safe|.
+
+   *asyncio.Queue.maxsize:maxsize*
+
+      Number of items allowed in the queue.
+
+   *asyncio.Queue.empty:empty()*
+
+      Return "True" if the queue is empty, "False" otherwise.
+
+   *asyncio.Queue.full:full()*
+
+      Return "True" if there are |:asyncio.Queue.maxsize:maxsize| items in the queue.
+
+      If the queue was initialized with "maxsize=0" (the default), then |:asyncio.Queue.full:full()| never
+      returns "True".
+
+   *asyncio.Queue.get:coroutine get()*
+
+      Remove and return an item from the queue. If queue is empty, wait until an item
+      is available.
+
+   *asyncio.Queue.get_nowait:get_nowait()*
+
+      Return an item if one is immediately available, else raise |:asyncio.QueueEmpty:QueueEmpty|.
+
+   *asyncio.Queue.join:coroutine join()*
+
+      Block until all items in the queue have been received and processed.
+
+      The count of unfinished tasks goes up whenever an item is added to the queue.
+      The count goes down whenever a consumer coroutine calls |:asyncio.Queue.task_done:task_done()| to
+      indicate that the item was retrieved and all work on it is complete.  When the
+      count of unfinished tasks drops to zero, |:asyncio.Queue.join:join()| unblocks.
+
+   *asyncio.Queue.put:coroutine put(item)*
+
+      Put an item into the queue. If the queue is full, wait until a free slot is
+      available before adding the item.
+
+   *asyncio.Queue.put_nowait:put_nowait(item)*
+
+      Put an item into the queue without blocking.
+
+      If no free slot is immediately available, raise |:asyncio.QueueFull:QueueFull|.
+
+   *asyncio.Queue.qsize:qsize()*
+
+      Return the number of items in the queue.
+
+   *asyncio.Queue.task_done:task_done()*
+
+      Indicate that a formerly enqueued task is complete.
+
+      Used by queue consumers. For each |:asyncio.Queue.get:get()| used to fetch a task, a subsequent
+      call to |:asyncio.Queue.task_done:task_done()| tells the queue that the processing on the task is
+      complete.
+
+      If a |:asyncio.Queue.join:join()| is currently blocking, it will resume when all items have been
+      processed (meaning that a |:asyncio.Queue.task_done:task_done()| call was received for every item that
+      had been |:asyncio.Queue.put:put()| into the queue).
+
+      Raises |:library/exceptions.txt/ValueError:ValueError| if called more times than there were items placed in the
+      queue.
+
+# priority-queue:Priority Queue
+
+*asyncio.PriorityQueue:class asyncio.PriorityQueue*
+
+   A variant of |:asyncio.Queue:Queue|; retrieves entries in priority order (lowest first).
+
+   Entries are typically tuples of the form "(priority_number, data)".
+
+# lifo-queue:LIFO Queue
+
+*asyncio.LifoQueue:class asyncio.LifoQueue*
+
+   A variant of |:asyncio.Queue:Queue| that retrieves most recently added entries first (last in,
+   first out).
+
+# exceptions:Exceptions
+
+*asyncio.QueueEmpty:exception asyncio.QueueEmpty*
+
+   This exception is raised when the |:asyncio.Queue.get_nowait:get_nowait()| method is called on an empty
+   queue.
+
+*asyncio.QueueFull:exception asyncio.QueueFull*
+
+   Exception raised when the |:asyncio.Queue.put_nowait:put_nowait()| method is called on a queue that has
+   reached its *maxsize*.
+
+# examples:Examples*|asyncio-example-queue-dist:⚓|*
+
+Queues can be used to distribute workload between several concurrent tasks:
+
+```rst
+import asyncio
+import random
+import time
+
+
+async def worker(name, queue):
+    while True:
+        # Get a "work item" out of the queue.
+        sleep_for = await queue.get()
+
+        # Sleep for the "sleep_for" seconds.
+        await asyncio.sleep(sleep_for)
+
+        # Notify the queue that the "work item" has been processed.
+        queue.task_done()
+
+        print(f'{name} has slept for {sleep_for:.2f} seconds')
+
+
+async def main():
+    # Create a queue that we will use to store our "workload".
+    queue = asyncio.Queue()
+
+    # Generate random timings and put them into the queue.
+    total_sleep_time = 0
+    for _ in range(20):
+        sleep_for = random.uniform(0.05, 1.0)
+        total_sleep_time += sleep_for
+        queue.put_nowait(sleep_for)
+
+    # Create three worker tasks to process the queue concurrently.
+    tasks = []
+    for i in range(3):
+        task = asyncio.create_task(worker(f'worker-{i}', queue))
+        tasks.append(task)
+
+    # Wait until the queue is fully processed.
+    started_at = time.monotonic()
+    await queue.join()
+    total_slept_for = time.monotonic() - started_at
+
+    # Cancel our worker tasks.
+    for task in tasks:
+        task.cancel()
+    # Wait until all worker tasks are cancelled.
+    await asyncio.gather(*tasks, return_exceptions=True)
+
+    print('====')
+    print(f'3 workers slept in parallel for {total_slept_for:.2f} seconds')
+    print(f'total expected sleep time: {total_sleep_time:.2f} seconds')
+
+
+asyncio.run(main())
+```
+
+
+

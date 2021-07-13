@@ -1,0 +1,94 @@
+%hyperhelp title="Superseded Modules" date="2021-07-11"
+*|superseded-modules:⚓|*
+
+The modules described in this chapter are deprecated and only kept for backwards
+compatibility. They have been superseded by other modules.
+
+* |:library/optparse.txt:optparse — Parser for command line options|
+
+  * |:library/optparse.txt/background:Background|
+
+    * |:library/optparse.txt/terminology:Terminology|
+
+    * |:library/optparse.txt/what-are-options-for:What are options for?|
+
+    * |:library/optparse.txt/what-are-positional-arguments-for:What are positional arguments for?|
+
+  * |:library/optparse.txt/tutorial:Tutorial|
+
+    * |:library/optparse.txt/understanding-option-actions:Understanding option actions|
+
+    * |:library/optparse.txt/the-store-action:The store action|
+
+    * |:library/optparse.txt/handling-boolean-flag-options:Handling boolean (flag) options|
+
+    * |:library/optparse.txt/other-actions:Other actions|
+
+    * |:library/optparse.txt/default-values:Default values|
+
+    * |:library/optparse.txt/generating-help:Generating help|
+
+      * |:library/optparse.txt/grouping-options:Grouping Options|
+
+    * |:library/optparse.txt/printing-a-version-string:Printing a version string|
+
+    * |:library/optparse.txt/how-optparse-handles-errors:How optparse handles errors|
+
+    * |:library/optparse.txt/putting-it-all-together:Putting it all together|
+
+  * |:library/optparse.txt/reference-guide:Reference Guide|
+
+    * |:library/optparse.txt/creating-the-parser:Creating the parser|
+
+    * |:library/optparse.txt/populating-the-parser:Populating the parser|
+
+    * |:library/optparse.txt/defining-options:Defining options|
+
+    * |:library/optparse.txt/option-attributes:Option attributes|
+
+    * |:library/optparse.txt/standard-option-actions:Standard option actions|
+
+    * |:library/optparse.txt/standard-option-types:Standard option types|
+
+    * |:library/optparse.txt/parsing-arguments:Parsing arguments|
+
+    * |:library/optparse.txt/querying-and-manipulating-your-option-parser:Querying and manipulating your option parser|
+
+    * |:library/optparse.txt/conflicts-between-options:Conflicts between options|
+
+    * |:library/optparse.txt/cleanup:Cleanup|
+
+    * |:library/optparse.txt/other-methods:Other methods|
+
+  * |:library/optparse.txt/option-callbacks:Option Callbacks|
+
+    * |:library/optparse.txt/defining-a-callback-option:Defining a callback option|
+
+    * |:library/optparse.txt/how-callbacks-are-called:How callbacks are called|
+
+    * |:library/optparse.txt/raising-errors-in-a-callback:Raising errors in a callback|
+
+    * |:library/optparse.txt/callback-example-1-trivial-callback:Callback example 1: trivial callback|
+
+    * |:library/optparse.txt/callback-example-2-check-option-order:Callback example 2: check option order|
+
+    * |:library/optparse.txt/callback-example-3-check-option-order-generalized:Callback example 3: check option order (generalized)|
+
+    * |:library/optparse.txt/callback-example-4-check-arbitrary-condition:Callback example 4: check arbitrary condition|
+
+    * |:library/optparse.txt/callback-example-5-fixed-arguments:Callback example 5: fixed arguments|
+
+    * |:library/optparse.txt/callback-example-6-variable-arguments:Callback example 6: variable arguments|
+
+  * |:library/optparse.txt/extending-optparse:Extending optparse|
+
+    * |:library/optparse.txt/adding-new-types:Adding new types|
+
+    * |:library/optparse.txt/adding-new-actions:Adding new actions|
+
+* |:library/imp.txt:imp — Access the import internals|
+
+  * |:library/imp.txt/examples:Examples|
+
+
+
