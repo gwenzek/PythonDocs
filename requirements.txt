@@ -1,1 +1,1 @@
-more_itertools
+sphinx_hyperhelp

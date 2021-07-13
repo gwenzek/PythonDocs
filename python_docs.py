@@ -1,8 +1,10 @@
 import sublime
 import sublime_plugin
-import hyperhelpcore as hh
 
 import re
+import logging
+
+import hyperhelpcore as hh
 
 
 def log(*args):
@@ -35,7 +37,11 @@ class PythonDocsOpen(sublime_plugin.TextCommand):
             )
 
         sublime.run_command("hyperhelp_index", {"package": self.pkg})
-        self.view.window().run_command("insert", {"characters": topic})
+        window = self.view.window()
+        if window is None:
+            return
+
+        window.run_command("insert", {"characters": topic})
 
     def get_topic(self) -> str:
         """Uses the word under the cursor as topic.
@@ -57,7 +63,6 @@ class PythonDocsOpen(sublime_plugin.TextCommand):
 
         topic = self.view.substr(selection)
         return topic
-
 
 # For testing
 # pathlib.Path
