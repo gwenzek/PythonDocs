@@ -19,9 +19,21 @@ which is also readable from Sublime Text.
 
 ## Get started
 
-- Install the package with `git clone`
-- Restart Sublime Text
-- Open Command Palette
-- `HyperHelp: Browse available Help` > `PythonDocs` > `pathlib`
-- Open a python file. Type `pathlib`, press `F1`. It should open the pathlib HyperHelp.
-- Type `F1` anywhere in your python code to open the HyperHelp search box prefilled with the text under cursor.
+- First make this package and dependencies visible to Package Control
+  - Open Command Palette
+  - `Package Control: Add Repository`
+  - Paste in the URL https://raw.githubusercontent.com/STealthy-and-haSTy/SublimePackages/master/unreleased-packages.json 
+- Install this package
+  - Command Palette: `Package Control: Install Package` > `PythonDocs`
+  - Restart Sublime Text
+- Test it through Command Palette
+  - Command Palette: `HyperHelp: Browse available Help` > `PythonDocs` > `pathlib`
+  - This should open a new view showing pathlib documentation
+  - Try navigating by using `tab`, `enter`
+- Add keybindings
+  - !!! Command is currently broke, need fix !!!
+  - Command Palette: `Preferences: Key Bindings`
+  - Insert `{"keys": ["f1"], "command": "python_docs_open", "context": [{"key": "selector", "operator": "equal", "operand": "source.python"}]},`
+  - Save and exit the key bindings view
+  - Open a python file. Type `pathlib`, press `F1`. It should open the pathlib HyperHelp.
+  - Type `F1` anywhere in your python code to open the HyperHelp search box prefilled with the text under cursor.
